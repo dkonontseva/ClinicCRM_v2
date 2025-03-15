@@ -4,14 +4,14 @@ from datetime import datetime
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 from fastapi import APIRouter, Query, HTTPException
 from select import select
+from redis import asyncio as aioredis
 
 from aiAssistant.app.api import schemas, models
 from aiAssistant.app.core.database import async_session_maker
 from aiAssistant.ml.training.predict import vectorizer, model, predict_specialist_and_recommendation
 from sqlalchemy import select
-import aioredis
-router = APIRouter(prefix="/assistant", tags=["AI assistant"])
 
+router = APIRouter(prefix="/assistant", tags=["AI assistant"])
 
 redis_client = aioredis.from_url("redis://redis:6379", db=0)
 KAFKA_BOOTSTRAP_SERVERS= "localhost:9092"

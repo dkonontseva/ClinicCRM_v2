@@ -12,7 +12,7 @@ from sqlalchemy.orm import selectinload
 from clinicApp.app.api.talons.schema import AppointmentCreate, AppointmentResponse
 from clinicApp.app.core.database import async_session_maker
 from clinicApp.app.models.models import Talons, Schedules, Patients, Doctors, Departments, Users
-import aioredis
+from redis import asyncio as aioredis
 
 redis_client = aioredis.from_url("redis://redis:6379", db=0)
 REQUEST_TOPIC = os.getenv("REQUEST_TOPIC")
