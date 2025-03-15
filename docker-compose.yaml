@@ -1,4 +1,4 @@
-version: '3.11'
+version: "3.11"
 
 services:
   # Сервис для приложения клиники
@@ -6,7 +6,16 @@ services:
     build:
       context: ./clinicApp
       dockerfile: Dockerfile
-    command: [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
+    command:
+      [
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
     ports:
       - "8001:8000"
     environment:
@@ -19,16 +28,29 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - clinic_service_db
-      - kafka
-      - redis
+      clinic_service_db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: unless-stopped
 
   # Сервис для ии ассистента
   assistant_service_app:
     build:
       context: ./aiAssistant
       dockerfile: Dockerfile
-    command: [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload" ]
+    command:
+      [
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
     ports:
       - "8002:8000"
     environment:
@@ -41,9 +63,13 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - assistant_service_db
-      - kafka
-      - redis
+      assistant_service_db:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+    restart: unless-stopped
 
   # Сервис для PostgreSQL (клиника)
   clinic_service_db:
@@ -57,6 +83,12 @@ services:
       - "5436:5432"
     volumes:
       - clinic_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   # Сервис для PostgreSQL (ии ассистент)
   assistant_service_db:
@@ -70,6 +102,12 @@ services:
       - "5437:5432"
     volumes:
       - assistant_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   nginx:
     image: nginx:latest
