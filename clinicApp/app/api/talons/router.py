@@ -13,7 +13,7 @@ from clinicApp.app.schemas.schemas import TalonSchema
 
 router = APIRouter(prefix='/appointments', tags=['Appointments'])
 
-KAFKA_BOOTSTRAP_SERVERS =  os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 
 producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
 

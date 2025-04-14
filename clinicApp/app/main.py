@@ -1,6 +1,11 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import date
+from clinicApp.app.api.talons.dao import AppointmentsDAO
+import asyncio
+import logging
+import os
 
 from clinicApp.app.api.auth.router import router as auth_router
 from clinicApp.app.api.patients.router import router as patients_router
@@ -21,14 +26,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router)
-app.include_router(patients_router)
-app.include_router(doctors_router)
-app.include_router(medcard_router)
-app.include_router(leaves_router)
-app.include_router(schedule_router)
-app.include_router(talons_router)
-app.include_router(chat_router)
+app.include_router(auth_router, prefix="/api/v1/clinic")
+app.include_router(patients_router, prefix="/api/v1/clinic")
+app.include_router(doctors_router, prefix="/api/v1/clinic")
+app.include_router(medcard_router, prefix="/api/v1/clinic")
+app.include_router(leaves_router, prefix="/api/v1/clinic")
+app.include_router(schedule_router, prefix="/api/v1/clinic")
+app.include_router(talons_router, prefix="/api/v1/clinic")
+app.include_router(chat_router, prefix="/api/v1/clinic")
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

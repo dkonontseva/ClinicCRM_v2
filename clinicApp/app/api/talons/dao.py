@@ -11,8 +11,10 @@ from sqlalchemy.orm import selectinload
 
 from clinicApp.app.api.talons.schema import AppointmentCreate, AppointmentResponse
 from clinicApp.app.core.database import async_session_maker
+from clinicApp.app.core.mapping import get_department_name
 from clinicApp.app.models.models import Talons, Schedules, Patients, Doctors, Departments, Users
 from redis import asyncio as aioredis
+import asyncio
 
 redis_client = aioredis.from_url("redis://redis:6379", db=0)
 REQUEST_TOPIC = os.getenv("REQUEST_TOPIC")
@@ -230,167 +232,208 @@ class AppointmentsDAO:
 
     @classmethod
     async def consume_requests(cls, today: date):
-        consumer = AIOKafkaConsumer(REQUEST_TOPIC, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS, group_id="clinic_group")
-        await consumer.start()
+        consumer = AIOKafkaConsumer(
+            REQUEST_TOPIC,
+            bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+            group_id="clinic_group",
+        )
 
-        async for message in consumer:
-            data = json.loads(message.value.decode("utf-8"))
-            specialty = data.get("specialty")
-            complaint_id = data.get("complaint_id")
+        try:
+            await consumer.start()
+            print("Consumer started successfully")
+            async for message in consumer:
+                try:
+                    print(f"Received message: {message.value.decode('utf-8')}")
+                    data = json.loads(message.value.decode("utf-8"))
+                    specialty = data.get("specialty")
+                    complaint_id = data.get("complaint_id")
+                    
+                    print(f"Processing request - specialty: {specialty}, complaint_id: {complaint_id}")
+                    # Преобразуем специальность в название отделения
+                    department_name = get_department_name(specialty)
+                    print(f"Received request for specialty: {specialty} (mapped to: {department_name}), complaint_id: {complaint_id}")
+                    
+                    max_days_ahead = 30
+                    search_date = today
 
-            max_days_ahead = 30
-            search_date = today
+                    async with async_session_maker() as session:
+                        earliest_slots = []
 
-            async with async_session_maker() as session:
-                earliest_slots = []
+                        while search_date <= today + timedelta(days=max_days_ahead):
+                            day_of_week = search_date.strftime("%A")
 
-                while search_date <= today + timedelta(days=max_days_ahead):
-                    day_of_week = search_date.strftime("%A")
-
-                    doctors_query = (
-                        select(
-                            Doctors._id.label("doctor_id"),
-                            Users.last_name,
-                            Users.first_name,
-                            Users.second_name,
-                            Departments.department_name.label("department"),
-                        )
-                        .join(Users, Doctors.user_id == Users._id)
-                        .join(Departments, Doctors.department_id == Departments._id)
-                        .join(Schedules, Doctors._id == Schedules.doctor_id)
-                        .where(
-                            Schedules.day_of_week == day_of_week,
-                            Departments.department_name.ilike(f"%{specialty}%"),
-                        )
-                        .group_by(Doctors._id, Departments.department_name, Users.last_name, Users.first_name,
-                                  Users.second_name)
-                    )
-
-                    doctors_result = await session.execute(doctors_query)
-                    doctors = doctors_result.fetchall()
-
-                    if doctors:
-                        for doctor in doctors:
-                            doctor_id = doctor.doctor_id
-                            doctor_name = f"{doctor.last_name} {doctor.first_name} {doctor.second_name}"
-
-                            shift_query = await session.execute(
-                                select(Schedules)
-                                .options(selectinload(Schedules.shifts))
-                                .where(Schedules.doctor_id == doctor_id, Schedules.day_of_week == day_of_week)
+                            doctors_query = (
+                                select(
+                                    Doctors._id.label("doctor_id"),
+                                    Users.last_name,
+                                    Users.first_name,
+                                    Users.second_name,
+                                    Departments.department_name.label("department"),
+                                )
+                                .join(Users, Doctors.user_id == Users._id)
+                                .join(Departments, Doctors.department_id == Departments._id)
+                                .join(Schedules, Doctors._id == Schedules.doctor_id)
+                                .where(
+                                    Schedules.day_of_week == day_of_week,
+                                    Departments.department_name.ilike(f"%{department_name}%"),
+                                )
+                                .group_by(Doctors._id, Departments.department_name, Users.last_name, Users.first_name,
+                                          Users.second_name)
                             )
-                            schedule = shift_query.scalar()
 
-                            if not schedule or not schedule.shifts:
-                                continue
+                            doctors_result = await session.execute(doctors_query)
+                            doctors = doctors_result.fetchall()
 
-                            booked_query = await session.execute(
-                                select(Talons.time)
-                                .where(Talons.doctor_id == doctor_id, Talons.date == search_date)
+                            if doctors:
+                                for doctor in doctors:
+                                    doctor_id = doctor.doctor_id
+                                    doctor_name = f"{doctor.last_name} {doctor.first_name} {doctor.second_name}"
+
+                                    shift_query = await session.execute(
+                                        select(Schedules)
+                                        .options(selectinload(Schedules.shifts))
+                                        .where(Schedules.doctor_id == doctor_id, Schedules.day_of_week == day_of_week)
+                                    )
+                                    schedule = shift_query.scalar()
+
+                                    if not schedule or not schedule.shifts:
+                                        continue
+
+                                    booked_query = await session.execute(
+                                        select(Talons.time)
+                                        .where(Talons.doctor_id == doctor_id, Talons.date == search_date)
+                                    )
+                                    booked_slots = {row[0].strftime("%H:%M") for row in booked_query.all()}
+
+                                    current_time = datetime.combine(search_date, schedule.shifts.start_time)
+                                    end_time = datetime.combine(search_date, schedule.shifts.end_time)
+
+                                    while current_time < end_time:
+                                        slot_time = current_time.strftime("%H:%M")
+                                        if slot_time not in booked_slots:
+                                            earliest_slots.append({
+                                                "doctor_id": doctor_id,
+                                                "doctor_name": doctor_name,
+                                                "date": search_date,
+                                                "time": slot_time
+                                            })
+                                            break
+                                        current_time += timedelta(minutes=30)
+
+                            search_date += timedelta(days=1)
+
+                        if earliest_slots:
+                            earliest_slot = min(earliest_slots, key=lambda x: (x["date"], x["time"]))
+                            response_data = {
+                                "complaint_id": complaint_id,
+                                "doctor": earliest_slot["doctor_name"],
+                                "date": earliest_slot["date"].strftime("%Y-%m-%d"),
+                                "time": earliest_slot["time"],
+                                "doctor_id": earliest_slot["doctor_id"]
+                            }
+                            print(f"Sending response: {response_data}")
+                            
+                            await redis_client.setex(
+                                f"slot:{complaint_id}",
+                                300,  # TTL 5 минут
+                                json.dumps(response_data)
                             )
-                            booked_slots = {row[0].strftime("%H:%M") for row in booked_query.all()}
+                            
+                            producer = AIOKafkaProducer(
+                                bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+                                security_protocol="PLAINTEXT",
+                                request_timeout_ms=30000,
+                                retry_backoff_ms=1000,
+                                max_request_size=10485760,
+                                compression_type="none"
+                            )
+                            await producer.start()
+                            try:
+                                await producer.send_and_wait(
+                                    RESPONSE_TOPIC,
+                                    json.dumps(response_data).encode("utf-8")
+                                )
+                            finally:
+                                await producer.stop()
+                        
+                    await consumer.commit()
+                except Exception as e:
+                    print(f"Error processing message: {e}")
+                
+        except Exception as e:
+            print(f"Consumer error: {e}")
+            raise
+        finally:
+            await consumer.stop()
 
-                            current_time = datetime.combine(search_date, schedule.shifts.start_time)
-                            end_time = datetime.combine(search_date, schedule.shifts.end_time)
+    @classmethod
+    async def consume_confirmations(cls):
+        # Ждем готовности Kafka
+        if not await AppointmentsDAO.wait_for_kafka(KAFKA_BOOTSTRAP_SERVERS):
+            print("Failed to connect to Kafka after multiple retries")
+            return
+        
+        consumer = AIOKafkaConsumer(
+            CONFIRMATION_TOPIC,
+            bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
+            group_id="clinic_group"
+        )
+        
+        try:
+            await consumer.start()
+            async for message in consumer:
+                data = json.loads(message.value.decode("utf-8"))
+                complaint_id = data.get("complaint_id")
+                confirmed = data.get("confirmed")
+                patient_id = data.get("patient_id")
 
-                            while current_time < end_time:
-                                slot_time = current_time.strftime("%H:%M")
-                                if slot_time not in booked_slots:
-                                    earliest_slots.append({
-                                        "doctor_id": doctor_id,
-                                        "doctor_name": doctor_name,
-                                        "date": search_date,
-                                        "time": slot_time
-                                    })
-                                    break
-                                current_time += timedelta(minutes=30)
+                slot_data = await redis_client.get(f"slot:{complaint_id}")
 
-                    search_date += timedelta(days=1)
+                if not slot_data:
+                    error_data = {
+                        "complaint_id": complaint_id,
+                        "message": "Талон не найден или истекло время резервации."
+                    }
+                    producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
+                    await producer.start()
+                    await producer.send_and_wait(ERROR_TOPIC, json.dumps(error_data).encode("utf-8"))
+                    await producer.stop()
+                    continue
 
-                if earliest_slots:
-                    earliest_slot = min(earliest_slots, key=lambda x: (x["date"], x["time"]))
+                slot = json.loads(slot_data)
+
+                if confirmed:
+                    async with async_session_maker() as session:
+                        new_appointment = Talons(
+                            doctor_id=slot["doctor_id"],
+                            date=datetime.strptime(slot["date"], "%Y-%m-%d").date(),
+                            time=datetime.strptime(slot["time"], "%H:%M").time(),
+                            patient_id=patient_id,
+                            status="confirmed"
+                        )
+                        session.add(new_appointment)
+                        await session.commit()
+
+                    await redis_client.delete(f"slot:{complaint_id}")
 
                     response_data = {
                         "complaint_id": complaint_id,
-                        "doctor": earliest_slot["doctor_name"],
-                        "date": earliest_slot["date"].strftime("%Y-%m-%d"),
-                        "time": earliest_slot["time"]
+                        "message": "Запись подтверждена!"
                     }
-
-                    await redis_client.setex(f"slot:{complaint_id}", 300, json.dumps(response_data))
-
                     producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
                     await producer.start()
                     await producer.send_and_wait(RESPONSE_TOPIC, json.dumps(response_data).encode("utf-8"))
                     await producer.stop()
 
                 else:
+                    await redis_client.delete(f"slot:{complaint_id}")
                     response_data = {
                         "complaint_id": complaint_id,
-                        "message": "No available slots found within the next 30 days."
+                        "message": "Запись отменена."
                     }
                     producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
                     await producer.start()
-                    await producer.send_and_wait(ERROR_TOPIC, json.dumps(response_data).encode("utf-8"))
+                    await producer.send_and_wait(RESPONSE_TOPIC, json.dumps(response_data).encode("utf-8"))
                     await producer.stop()
-
-    @classmethod
-    async def consume_confirmations(cls):
-        consumer = AIOKafkaConsumer(CONFIRMATION_TOPIC, bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS,
-                                    group_id="clinic_group")
-        await consumer.start()
-
-        async for message in consumer:
-            data = json.loads(message.value.decode("utf-8"))
-            complaint_id = data.get("complaint_id")
-            confirmed = data.get("confirmed")
-            patient_id = data.get("patient_id")
-
-            slot_data = await redis_client.get(f"slot:{complaint_id}")
-
-            if not slot_data:
-                error_data = {
-                    "complaint_id": complaint_id,
-                    "message": "ТАлон не найден или истекло время резервации."
-                }
-                producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-                await producer.start()
-                await producer.send_and_wait(ERROR_TOPIC, json.dumps(error_data).encode("utf-8"))
-                await producer.stop()
-                continue
-
-            slot = json.loads(slot_data)
-
-            if confirmed:
-                async with async_session_maker() as session:
-                    new_appointment = Talons(
-                        doctor_id=slot["doctor_id"],
-                        date=datetime.strptime(slot["date"], "%Y-%m-%d").date(),
-                        time=datetime.strptime(slot["time"], "%H:%M").time(),
-                        patient_id=patient_id,
-                        status="confirmed"
-                    )
-                    session.add(new_appointment)
-                    await session.commit()
-
-                await redis_client.delete(f"slot:{complaint_id}")
-
-                response_data = {
-                    "complaint_id": complaint_id,
-                    "message": "Запись подтверждена!"
-                }
-                producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-                await producer.start()
-                await producer.send_and_wait(RESPONSE_TOPIC, json.dumps(response_data).encode("utf-8"))
-                await producer.stop()
-
-            else:
-                await redis_client.delete(f"slot:{complaint_id}")
-                response_data = {
-                    "complaint_id": complaint_id,
-                    "message": "Запись отменена."
-                }
-                producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-                await producer.start()
-                await producer.send_and_wait(RESPONSE_TOPIC, json.dumps(response_data).encode("utf-8"))
-                await producer.stop()
+        finally:
+            await consumer.stop()
