@@ -131,6 +131,8 @@ class TalonSchema(BaseSchema):
     patient_id: int
     doctor_id: int
     service_id: int
+    service: Optional[str] = None
+    price: Optional[float] = None
 
 
 class ChatMessageSchema(BaseSchema):

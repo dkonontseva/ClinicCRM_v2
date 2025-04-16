@@ -1,6 +1,5 @@
-from datetime import date
-from typing import Optional
-
+from datetime import date, time
+from typing import List, Optional
 from pydantic import BaseModel, EmailStr
 
 from clinicApp.app.schemas.schemas import UserSchema, AddressSchema
@@ -48,3 +47,28 @@ class PatientUpdateSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class VisitByDepartment(BaseModel):
+    department: str
+    count: int
+
+
+class AppointmentHistory(BaseModel):
+    doctor_first_name: str
+    doctor_last_name: str
+    department: str
+    date: date
+    time: time
+    status: str
+    service: Optional[str] = None
+    price: Optional[float] = None
+
+
+class PatientDashboardSchema(BaseModel):
+    next_appointment: Optional[date]
+    medical_records: int
+    visits_by_month: List[int]
+    visits_by_department: List[VisitByDepartment]
+    recent_appointments: List[AppointmentHistory]
+    appointment_history: List[AppointmentHistory]

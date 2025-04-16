@@ -1,13 +1,14 @@
 from datetime import date
 from typing import Optional
 
+from clinicApp.app.api.talons.schema import AppointmentResponsePatient
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from clinicApp.app.api.address.dao import AddressDAO
 from clinicApp.app.api.auth.dao import UsersDAO
 from clinicApp.app.api.medical_cards.dao import MedicalCardsDAO
 from clinicApp.app.api.medical_cards.schema import MedicalCardResponseSchema
 from clinicApp.app.api.patients.dao import PatientsDAO
-from clinicApp.app.api.patients.schemas import PatientResponseSchema, PatientCreateSchema, PatientUpdateSchema
+from clinicApp.app.api.patients.schemas import PatientResponseSchema, PatientCreateSchema, PatientUpdateSchema, PatientDashboardSchema
 from clinicApp.app.api.talons.dao import AppointmentsDAO
 from clinicApp.app.schemas.schemas import TalonSchema
 
@@ -65,7 +66,7 @@ async def get_patient_cards(patient_id: int = Query(...)):
     return await MedicalCardsDAO.get_cards_for_patient(patient_id)
 
 
-@router.get("/get_future_talon", response_model=list[TalonSchema], summary='Список всех будущих визитов пациента')
+@router.get("/get_future_talon", response_model=list[AppointmentResponsePatient], summary='Список всех будущих визитов пациента')
 async def get_for_patient(patient_id: int = Query(...)):
     return await AppointmentsDAO.get_for_patient(patient_id)
 
@@ -77,5 +78,6 @@ async def get_patient_medical_cards(patient_name: str = Query(...)):
 async def search_patient(patient_name: Optional[str] = Query(None)):
     return await PatientsDAO.search_patients(patient_name)
 
-
-
+@router.get("/dashboard", response_model=PatientDashboardSchema)
+async def get_patient_dashboard(patient_id: int = Query(...)):    
+    return await PatientsDAO.get_patient_dashboard_data(patient_id)

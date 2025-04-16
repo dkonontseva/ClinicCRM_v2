@@ -2,14 +2,14 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import HTTPException
-from sqlalchemy import select, delete, update, and_, or_
-from sqlalchemy.orm import contains_eager, joinedload
+from sqlalchemy import select, delete, update, and_, or_, func, distinct
+from sqlalchemy.orm import contains_eager, joinedload, selectinload
 
 from clinicApp.app.api.auth.auth import get_password_hash
 from clinicApp.app.api.dao import BaseDAO
 from clinicApp.app.api.doctors.schemas import DoctorUpdateSchema
 from clinicApp.app.core.database import async_session_maker
-from clinicApp.app.models.models import Users, Addresses, Doctors, Education, Talons, Departments
+from clinicApp.app.models.models import Users, Addresses, Doctors, Education, Talons, Departments, Patients, Services
 
 
 class DoctorsDAO(BaseDAO):
@@ -148,34 +148,91 @@ class DoctorsDAO(BaseDAO):
     @classmethod
     async def get_doctor_dashboard_data(cls, doctor_id: int):
         async with async_session_maker() as session:
-            today = datetime.now().date()
+            # Получаем общее количество пациентов
+            total_patients_query = select(func.count(distinct(Talons.patient_id))).where(Talons.doctor_id == doctor_id)
+            total_patients = await session.scalar(total_patients_query)
 
-            total_patients = await session.execute(
-                select(Talons.patient_id).distinct().filter_by(doctor_id=doctor_id)
+            # Получаем количество пациентов на сегодня
+            today = datetime.now().date()
+            today_patients_query = select(func.count(distinct(Talons.patient_id))).where(
+                and_(Talons.doctor_id == doctor_id, Talons.date == today)
             )
-            today_patients = await session.execute(
-                select(Talons).filter_by(doctor_id=doctor_id, date=today)
-            )
-            total_appointments = await session.execute(
-                select(Talons).filter_by(doctor_id=doctor_id)
-            )
-            upcoming_appointments = await session.execute(
-                select(Talons)
-                .filter(Talons.doctor_id == doctor_id, Talons.date >= today, Talons.status != "declined")
+            today_patients = await session.scalar(today_patients_query)
+
+            # Получаем общее количество записей
+            total_appointments_query = select(func.count(Talons._id)).where(Talons.doctor_id == doctor_id)
+            total_appointments = await session.scalar(total_appointments_query)
+
+            # Получаем предстоящие записи
+            upcoming_appointments_query = (
+                select(
+                    Talons, 
+                    Services.service,
+                    Services.price
+                )
+                .outerjoin(Services, Talons.service_id == Services._id)
+                .where(
+                    and_(
+                        Talons.doctor_id == doctor_id,
+                        Talons.date >= today,
+                        Talons.status != "declined"
+                    )
+                )
                 .order_by(Talons.date, Talons.time)
             )
-            today_appointments = await session.execute(
-                select(Talons)
-                .filter(Talons.doctor_id == doctor_id, Talons.date == today, Talons.status != "declined")
+            result = await session.execute(upcoming_appointments_query)
+            upcoming_appointments_list = [
+                {
+                    "date": row.Talons.date,
+                    "time": row.Talons.time,
+                    "status": row.Talons.status,
+                    "patient_id": row.Talons.patient_id,
+                    "doctor_id": row.Talons.doctor_id,
+                    "service_id": row.Talons.service_id if row.Talons.service_id is not None else 0,
+                    "service": row.service if hasattr(row, 'service') and row.service else None,
+                    "price": row.price if hasattr(row, 'price') and row.price else None
+                }
+                for row in result.all()
+            ]
+
+            # Получаем записи на сегодня с информацией об услугах
+            today_appointments_query = (
+                select(
+                    Talons, 
+                    Services.service,
+                    Services.price
+                )
+                .outerjoin(Services, Talons.service_id == Services._id)
+                .where(
+                    and_(
+                        Talons.doctor_id == doctor_id,
+                        Talons.date == today,
+                        Talons.status != "declined"
+                    )
+                )
                 .order_by(Talons.time)
             )
+            result = await session.execute(today_appointments_query)
+            today_appointments_list = [
+                {
+                    "date": row.Talons.date,
+                    "time": row.Talons.time,
+                    "status": row.Talons.status,
+                    "patient_id": row.Talons.patient_id,
+                    "doctor_id": row.Talons.doctor_id,
+                    "service_id": row.Talons.service_id if row.Talons.service_id is not None else 0,
+                    "service": row.service if hasattr(row, 'service') and row.service else None,
+                    "price": row.price if hasattr(row, 'price') and row.price else None
+                }
+                for row in result.all()
+            ]
 
             return {
-                "total_patients": len(total_patients.scalars().all()),
-                "today_patients": len(today_patients.scalars().all()),
-                "total_appointments": len(total_appointments.scalars().all()),
-                "upcoming_appointments": upcoming_appointments.scalars().all(),
-                "today_appointments": today_appointments.scalars().all(),
+                "total_patients": total_patients or 0,
+                "today_patients": today_patients or 0,
+                "total_appointments": total_appointments or 0,
+                "upcoming_appointments": upcoming_appointments_list,
+                "today_appointments": today_appointments_list
             }
 
     @classmethod

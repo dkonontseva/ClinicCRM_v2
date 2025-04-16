@@ -7,22 +7,23 @@ from fastapi import APIRouter, Query, HTTPException
 
 from clinicApp.app.api.doctors.schemas import DoctorResponseSchema
 from clinicApp.app.api.talons.dao import AppointmentsDAO
-from clinicApp.app.api.talons.schema import AvailableSlotsResponse, AppointmentCreate, DoctorAppointmentsResponse, \
+from clinicApp.app.api.talons.schema import AppointmentResponseDoctor, AvailableSlotsResponse, AppointmentCreate, DoctorAppointmentsResponse, \
     AppointmentResponse
 from clinicApp.app.schemas.schemas import TalonSchema
 
 router = APIRouter(prefix='/appointments', tags=['Appointments'])
 
-KAFKA_BOOTSTRAP_SERVERS = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
-
-producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
-
 @router.get("/get_all", response_model=list[AppointmentResponse], summary="Получить все записи")
-async def find_appointments(doctor_name: Optional[str] = None, from_date: Optional[date] = None,
-            to_date: Optional[date] = None, status: Optional[str] = None):
-    return await AppointmentsDAO.find_all(doctor_name, from_date, to_date, status)
+async def find_appointments(
+    doctor_name: Optional[str] = None, 
+    from_date: Optional[date] = None,
+    to_date: Optional[date] = None, 
+    status: Optional[str] = None,
+    service_id: Optional[int] = Query(None, description="ID услуги для фильтрации")
+):
+    return await AppointmentsDAO.find_all(doctor_name, from_date, to_date, status, service_id)
 
-@router.get("/get_for_doctor", response_model=list[TalonSchema], summary='Получить для врача все будущие записи к нему')
+@router.get("/get_for_doctor", response_model=list[AppointmentResponseDoctor], summary='Получить для врача все будущие записи к нему')
 async def get_talon(doctor_id: int = Query(...)):
     return await AppointmentsDAO.get_for_doctor(doctor_id)
 
@@ -58,4 +59,8 @@ async def get_doctors_for_appointments(
         department: str = Query(default=""),
         doctor_search: str = Query(default="")):
     return await AppointmentsDAO.find_appointments(patient_id, requested_date, department, doctor_search)
+
+@router.get("/services", summary="Получить список доступных услуг")
+async def get_services():
+    return await AppointmentsDAO.get_all_services()
 

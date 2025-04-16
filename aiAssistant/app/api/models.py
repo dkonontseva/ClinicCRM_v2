@@ -43,13 +43,3 @@ class AppointmentRequests(Base):
     status = Column(String, default='pending')
 
     complaints = relationship("Complaints", back_populates="appointment_requests")
-
-
-class TrainingData(Base):
-    __tablename__ = 'training_data'
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    symptoms = Column(String, nullable=False)
-    recommended_specialty = Column(String, nullable=False)
-    confirmed_specialty = Column(String)
-    created_at = Column(DateTime, default=datetime.now)

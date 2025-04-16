@@ -30,22 +30,33 @@ class MedicalCardsDAO:
     async def get_cards_for_doctor(cls, doctor_id: int):
         async with async_session_maker() as session:
             query = (
-                select(Users.first_name, Users.last_name, MedicalCards.date, MedicalCards._id)
-                .join(MedicalCards, Patients._id == MedicalCards.patient_id)
-                .join(Users, Users._id == Patients.user_id)
+                select(
+                    MedicalCards._id,
+                    MedicalCards.date,
+                    Users.first_name,
+                    Users.last_name,
+                    Users.second_name
+                )
+                .join(Patients, MedicalCards.patient_id == Patients._id)
+                .join(Users, Patients.user_id == Users._id)
                 .join(Doctors, MedicalCards.doctor_id == Doctors._id)
-                .filter(Doctors._id == doctor_id)
+                .where(Doctors._id == doctor_id)
                 .order_by(MedicalCards.date.desc())
             )
             result = await session.execute(query)
-            return result.scalars().all()
+            return result.all()
 
 
     @classmethod
     async def get_cards_for_patient(cls,patient_id: int):
         async with async_session_maker() as session:
             query = (
-                select(Users.first_name, Users.last_name, MedicalCards.date, MedicalCards._id)
+                select(
+                    MedicalCards._id,
+                    MedicalCards.date,
+                    Users.first_name,
+                    Users.last_name
+                )
                 .join(Patients, Users._id == Patients.user_id)
                 .join(MedicalCards, Patients._id == MedicalCards.patient_id)
                 .join(Doctors, MedicalCards.doctor_id == Doctors._id)
@@ -53,7 +64,7 @@ class MedicalCardsDAO:
                 .order_by(MedicalCards.date.desc())
             )
             result = await session.execute(query)
-            return result.scalars().all()
+            return [dict(row) for row in result.mappings()]
 
     @classmethod
     async def get_medical_record_by_id(cls,record_id: int):
@@ -71,7 +82,12 @@ class MedicalCardsDAO:
     async def search(cls, doctor_full_name: Optional[str], patient_full_name: Optional[str]):
         async with async_session_maker() as session:
             query = (
-                select(Users.first_name, Users.last_name, MedicalCards.date, MedicalCards._id)
+                select(
+                    MedicalCards._id,
+                    MedicalCards.date,
+                    Users.first_name,
+                    Users.last_name
+                )
                 .join(Patients, Users._id == Patients.user_id)
                 .join(MedicalCards, Patients._id == MedicalCards.patient_id)
                 .join(Doctors, MedicalCards.doctor_id == Doctors._id)
@@ -125,12 +141,12 @@ class MedicalCardsDAO:
                     )
                 filters.append(and_(*name_conditions))
 
-                if filters:
-                    query = query.where(and_(*filters))
+            if filters:
+                query = query.where(and_(*filters))
 
-                query=query.order_by(MedicalCards.date.desc())
+            query = query.order_by(MedicalCards.date.desc())
             result = await session.execute(query)
-            return result.scalars().all()
+            return [dict(row) for row in result.mappings()]
 
 
     # @classmethod
