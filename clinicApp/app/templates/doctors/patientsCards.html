@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .doctor-profile {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .doctor-profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+        }
+
+        .doctor-info h3 {
+            color: #272b41;
+            font-size: 18px;
+        }
+
+        .doctor-info p {
+            color: #757575;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .nav-menu .nav-item {
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            color: #272b41;
+            display: flex;
+            align-items: center;
+            box-shadow: 4px 4px 8px #e6e6e6, -4px -4px 8px #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: rgba(74, 144, 226, 0.36);
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: 190%;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+        }
+
+
+        .patients-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+            margin-top: 30px;
+        }
+
+        .patients-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .patients-header input {
+            width: 650px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            color: #272b41;
+            font-weight: 600;
+        }
+
+        td {
+            color: #757575;
+        }
+
+        .view-btn {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #4a90e2;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            border-color: transparent;
+        }
+
+        .view-btn:hover {
+            background: #3a78c1;
+        }
+
+        .no-records {
+            text-align: center;
+            color: #757575;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            background: #4a90e2;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="doctor-profile">
+            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+        </div>
+        <div class="nav-menu">
+            <a href="/doctor/dashboard" class="nav-item">Dashboard</a>
+            <a href="/doctor/myLeaves" class="nav-item">My Leaves</a>
+            <a href="/doctor/patientsCards" class="nav-item active">Patients' cards</a>
+            <a href="/doctor/profile" class="nav-item">Profile Settings</a>
+            <a href="/doctor/chat" class="nav-item">Chat</a>
+            <a href='/' class="logout">Logout</a>
+        </div>
+    </div>
+
+     <div class="main-content">
+        <h1>Medical Records</h1>
+        <div class="patients-section">
+            <div class="patients-header">
+                <input type="text" id="searchInput" placeholder="Search medical card by patient name...">
+            </div>
+
+            <table id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>Med ID</th>
+                        <th>Patient Name</th>
+                        <th>Last Visit</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+            <div class="no-records" id="noRecords" style="display: none;">No records found</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch doctor_id from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const doctorId = urlParams.get('id');
+
+            if (!doctorId) {
+                alert('Doctor ID is required');
+                return;
+            }
+
+            // Load medical cards on page load
+            await loadMedicalCards();
+
+            // Add search input event listener
+            document.getElementById('searchInput').addEventListener('input', handleSearch);
+        });
+
+        async function loadMedicalCards(patientFullName = '') {
+            const doctorId = new URLSearchParams(window.location.search).get('id');
+            try {
+                const response = await fetch(`/doctor/patientsCards?doctor_id=${doctorId}&patient_full_name=${patientFullName}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch medical records');
+                }
+                const medicalCards = await response.json();
+                updateMedicalCardsTable(medicalCards);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('noRecords').style.display = 'block';
+            }
+        }
+
+        function updateMedicalCardsTable(medicalCards) {
+            const tbody = document.querySelector('#recordsTable tbody');
+            tbody.innerHTML = '';
+
+            if (medicalCards.length === 0) {
+                document.getElementById('noRecords').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('noRecords').style.display = 'none';
+
+            medicalCards.forEach(card => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${card._id}</td>
+                    <td>${card.first_name} ${card.last_name}</td>
+                    <td>${new Date(card.date).toLocaleDateString()}</td>
+                    <td>
+                        <form method="GET" action="/doctor/medicalRecord/${card._id}">
+                            <button type="submit" class="view-btn">View Details</button>
+                        </form>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function handleSearch() {
+            const searchValue = document.getElementById('searchInput').value;
+            loadMedicalCards(searchValue);
+        }
+    </script>
+</body>
+</html>

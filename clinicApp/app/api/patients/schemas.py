@@ -72,3 +72,9 @@ class PatientDashboardSchema(BaseModel):
     visits_by_department: List[VisitByDepartment]
     recent_appointments: List[AppointmentHistory]
     appointment_history: List[AppointmentHistory]
+
+class PatientShortSchema(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    second_name: Optional[str]

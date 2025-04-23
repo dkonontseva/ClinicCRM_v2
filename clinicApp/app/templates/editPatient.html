@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre Clinic - Add Patient</title>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #F3F6F9;
+            --text-color: #2E2E3A;
+            --border-color: #EBEEF6;
+            --success-color: #2BC155;
+            --warning-color: #FFA755;
+            --danger-color: #FF5C75;
+            --new-color: #8E44AD;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: var(--sidebar-width);
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo span {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            margin-left: 12px;
+            flex-grow: 1;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(59, 76, 184, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item.active a {
+            color: white;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+
+        .menu-item.active i {
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: auto;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+            width: 1620px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #2e2e2e;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="email"], input[type="date"], input[type="file"], input[type="password"], select {
+            width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #f5f7fb;
+            border-width: 2px;
+            background-color: #fdfdff;
+            border-color: #dadada;
+            color: #2e2e2e;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="date"]:focus, input[type="password"]:focus, select:focus {
+            outline: none;
+            border-color: #617dff; /* Neon green border on focus */
+            box-shadow: 0 0 5px rgb(29, 68, 255);
+        }
+
+        .gender-option {
+            display: inline-block;
+            border: 1px dashed rgba(255, 255, 255, 0.6);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .gender-option {
+            background-color: #eef3fd;
+            /* Light neon green */
+            border-color: #6c87ff;
+            /* Neon green border */
+            box-shadow: 0 0 10px rgb(29, 68, 255);
+            /* Neon glow effect */
+        }
+
+        .breadcrumb {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .breadcrumb-active {
+            color: #333;
+        }
+
+        .personal-info, .medical-info, .document-upload {
+            margin-top: 30px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fdfdfd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .two-columns {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0px 20px;
+        }
+
+        .info {
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 20px;
+            margin-right: 70px;
+        }
+
+        .submit-btn {
+            margin-top: 30px;
+            width: 200px;
+            padding: 15px;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .submit-btn:hover {
+            background-color: #4a90e2;
+        }
+
+        .button-btn {
+            margin-top: 30px;
+            width: 200px;
+            padding: 15px;
+            background-color: white;
+            border: none;
+            border-radius: 8px;
+            color: #4a90e2;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+            <span>Pre Clinic</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <a href="/admin/dashboard">Dashboard</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-user-md"></i>
+            <a href="/admin/doctorsList">Doctors</a>
+        </div>
+        <div class="menu-item active">
+            <i class="fas fa-users"></i>
+            <a href="/admin/patientsList">Patients</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-calendar-alt"></i>
+            <a href="/admin/appointmentList">Appointments</a>
+        </div>
+        <div class="menu-item">
+            <i class="far fa-clock"></i>
+            <a href="/admin/scheduleList">Doctor Schedule</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-hospital"></i>
+            <a href="/admin/doctorLeaves">Doctor Leaves</a>
+        </div>
+        <a href='/' class="logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>{{ 'Edit Patient' if patient_id else 'Add Patinet' }}</h2>
+        </div>
+
+
+        <div class="card">
+
+            <form id="patient-form">
+
+                <div class="personal-info">
+                    <div class="header">
+                        <a href="/admin/patientsList" class="breadcrumb">Patients</a>
+                    </div>
+                    <div class="two-columns">
+                        <div class="form-field">
+                            <label for="surname">Surname</label>
+                            <input type="text" id="surname" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="patronymic">Second Name</label>
+                            <input type="text" id="patronymic">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="phone_number">Phone Number</label>
+                            <input type="text" id="phone_number" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="b_date">Date of Birth</label>
+                            <input type="date" id="b_date" name="b_date" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label>Gender</label>
+                            <div>
+                                <input type="radio" id="male" name="gender" value="male" required>
+                                <label for="male" class="gender-option">Male</label>
+
+                                <input type="radio" id="female" name="gender" value="female">
+                                <label for="female" class="gender-option">Female</label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="address-info">
+                        <h2>Address Information</h2>
+                        <div class="two-columns">
+                            <div class="form-field">
+                                <label for="country">Country</label>
+                                <input type="text" id="country" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="region">Region</label>
+                                <input type="text" id="region">
+                            </div>
+
+                            <div class="form-field">
+                                <label for="city">City</label>
+                                <input type="text" id="city" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="street">Street</label>
+                                <input type="text" id="street" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="house">House</label>
+                                <input type="text" id="house" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="flat">Flat</label>
+                                <input type="text" id="flat">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn">
+                    <button type="submit" class="submit-btn">Save Changes</button>
+                    <button type="button" class="button-btn" onclick="window.location.href='/admin/patientsList';">
+                        Close
+                    </button>
+                </div>
+            </form>
+        </div>
+        </section>
+    </div>
+</div>
+<script>
+    const urlParams = new URLSearchParams(window.location.pathname.split('/'));
+    const patientId = urlParams.get('3') || window.location.pathname.split('/').pop();
+
+    if (Number(patientId)) {
+        document.getElementById('form-title').innerText = 'Edit Patient';
+        loadPatientData(patientId);
+    }
+
+    async function loadPatientData(id) {
+        try {
+            const res = await fetch(`/admin/patient?id=${id}`);
+            const data = await res.json();
+
+            document.getElementById('surname').value = data.users.surname || '';
+            document.getElementById('name').value = data.users.name || '';
+            document.getElementById('patronymic').value = data.users.patronymic || '';
+            document.getElementById('phone_number').value = data.users.phone_number || '';
+            document.getElementById('email').value = data.users.email || '';
+            document.getElementById('b_date').value = data.b_date || '';
+            document.querySelector(`input[name="gender"][value="${data.users.gender}"]`).checked = true;
+
+            document.getElementById('country').value = data.addresses.country || '';
+            document.getElementById('region').value = data.addresses.region || '';
+            document.getElementById('city').value = data.addresses.city || '';
+            document.getElementById('street').value = data.addresses.street || '';
+            document.getElementById('house').value = data.addresses.house || '';
+            document.getElementById('flat').value = data.addresses.flat || '';
+
+        } catch (err) {
+            console.error('Failed to fetch patient data:', err);
+        }
+    }
+
+    document.getElementById('patient-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const data = {
+            b_date: document.getElementById('b_date').value,
+            users: {
+                surname: document.getElementById('surname').value,
+                name: document.getElementById('name').value,
+                patronymic: document.getElementById('patronymic').value,
+                phone_number: document.getElementById('phone_number').value,
+                email: document.getElementById('email').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                login: document.getElementById('email').value  // можно как идентификатор
+            },
+            addresses: {
+                country: document.getElementById('country').value,
+                region: document.getElementById('region').value,
+                city: document.getElementById('city').value,
+                street: document.getElementById('street').value,
+                house: document.getElementById('house').value,
+                flat: document.getElementById('flat').value
+            }
+        };
+
+        try {
+            if (Number(patientId)) {
+                const res = await fetch(`/admin/update/${patientId}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                alert(result.message);
+            } else {
+                const res = await fetch('/admin/add_patient', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                alert(result.message);
+            }
+
+            window.location.href = '/admin/patientsList';
+        } catch (err) {
+            console.error('Ошибка при сохранении:', err);
+            alert('Произошла ошибка. Проверьте данные.');
+        }
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    flatpickr("#b_date", {
+        dateFormat: "d-m-Y",
+        maxDate: today
+    });
+
+</script>
+</body>
+</html>

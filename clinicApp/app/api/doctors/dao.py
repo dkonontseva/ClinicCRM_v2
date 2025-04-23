@@ -2,14 +2,14 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import HTTPException
-from sqlalchemy import select, delete, update, and_, or_, func, distinct
-from sqlalchemy.orm import contains_eager, joinedload, selectinload
+from sqlalchemy import select, delete, and_, or_, func, distinct
+from sqlalchemy.orm import joinedload
 
 from clinicApp.app.api.auth.auth import get_password_hash
 from clinicApp.app.api.dao import BaseDAO
 from clinicApp.app.api.doctors.schemas import DoctorUpdateSchema
 from clinicApp.app.core.database import async_session_maker
-from clinicApp.app.models.models import Users, Addresses, Doctors, Education, Talons, Departments, Patients, Services
+from clinicApp.app.models.models import Users, Addresses, Doctors, Education, Talons, Departments, Services
 
 
 class DoctorsDAO(BaseDAO):
@@ -25,7 +25,6 @@ class DoctorsDAO(BaseDAO):
             )
             result = await session.execute(query)
             return result.scalars().all()
-
 
     @classmethod
     async def get_by_id(cls, doctor_id: int):
@@ -105,7 +104,7 @@ class DoctorsDAO(BaseDAO):
                 return doctor_id
 
     @classmethod
-    async def update_doctor(cls, doctor_id:int, request: DoctorUpdateSchema):
+    async def update_doctor(cls, doctor_id: int, request: DoctorUpdateSchema):
         async with async_session_maker() as session:
             query = (
                 select(cls.model).filter_by(_id=doctor_id)
@@ -166,7 +165,7 @@ class DoctorsDAO(BaseDAO):
             # Получаем предстоящие записи
             upcoming_appointments_query = (
                 select(
-                    Talons, 
+                    Talons,
                     Services.service,
                     Services.price
                 )
@@ -183,6 +182,7 @@ class DoctorsDAO(BaseDAO):
             result = await session.execute(upcoming_appointments_query)
             upcoming_appointments_list = [
                 {
+                    "id": row.Talons._id,
                     "date": row.Talons.date,
                     "time": row.Talons.time,
                     "status": row.Talons.status,
@@ -198,7 +198,7 @@ class DoctorsDAO(BaseDAO):
             # Получаем записи на сегодня с информацией об услугах
             today_appointments_query = (
                 select(
-                    Talons, 
+                    Talons,
                     Services.service,
                     Services.price
                 )
@@ -215,6 +215,7 @@ class DoctorsDAO(BaseDAO):
             result = await session.execute(today_appointments_query)
             today_appointments_list = [
                 {
+                    "id": row.Talons._id,
                     "date": row.Talons.date,
                     "time": row.Talons.time,
                     "status": row.Talons.status,
@@ -279,3 +280,39 @@ class DoctorsDAO(BaseDAO):
             result = await session.execute(query)
             return result.scalars().all()
 
+    @classmethod
+    async def search_doctors_by_name(cls, name: str):
+        async with async_session_maker() as session:
+            search_parts = name.split()
+            query = select(Doctors._id.label("id"), Users.first_name, Users.last_name, Users.second_name) \
+                .join(Users, Doctors.user_id == Users._id)
+
+            conditions = []
+            for part in search_parts:
+                conditions.append(
+                    or_(
+                        Users.first_name.ilike(f"%{part}%"),
+                        Users.last_name.ilike(f"%{part}%"),
+                        Users.second_name.ilike(f"%{part}%")
+                    )
+                )
+
+            query = query.where(and_(*conditions))
+            result = await session.execute(query)
+            return result.mappings().all()
+
+    @classmethod
+    async def get_doctor_name_by_id(cls, doctor_id: int):
+        async with async_session_maker() as session:
+            query = select(Doctors._id.label("id"), Users.first_name, Users.last_name, Users.second_name
+                           ).join(Users,Doctors.user_id == Users._id
+                                  ).where(Doctors._id == doctor_id)
+            result = await session.execute(query)
+            return result.scalar_one_or_none()
+
+    @classmethod
+    async def get_department(cls):
+        async with async_session_maker() as session:
+            query = select(Departments.department_name.label("name"))
+            result = await session.execute(query)
+            return result.scalars().all()

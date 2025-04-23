@@ -8,9 +8,11 @@ from clinicApp.app.api.auth.dao import UsersDAO
 from clinicApp.app.api.doctor_leaves.dao import DoctorLeavesDao
 from clinicApp.app.api.doctor_leaves.schema import DoctorLeaveAllSchema
 from clinicApp.app.api.doctors.dao import DoctorsDAO
-from clinicApp.app.api.doctors.schemas import DoctorResponseSchema, DoctorUpdateSchema, DoctorDashboardSchema
+from clinicApp.app.api.doctors.schemas import DoctorResponseSchema, DoctorUpdateSchema, DoctorDashboardSchema, \
+    DoctorShortSchema
 from clinicApp.app.api.medical_cards.dao import MedicalCardsDAO
 from clinicApp.app.api.medical_cards.schema import MedicalCardResponseSchema
+from clinicApp.app.models.models import Doctors
 
 router = APIRouter(prefix='/doctors', tags=['doctor'])
 
@@ -86,3 +88,15 @@ async def search_leaves(
 @router.get("/admin/search/", response_model=list[DoctorResponseSchema], summary='Поиск по врачам')
 async def search_patient(doctor_name: Optional[str] = Query(None), department: Optional[str] = Query(None)):
     return await DoctorsDAO.search_patients(doctor_name, department)
+
+@router.get("/search_by_name", response_model=list[DoctorShortSchema])
+async def search_doctors(name: str = Query(...)):
+    return await DoctorsDAO.search_doctors_by_name(name)
+
+@router.get("/get_data", response_model=DoctorShortSchema, summary="Получить врача по id")
+async def get_doctor(doctor_id: int = Query(...)):
+    return await DoctorsDAO.get_doctor_name_by_id(doctor_id)
+
+@router.get("/department", summary="Получить отделы")
+async def get_department():
+    return await DoctorsDAO.get_department()

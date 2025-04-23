@@ -13,6 +13,7 @@ class DoctorResponseSchema(BaseModel):
     users: UserSchema
     addresses: AddressSchema
     departments: DepartmentSchema
+    education: Optional[EducationSchema] = None
 
 
 class UserUpdateSchema(BaseModel):
@@ -47,9 +48,16 @@ class DoctorUpdateSchema(BaseSchema):
     addresses: Optional[AddressUpdateSchema] = None
     education: Optional[EducationUpdateSchema] =None
 
+
 class DoctorDashboardSchema(BaseModel):
     total_patients: int
     today_patients: int
     total_appointments: int
     upcoming_appointments: List[TalonSchema]
     today_appointments: List[TalonSchema]
+
+class DoctorShortSchema(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    second_name: Optional[str]

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre Clinic - Leave Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #F3F6F9;
+            --text-color: #2E2E3A;
+            --border-color: #EBEEF6;
+            --success-color: #2BC155;
+            --warning-color: #FFA755;
+            --danger-color: #FF5C75;
+            --new-color: #8E44AD;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: var(--sidebar-width);
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo span {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            margin-left: 12px;
+            flex-grow: 1;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(59, 76, 184, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item.active a {
+            color: white;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+
+        .menu-item.active i {
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: auto;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+            width: 1620px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2E2E3A;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 8px;
+            padding: 8px 15px;
+            width: 280px;
+            border: 1px solid #EBEEF6;
+        }
+
+        .search-bar i {
+            color: #8A92A6;
+            font-size: 16px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        /* Filter Section */
+        .filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-input {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .filter-input::placeholder {
+            color: #8A92A6;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .add-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .delete-btn {
+            background: #fd6666;
+            color: white;
+        }
+
+        .refresh-btn {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            font-weight: 600;
+            color: #525252;
+            font-size: 13px;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        td {
+            padding: 15px;
+            font-size: 14px;
+            color: #525252;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-approved {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: rgba(43, 193, 85, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-pending {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: rgba(255, 167, 85, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-declined {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: rgba(255, 92, 117, 0.1);
+            color: var(--danger-color);
+        }
+
+        .status-new {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            background: rgba(142, 68, 173, 0.1);
+            color: var(--new-color);
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+
+        .employee-cell {
+            display: flex;
+            align-items: center;
+        }
+
+        .employee-name {
+            font-weight: 500;
+            color: #2E2E3A;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .export-buttons {
+            display: flex;
+            margin-bottom: 10px;
+            gap: 8px;
+        }
+
+        .export-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .actions-cell {
+            width: 40px;
+            text-align: center;
+        }
+
+        .actions-cell i {
+            color: #8A92A6;
+            cursor: pointer;
+        }
+
+        /* Search button */
+        .search-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .filter-input {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            outline: none;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .filter-input::placeholder {
+            color: #8A92A6;
+        }
+
+        .filter-input:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(9, 220, 164, 0.1);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .filters {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+
+            .logo span,
+            .menu-item span {
+                display: none;
+            }
+
+            .filters {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+            <span>Pre Clinic</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <a href="/admin/dashboard">Dashboard</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-user-md"></i>
+            <a href="/admin/doctorsList">Doctors</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-users"></i>
+            <a href="/admin/patientsList">Patients</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-calendar-alt"></i>
+            <a href="/admin/appointmentList">Appointments</a>
+        </div>
+        <div class="menu-item">
+            <i class="far fa-clock"></i>
+            <a href="/admin/scheduleList">Doctor Schedule</a>
+        </div>
+        <div class="menu-item active">
+            <i class="fas fa-hospital"></i>
+            <a href="/admin/doctorLeaves">Doctor Leaves</a>
+        </div>
+        <a href='/' class="logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h2>Leave Request</h2>
+        </div>
+
+        <div class="filters" style="display: flex; gap: 15px; align-items: center;">
+            <input type="text" id="search_query" class="filter-input" placeholder="Search by doctor name">
+            <select id="leave_type" class="filter-input">
+                <option value="">Leave Type</option>
+                <option value="Medical Reason">Medical Reason</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Family Reason">Family Reason</option>
+            </select>
+            <input type="date" id="from_date" class="filter-input">
+            <input type="date" id="to_date" class="filter-input">
+            <select id="status" class="filter-input">
+                <option value="">Leave Status</option>
+                <option value="Approved">Approved</option>
+                <option value="Pending">Pending</option>
+                <option value="Declined">Declined</option>
+            </select>
+            <button class="search-button" onclick="searchLeaves()">Search</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div class="action-buttons">
+                <button class="action-btn add-btn" onclick="window.location.href = '/admin/addLeave'">
+                    <i class="fas fa-plus"></i> Add New
+                </button>
+                <button class="action-btn refresh-btn" onclick="loadAllLeaves()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <button class="action-btn delete-btn" style="margin-left: 84%" onclick="deleteSelected()">Delete</button>
+            <table>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Doctor Name</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>No of days</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="leave-table-body">
+                <!-- rows injected by JS -->
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="page-btn">Previous</button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAllLeaves();
+    });
+
+    async function loadAllLeaves() {
+        const res = await fetch('/get_all');
+        const data = await res.json();
+        renderLeaveTable(data);
+    }
+
+    async function searchLeaves() {
+        const name = document.getElementById('search_query').value;
+        const reason = document.getElementById('leave_type').value;
+        const from = document.getElementById('from_date').value;
+        const to = document.getElementById('to_date').value;
+        const status = document.getElementById('status').value;
+
+        const params = new URLSearchParams();
+        if (name) params.append('full_name', name);
+        if (reason) params.append('reason', reason);
+        if (from) params.append('from_date', from);
+        if (to) params.append('to_date', to);
+        if (status) params.append('status', status);
+
+        const res = await fetch(`/admin/leaves/search?${params.toString()}`);
+        const data = await res.json();
+        renderLeaveTable(data);
+    }
+
+    function renderLeaveTable(leaves) {
+        const tbody = document.getElementById('leave-table-body');
+        tbody.innerHTML = '';
+
+        leaves.forEach(leave => {
+            const tr = document.createElement('tr');
+
+            tr.innerHTML = `
+                <td><input type="checkbox" name="selectedRows" value="${leave.id}"></td>
+                <td>${leave.doctor.first_name} ${leave.doctor.last_name} ${leave.doctor.second_name || ''}</td>
+                <td>${leave.reason}</td>
+                <td>${leave.from_date}</td>
+                <td>${leave.to_date}</td>
+                <td>${leave.days}</td>
+                <td>${leave.description || ''}</td>
+                <td><span class="status-${leave.status.toLowerCase()}">${leave.status}</span></td>
+                <td>
+                    <button class="download-btn"
+                            style="background-color: transparent; border-color: transparent"
+                            onclick="editLeave(${leave.id})">
+                        <img width="40" height="40"
+                            src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png"
+                            alt="edit"/>
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(tr);
+        });
+    }
+
+    function editLeave(leaveId) {
+        window.location.href = `/admin/addLeave/${leaveId}`;
+    }
+
+    function deleteSelected() {
+        const selected = [...document.getElementsByName('selectedRows')]
+            .filter(checkbox => checkbox.checked)
+            .map(cb => cb.value);
+
+        if (!selected.length) {
+            alert("Please select at least one record to delete.");
+            return;
+        }
+
+        fetch('/admin/delete_leave', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({values: selected})
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Deleted successfully!');
+                    loadAllLeaves();
+                } else {
+                    alert('Delete failed!');
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
+    flatpickr("#from_date", {
+        dateFormat: "d-m-Y",
+        static: true
+    });
+    flatpickr("#to_date", {
+        dateFormat: "d-m-Y",
+        static: true
+    });
+
+
+</script>
+</body>
+</html>

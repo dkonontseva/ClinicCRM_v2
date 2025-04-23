@@ -125,6 +125,7 @@ class ShiftSchema(BaseSchema):
 
 
 class TalonSchema(BaseSchema):
+    id: Optional[int] = None
     date: date
     time: time
     status: str

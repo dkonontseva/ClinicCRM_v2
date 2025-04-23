@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pre Clinic - Add Doctor</title>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #F3F6F9;
+            --text-color: #2E2E3A;
+            --border-color: #EBEEF6;
+            --success-color: #2BC155;
+            --warning-color: #FFA755;
+            --danger-color: #FF5C75;
+            --new-color: #8E44AD;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            width: var(--sidebar-width);
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo span {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 16px;
+            margin-left: 12px;
+            flex-grow: 1;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(59, 76, 184, 0.1);
+        }
+
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .menu-item.active a {
+            color: white;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            color: var(--text-color);
+        }
+
+        .menu-item.active i {
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: auto;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+            width: 1620px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2E2E3A;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 100%;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            margin-bottom: 20px;
+            color: #4a90e2;
+            font-size: 16px;
+        }
+
+        .breadcrumb {
+            color: #4a90e2;
+            text-decoration: none;
+        }
+
+        .breadcrumb-active {
+            color: #333;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #2e2e2e;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="file"],
+        input[type="password"],
+        select {
+            width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #f5f7fb;
+            border-width: 2px;
+            background-color: #fdfdff;
+            border-color: #dadada;
+            color: #2e2e2e;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #617dff;
+            /* Neon green border on focus */
+            box-shadow: 0 0 5px rgb(29, 68, 255);
+        }
+
+        .gender-option {
+            display: inline-block;
+            border: 1px dashed rgba(255, 255, 255, 0.6);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        input[type="radio"]:checked + .gender-option {
+            background-color: #eef3fd;
+            /* Light neon green */
+            border-color: #6c87ff;
+            /* Neon green border */
+            box-shadow: 0 0 10px rgb(29, 68, 255);
+            /* Neon glow effect */
+        }
+
+        .personal-info,
+        .medical-info,
+        .document-upload {
+            margin-top: 30px;
+            width: 90%;
+            margin-left: 50px;
+            padding: 20px;
+            background-color: #fdfdfd;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgb(167, 169, 174);
+        }
+
+        .two-columns {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0px 20px;
+        }
+
+        .info {
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 20px;
+            margin-right: 70px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .submit-button {
+            margin-top: 30px;
+            width: 200px;
+            padding: 15px;
+            background-color: #4a90e2;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .cancel-button {
+            margin-top: 30px;
+            width: 200px;
+            padding: 15px;
+            background-color: white;
+            border: none;
+            border-radius: 8px;
+            color: #4a90e2;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+
+        .submit-button:hover {
+            background-color: #4a90e2;
+        }
+
+        .cancel-button:hover {
+            background-color: #cccccc;
+        }
+
+        .button-btn {
+            margin-top: 30px;
+            width: 200px;
+            padding: 15px;
+            background-color: white;
+            border: none;
+            border-radius: 8px;
+            color: #4a90e2;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+            <span>Pre Clinic</span>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-th-large"></i>
+            <a href="/admin/dashboard">Dashboard</a>
+        </div>
+        <div class="menu-item  active">
+            <i class="fas fa-user-md"></i>
+            <a href="/admin/doctorsList">Doctors</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-users"></i>
+            <a href="/admin/patientsList">Patients</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-calendar-alt"></i>
+            <a href="/admin/appointmentList">Appointments</a>
+        </div>
+        <div class="menu-item">
+            <i class="far fa-clock"></i>
+            <a href="/admin/scheduleList">Doctor Schedule</a>
+        </div>
+        <div class="menu-item">
+            <i class="fas fa-hospital"></i>
+            <a href="/admin/doctorLeaves">Doctor Leaves</a>
+        </div>
+        <a href='/' class="logout">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h2>{{ 'Edit Doctor' if doctor_id else 'Add Doctor' }}</h2>
+        </div>
+
+        <div class="card">
+            <div class="header">
+                <a href="/admin/doctorsList" class="breadcrumb">Doctors</a>
+            </div>
+
+            <section class="content">
+                <form id="doctor-form">
+                    <div class="two-columns">
+                        <div class="form-field">
+                            <label for="lastname">Surname</label>
+                            <input type="text" id="lastname" name="lastname" placeholder="Enter your surname" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="firstname">Name</label>
+                            <input type="text" id="firstname" name="firstname" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="secondname">Second Name</label>
+                            <input type="text" id="secondname" name="secondname" placeholder="Enter your second name"
+                                   required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" name="dob" placeholder="Select your date of birth" required>
+                        </div>
+
+                        <div class="form-field">
+                            <label>Gender</label>
+                            <div>
+                                <input type="radio" id="male" name="gender" value="male" required>
+                                <label for="male" class="gender-option">Male</label>
+
+                                <input type="radio" id="female" name="gender" value="female">
+                                <label for="female" class="gender-option">Female</label>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="department">Department</label>
+                            <select id="department" name="department" required>
+                                <option value="">Select Department</option>
+                                <!-- Department options will be filled dynamically -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="education-info">
+                        <h2>Education Information</h2>
+                        <div class="two-columns">
+                            <div class="form-field">
+                                <label for="university">University</label>
+                                <input type="text" id="university" name="university" placeholder="Enter university"
+                                       required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="faculty">Faculty</label>
+                                <input type="text" id="faculty" name="faculty" placeholder="Enter faculty" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="specialization">Specialization</label>
+                                <input type="text" id="specialization" name="specialization"
+                                       placeholder="Enter specialization" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="address-info">
+                        <h2>Address Information</h2>
+                        <div class="two-columns">
+                            <div class="form-field">
+                                <label for="country">Country</label>
+                                <input type="text" id="country" name="country" placeholder="Enter your country"
+                                       required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="city">City</label>
+                                <input type="text" id="city" name="city" placeholder="Enter your city" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="street">Street</label>
+                                <input type="text" id="street" name="street" placeholder="Enter your street" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="house">House</label>
+                                <input type="text" id="house" name="house" placeholder="Enter your house number"
+                                       required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="flat">Flat</label>
+                                <input type="text" id="flat" name="flat" placeholder="Enter your flat number" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="submit-button">Save Changes</button>
+                        <button type="button" class="cancel-button"
+                                onclick="window.location.href='/admin/doctorsList';">Cancel
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async function () {
+        try {
+            const doctorId = new URLSearchParams(window.location.search).get('doctor_id');
+
+            if (doctorId) {
+                // Load doctor data for editing
+                const doctorData = await getDoctorData(doctorId);
+                populateForm(doctorData);
+            }
+
+            // Load departments
+            await loadDepartments();
+
+            // Initialize Flatpickr for date inputs
+            flatpickr('#dob', {dateFormat: "Y-m-d", maxDate: "today"});
+        } catch (error) {
+            alert('Error loading doctor data: ' + error.message);
+        }
+    });
+
+    async function getDoctorData(doctorId) {
+        const response = await fetch(`/admin/get_data?doctor_id=${doctorId}`);
+        const data = await response.json();
+        return data;
+    }
+
+    async function loadDepartments() {
+        const response = await fetch('/admin/department');
+        const departments = await response.json();
+        const departmentSelect = document.getElementById('department');
+        departments.forEach(department => {
+            const option = document.createElement('option');
+            option.value = department.id;
+            option.textContent = department.name;
+            departmentSelect.appendChild(option);
+        });
+    }
+
+    function populateForm(data) {
+        document.getElementById('lastname').value = data.users.last_name || '';
+        document.getElementById('firstname').value = data.users.first_name || '';
+        document.getElementById('secondname').value = data.users.second_name || '';
+        document.getElementById('phone').value = data.users.phone_number || '';
+        document.getElementById('email').value = data.users.login || '';
+        document.getElementById('dob').value = data.birthday || '';
+        document.querySelector(`input[name="gender"][value="${data.users.gender}"]`).checked = true;
+        document.getElementById('department').value = data.department_id || '';
+        document.getElementById('university').value = data.education.university || '';
+        document.getElementById('faculty').value = data.education.faculty || '';
+        document.getElementById('specialization').value = data.education.specialization || '';
+        document.getElementById('country').value = data.addresses.country || '';
+        document.getElementById('city').value = data.addresses.city || '';
+        document.getElementById('street').value = data.addresses.street || '';
+        document.getElementById('house').value = data.addresses.house_number || '';
+        document.getElementById('flat').value = data.addresses.flat_number || '';
+    }
+
+    document.getElementById('doctor-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const doctorData = {
+            users: {
+                first_name: formData.get('firstname'),
+                last_name: formData.get('lastname'),
+                second_name: formData.get('secondname'),
+                login: formData.get('email'),
+                phone_number: formData.get('phone'),
+                gender: formData.get('gender'),
+            },
+            birthday: formData.get('dob'),
+            education: {
+                university: formData.get('university'),
+                faculty: formData.get('faculty'),
+                specialization: formData.get('specialization'),
+            },
+            addresses: {
+                country: formData.get('country'),
+                city: formData.get('city'),
+                street: formData.get('street'),
+                house_number: formData.get('house'),
+                flat_number: formData.get('flat'),
+            },
+            department_id: formData.get('department')
+        };
+
+        const doctorId = new URLSearchParams(window.location.search).get('doctor_id');
+        try {
+            let response;
+            if (doctorId) {
+                response = await fetch(`/admin/update?doctor_id=${doctorId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(doctorData),
+                    headers: {'Content-Type': 'application/json'},
+                });
+            } else {
+                response = await fetch('/admin/add_doctor', {
+                    method: 'POST',
+                    body: JSON.stringify(doctorData),
+                    headers: {'Content-Type': 'application/json'},
+                });
+            }
+            const result = await response.json();
+            alert(result.message);
+            window.location.href = '/admin/doctorsList';
+        } catch (error) {
+            alert('Error saving doctor: ' + error.message);
+        }
+    });
+
+    const today = new Date().toISOString().split("T")[0];
+    flatpickr("#dob", {
+        dateFormat: "d-m-Y",
+        maxDate: today
+    });
+</script>
+</body>
+</html>

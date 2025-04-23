@@ -71,14 +71,14 @@ class DoctorLeavesDao:
     @classmethod
     async def get_leave_by_id(cls, leave_id: int):
         async with async_session_maker() as session:
-            query = select(cls.model).filter_by(_id=leave_id)
+            query = select(cls.model).join(Doctors).join(Users).options(joinedload(cls.model.doctors)).filter_by(_id=leave_id)
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
     @classmethod
     async def get_all_leaves(cls):
         async with async_session_maker() as session:
-            query = select(cls.model)
+            query = select(cls.model).join(Doctors).join(Users).options(joinedload(cls.model.doctors))
             result = await session.execute(query)
             return result.scalars().all()
 

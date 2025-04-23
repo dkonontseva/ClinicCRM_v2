@@ -288,3 +288,12 @@ class PatientsDAO(BaseDAO):
                 appointment_history=appointment_history
             )
 
+
+    @classmethod
+    async def get_patient_name_by_id(cls, patient_id):
+        async with async_session_maker() as session:
+            query = select(Patients._id.label("id"), Users.first_name, Users.last_name, Users.second_name
+                           ).join(Users,Patients.user_id == Users._id
+                                  ).where(Patients._id == patient_id)
+            result = await session.execute(query)
+            return result.scalar_one_or_none()

@@ -8,7 +8,8 @@ from clinicApp.app.api.auth.dao import UsersDAO
 from clinicApp.app.api.medical_cards.dao import MedicalCardsDAO
 from clinicApp.app.api.medical_cards.schema import MedicalCardResponseSchema
 from clinicApp.app.api.patients.dao import PatientsDAO
-from clinicApp.app.api.patients.schemas import PatientResponseSchema, PatientCreateSchema, PatientUpdateSchema, PatientDashboardSchema
+from clinicApp.app.api.patients.schemas import PatientResponseSchema, PatientCreateSchema, PatientUpdateSchema, \
+    PatientDashboardSchema, PatientShortSchema
 from clinicApp.app.api.talons.dao import AppointmentsDAO
 from clinicApp.app.schemas.schemas import TalonSchema
 
@@ -81,3 +82,7 @@ async def search_patient(patient_name: Optional[str] = Query(None)):
 @router.get("/dashboard", response_model=PatientDashboardSchema)
 async def get_patient_dashboard(patient_id: int = Query(...)):    
     return await PatientsDAO.get_patient_dashboard_data(patient_id)
+
+@router.get("/get_data", response_model=PatientShortSchema, summary="Получить врача по id")
+async def get_doctor(patient_id: int = Query(...)):
+    return await PatientsDAO.get_patient_name_by_id(patient_id)

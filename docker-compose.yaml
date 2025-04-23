@@ -123,6 +123,8 @@ services:
       - '8080:8080'
     volumes:
       - ./nginx_config.conf:/etc/nginx/conf.d/default.conf
+      - ./clinicApp/app/static:/app/static
+      - ./clinicApp/app/templates:/app/templates
     depends_on:
       - clinic_service_app
       - assistant_service_app

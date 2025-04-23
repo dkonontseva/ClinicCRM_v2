@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="../../static/js/api.js"></script>
+    <style>
+        /* Стилизация страницы */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .doctor-profile {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .doctor-profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+        }
+
+        .doctor-info h3 {
+            color: #272b41;
+            font-size: 18px;
+        }
+
+        .doctor-info p {
+            color: #757575;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .nav-menu .nav-item {
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            color: #272b41;
+            display: flex;
+            align-items: center;
+            box-shadow: 4px 4px 8px #e6e6e6, -4px -4px 8px #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: rgba(74, 144, 226, 0.36);
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: 190%;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+        }
+
+        .appointments-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+            margin-top: 30px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: #4a90e2;
+            font-weight: bold;
+            border-bottom: 2px solid #4a90e2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            color: #272b41;
+            font-weight: 600;
+        }
+
+        td {
+            color: #757575;
+        }
+
+        .status-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .accept {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .cancel {
+            background: #a4b4ff;
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 20px;
+            gap: 8px;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #EBEEF6FF;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            color: #525252;
+        }
+
+        .page-btn.active {
+            background: #4a90e2;
+            color: white;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <div class="doctor-profile">
+      <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+    </div>
+    <div class="nav-menu">
+      <a href="/doctor/dashboard" class="nav-item active">Dashboard</a>
+      <a href="/doctor/myLeaves" class="nav-item">My leaves</a>
+      <a href="/doctor/patientsCards" class="nav-item">Patients' cards</a>
+      <a href="/doctor/profile" class="nav-item">Profile Settings</a>
+      <a href="/doctor/chat" class="nav-item">Chat</a>
+      <a href="/doctor/video" class="nav-item">Video</a>
+      <a href='/' class="logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1 class="section-title">Dashboard</h1>
+
+    <div class="stats-container">
+      <div class="stat-card">
+        <h2 id="total-patients">0</h2>
+        <p>Total Patients</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="today-appointments">0</h2>
+        <p>Today's Patients</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="pending-appointments">0</h2>
+        <p>Total Appointments</p>
+      </div>
+    </div>
+
+    <div class="appointments-section">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('upcoming')">Upcoming Appointments</div>
+        <div class="tab" onclick="switchTab('today')">Today's Appointments</div>
+      </div>
+
+      <div id="upcoming" class="tab-content">
+        <table>
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Appointment Date</th>
+              <th>Purpose</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="upcoming-appointments-body">
+          </tbody>
+        </table>
+      </div>
+
+      <div id="today" class="tab-content" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Appointment Time</th>
+              <th>Purpose</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="today-appointments-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-message" class="error-message" style="display: none;"></div>
+
+  <script>
+    let doctorId = null
+
+    document.addEventListener('DOMContentLoaded', async function () {
+      const urlParams = new URLSearchParams(window.location.search)
+      doctorId = urlParams.get('id')
+      if (!doctorId) return showError('Doctor ID not provided')
+
+      try {
+        const data = await DoctorAPI.getDashboardData(doctorId)
+        updateDashboard(data)
+        renderAppointments(data.today_appointments, data.upcoming_appointments)
+      } catch (err) {
+        showError(err.message || 'Failed to load dashboard')
+      }
+    })
+
+    function updateDashboard(data) {
+      document.getElementById('total-patients').textContent = data.total_patients
+      document.getElementById('today-appointments').textContent = data.today_patients
+      document.getElementById('pending-appointments').textContent = data.total_appointments
+    }
+
+    function renderAppointments(todayList, upcomingList) {
+      const todayBody = document.getElementById('today-appointments-body')
+      const upcomingBody = document.getElementById('upcoming-appointments-body')
+
+      todayBody.innerHTML = ''
+      upcomingBody.innerHTML = ''
+
+      todayList.forEach(app => {
+        todayBody.innerHTML += `
+          <tr>
+            <td>Patient #${app.patient_id}</td>
+            <td>${app.time}</td>
+            <td>${app.service || '-'}</td>
+            <td>
+              <a href="/doctor/add_note/${app.id}" class="status-btn accept">Add Note</a>
+              <button class="status-btn cancel" onclick="cancelAppointment(${app.id})">Cancel</button>
+            </td>
+          </tr>
+        `
+      })
+
+      upcomingList.forEach(app => {
+        upcomingBody.innerHTML += `
+          <tr>
+            <td>Patient #${app.patient_id}</td>
+            <td>${app.date}<br>${app.time}</td>
+            <td>${app.service || '-'}</td>
+            <td>
+              <button class="status-btn cancel" onclick="cancelAppointment(${app.id})">Cancel</button>
+            </td>
+          </tr>
+        `
+      })
+    }
+
+    async function cancelAppointment(appointmentId) {
+      try {
+        await DoctorAPI.updateAppointmentStatus(appointmentId, 'declined')
+        location.reload()
+      } catch (error) {
+        showError('Failed to cancel appointment')
+      }
+    }
+
+    function showError(message) {
+      const el = document.getElementById('error-message')
+      el.textContent = message
+      el.style.backgroundColor = '#f44336'
+      el.style.display = 'block'
+      setTimeout(() => el.style.display = 'none', 3000)
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none')
+      document.getElementById(tab).style.display = 'block'
+      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
+      document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
+    }
+  </script>
+</body>
+
+</html>

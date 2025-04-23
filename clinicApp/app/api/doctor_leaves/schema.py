@@ -19,6 +19,7 @@ class DoctorLeaveAddSchema(BaseModel):
     reason: Optional[str] = None
 
 class DoctorLeaveAllSchema(BaseModel):
+    _id: int
     doctor_id: int
     leave_type: str
     from_date: date
@@ -30,4 +31,9 @@ class DoctorLeaveAllSchema(BaseModel):
     @property
     def number_of_days(self) -> int:
         return (self.to_date - self.from_date).days + 1
+
+class DoctorLeaveOneSchema(DoctorLeaveAllSchema):
+    first_name: str
+    last_name: str
+    second_name: str
 

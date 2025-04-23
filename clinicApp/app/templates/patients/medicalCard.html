@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <script src="../../static/js/api.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #272b41;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .doctor-profile {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .doctor-profile img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+        }
+
+        .doctor-info h3 {
+            color: #272b41;
+            font-size: 18px;
+        }
+
+        .doctor-info p {
+            color: #757575;
+            font-size: 14px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .nav-menu .nav-item {
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 10px;
+            color: #272b41;
+            display: flex;
+            align-items: center;
+            box-shadow: 4px 4px 8px #e6e6e6, -4px -4px 8px #ffffff;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            background: #4a90e2;
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: rgba(74, 144, 226, 0.36);
+            color: white;
+        }
+
+        .logout {
+            padding: 12px 20px;
+            color: #272b41;
+            margin-top: 190%;
+            text-decoration: none;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            flex: 1;
+        }
+
+
+        .patients-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+            margin-top: 30px;
+        }
+
+        .patients-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .patients-header input {
+            width: 650px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        th {
+            color: #272b41;
+            font-weight: 600;
+        }
+
+        td {
+            color: #757575;
+        }
+
+        .view-btn {
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            background: #4a90e2;
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+            border-color: transparent;
+        }
+
+        .view-btn:hover {
+            background: #3a78c1;
+        }
+
+        .no-records {
+            text-align: center;
+            color: #757575;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .submit-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            border: none;
+            cursor: pointer;
+            background: #4a90e2;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="doctor-profile">
+        <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+    </div>
+    <div class="nav-menu">
+        <a href='/patientDashboard' class="nav-item">Dashboard</a>
+        <a href='/myMedicalCard' class="nav-item active">My medical card</a>
+        <a href="/findAppointment" class="nav-item">Find appointment</a>
+        <a href='/patientProfile' class="nav-item">Profile Settings</a>
+        <a href='/' class="logout">Logout</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <h1>Medical Records</h1>
+    <div class="patients-section">
+        <form action="#" method="POST" style="width: 50%; margin-top: 30px; justify-content: center">
+            <div class="patients-header">
+                <form id="searchForm" style="width: 50%; margin-top: 30px; justify-content: center">
+                    <div class="patients-header">
+                        <input type="text" id="searchInput" name="search_query" placeholder="Search by patient name...">
+                        <button type="submit" class="submit-btn">Search</button>
+                    </div>
+                </form>
+
+            </div>
+        </form>
+
+        <table id="recordsTable">
+            <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Date of Visit</th>
+                <th>View</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for medicalnote in medicalCard %}
+            <tr>
+                <td>{{ medicalnote.first_name }} {{ medicalnote.last_name }}</td>
+                <td>{{ medicalnote.date.strftime('%d.%m.%Y') }}</td>
+                <td>
+                    <form method="GET" action="/medicalRecord/{{ medicalnote._id }}">
+                        <button type="submit" class="view-btn">View Details</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="no-records" id="noRecords" style="display: none;">No records found</div>
+    </div>
+</div>
+<div id="error-message" class="error-message" style="display: none;"></div>
+
+<script></script>
+<script>
+    let currentPatientId = null
+
+    async function loadMedicalCards(search = '') {
+        try {
+            const urlParams = new URLSearchParams(window.location.search)
+            currentPatientId = urlParams.get('id')
+            if (!currentPatientId && !search) {
+                showError('Patient ID not provided')
+                return
+            }
+
+            let medicalCards = []
+
+            if (search.trim() !== '') {
+                medicalCards = await PatientAPI.searchMedicalCards(search)
+            } else {
+                medicalCards = await PatientAPI.getMedicalCards(currentPatientId)
+            }
+
+            updateMedicalCardsTable(medicalCards)
+        } catch (error) {
+            showError(error.message)
+        }
+    }
+
+    function updateMedicalCardsTable(cards) {
+        const tbody = document.querySelector('#recordsTable tbody')
+        tbody.innerHTML = ''
+
+        if (cards.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No medical records found</td></tr>'
+            return
+        }
+
+        cards.forEach(card => {
+            const tr = document.createElement('tr')
+            tr.innerHTML = `
+            <td>Dr. ${card.first_name} ${card.last_name}</td>
+            <td>${new Date(card.date).toLocaleDateString()}</td>
+            <td>
+                <a href="/medicalRecord/${card._id}" class="view-btn">View Details</a>
+            </td>
+        `
+            tbody.appendChild(tr)
+        })
+    }
+
+    function showError(message) {
+        const messageElement = document.getElementById('error-message')
+        messageElement.textContent = message
+        messageElement.style.backgroundColor = '#f44336'
+        messageElement.style.display = 'block'
+        setTimeout(() => {
+            messageElement.style.display = 'none'
+        }, 3000)
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadMedicalCards()
+
+        document.getElementById('searchForm').addEventListener('submit', (e) => {
+            e.preventDefault()
+            const query = document.getElementById('searchInput').value
+            loadMedicalCards(query)
+        })
+    })
+
+</script>
+</body>
+
+</html>

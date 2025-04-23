@@ -4,7 +4,8 @@ from typing import Optional
 from fastapi import APIRouter, Query, HTTPException
 
 from clinicApp.app.api.doctor_leaves.dao import DoctorLeavesDao
-from clinicApp.app.api.doctor_leaves.schema import DoctorLeaveUpdateSchema, DoctorLeaveAddSchema, DoctorLeaveAllSchema
+from clinicApp.app.api.doctor_leaves.schema import DoctorLeaveUpdateSchema, DoctorLeaveAddSchema, DoctorLeaveAllSchema, \
+    DoctorLeaveOneSchema
 
 router = APIRouter(prefix='/doctor_leaves', tags=['Doctor Leaves'])
 
@@ -23,11 +24,11 @@ async def get_leaves_for_doctor(doctor_id: int = Query(...)):
     return await DoctorLeavesDao.get_leaves_for_doctor(doctor_id)
 
 
-@router.get("/getLeave", response_model=DoctorLeaveAllSchema, summary="Получить заявление по id")
+@router.get("/getLeave", response_model=DoctorLeaveOneSchema, summary="Получить заявление по id")
 async def get_leave_by_id(leave_id: int = Query(...)):
     return await DoctorLeavesDao.get_leave_by_id(leave_id)
 
-@router.get("/get_all", response_model=list[DoctorLeaveAllSchema], summary="Получить все заявления")
+@router.get("/get_all", response_model=list[DoctorLeaveOneSchema], summary="Получить все заявления")
 async def get_all_leaves():
     return await DoctorLeavesDao.get_all_leaves()
 
