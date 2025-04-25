@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+          rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -356,10 +356,9 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 1000;
-            width: 400px;
-            max-width: 90%;
+            z-index: 9999;
         }
+
 
         .chatbot-header {
             background-color: #4a90e2;
@@ -411,6 +410,10 @@
             padding: 10px;
             overflow-y: auto;
             font-size: 14px;
+            width: 300px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
         }
 
         .chatbot-messages div {
@@ -420,18 +423,25 @@
 
         .chatbot-messages .user-message {
             text-align: right;
+            align-self: flex-end;
+            background-color: #eef3fd;
             color: #333;
             font-weight: 500;
-            padding: 5px;
-            background-color: #4a90e2;
+            padding: 8px 12px;
+            border-radius: 10px 10px 0 10px;
+            max-width: 80%;
         }
+
 
         .chatbot-messages .bot-message {
             text-align: left;
-            color: #4a90e2;
+            align-self: flex-start;
+            color: white;
             font-weight: 500;
-            padding: 5px;
-            background-color: #eef3fd;
+            padding: 8px 12px;
+            background-color: #4a90e2;
+            border-radius: 10px 10px 10px 0;
+            max-width: 80%;
         }
 
         .chatbot-input-container {
@@ -471,227 +481,204 @@
 </head>
 
 <body data-theme="light">
-    <div class="sidebar">
-        <div class="doctor-profile">
-            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
-        </div>
-        <div class="nav-menu">
-            <a href='/patientDashboard' class="nav-item active">Dashboard</a>
-            <a href='/myMedicalCard' class="nav-item">My medical card</a>
-            <a href="/findAppointment" class="nav-item">Find appointment</a>
-            <a href='/patientProfile' class="nav-item">Profile Settings</a>
-            <a href='/' class="logout">Logout</a>
-        </div>
+<div class="sidebar">
+    <div class="doctor-profile">
+        <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
     </div>
-    <div class="dashboard-container">
-        <header class="header">
-            <div class="profile-section">
-                <h2>{{ current_user[0] }} {{ current_user[1] }}</h2>
-            </div>
-        </header>
-
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('statistics')">Statistics</div>
-            <div class="tab" onclick="switchTab('appointments')">Future Appointments</div>
-            <div class="tab" onclick="switchTab('history')">Appointments History</div>
-        </div>
-
-        <div id="statistics" class="tab-content">
-            <div class="quick-stats">
-                <div class="stat-card">
-                    <i class="fas fa-calendar-check"></i>
-                    <h3>Next Appointment</h3>
-                    <p>{{ next_appointment if next_appointment else "No upcoming appointments" }}</p>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-file-medical"></i>
-                    <h3>Medical Records</h3>
-                    <p>{{ medical_records }}</p>
-                </div>
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="chart-container">
-                    <h3>Monthly Visits</h3>
-                    <canvas id="visitsByMonthChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Departments Visits</h3>
-                    <canvas id="visitsByDepartmentChart"></canvas>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="appointments" class="tab-content" style="display: none;">
-            <h3>Future Appointments</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Doctor</th>
-                            <th>Department</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for appointment in recent_appointments %}
-                        <tr>
-                            <td>Dr. {{ appointment[0] }} {{ appointment[1] }}</td>
-                            <td>{{ appointment[2] }}</td>
-                            <td>{{ appointment[3] }}</td>
-                            <td>{{ appointment[4] }}</td>
-                            <td><span class="status-{{ appointment[5] | lower }}">{{ appointment[5] }}</span></td>
-                            <td>
-                                <form method="POST" style="display: inline;">
-                                    <input type="hidden" name="appointment_id" value="{{ appointment[6] }}">
-                                    <button class="status-btn cancel" name="action" value="cancel">Cancel</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="history" class="tab-content" style="display: none;">
-            <h3>Appointments History</h3>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Doctor</th>
-                            <th>Department</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for appointment in appointment_history %}
-                        <tr>
-                            <td>Dr. {{ appointment[0] }} {{ appointment[1] }}</td>
-                            <td>{{ appointment[2] }}</td>
-                            <td>{{ appointment[3] }}</td>
-                            <td>{{ appointment[4] }}</td>
-                            <td><span class="status-{{ appointment[5] | lower }}">{{ appointment[5] }}</span></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+    <div class="nav-menu">
+        <a href='/patientDashboard' class="nav-item active">Dashboard</a>
+        <a href='/myMedicalCard' class="nav-item">My medical card</a>
+        <a href="/findAppointment" class="nav-item">Find appointment</a>
+        <a href='/patientProfile' class="nav-item">Profile Settings</a>
+        <a href='/' class="logout">Logout</a>
     </div>
-    <div id="chatbot-container" class="chatbot-container">
-        <div id="chatbot-body" class="chatbot-body hidden">
-            <div id="chatbot-messages" class="chatbot-messages"></div>
-            <div class="chatbot-input-container">
-                <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Send your question...">
-                <button onclick="sendMessage()" class="chatbot-send-btn">Send</button>
+</div>
+<div class="dashboard-container">
+    <header class="header">
+        <div class="profile-section">
+            <h2>{{ userData.first_name }} {{ userData.last_name }}</h2>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('statistics')">Statistics</div>
+        <div class="tab" onclick="switchTab('appointments')">Future Appointments</div>
+        <div class="tab" onclick="switchTab('history')">Appointments History</div>
+    </div>
+
+    <div id="statistics" class="tab-content">
+        <div class="quick-stats">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check"></i>
+                <h3>Next Appointment</h3>
+                <p>{{ next_appointment if next_appointment else "No upcoming appointments" }}</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-file-medical"></i>
+                <h3>Medical Records</h3>
+                <p>{{ medical_records }}</p>
             </div>
         </div>
-        <div id="chatbot-header" class="chatbot-header" onclick="toggleChatbot()">
-            <img src="https://img.icons8.com/?size=35&id=38977&format=png&color=ffffff" class="chat-icon" alt="chat">
+
+        <div class="dashboard-grid">
+            <div class="chart-container">
+                <h3>Monthly Visits</h3>
+                <canvas id="visitsByMonthChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Departments Visits</h3>
+                <canvas id="visitsByDepartmentChart"></canvas>
+            </div>
+
         </div>
     </div>
 
-    <div id="error-message" class="error-message" style="display: none;"></div>
+    <div id="appointments" class="tab-content" style="display: none;">
+        <h3>Future Appointments</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody id="future-appointments-body">
+                <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <script>
-        let currentPatientId = null
+    <div id="history" class="tab-content" style="display: none;">
+        <h3>Appointments History</h3>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody id="appointment-history-body">
+                <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div id="chatbot-container" class="chatbot-container">
+    <div id="chatbot-body" class="chatbot-body hidden">
+        <div id="chatbot-messages" class="chatbot-messages"></div>
+        <div class="chatbot-input-container">
+            <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Send your question...">
+            <button onclick="sendMessage()" class="chatbot-send-btn">Send</button>
+        </div>
+    </div>
+    <div id="chatbot-header" class="chatbot-header" onclick="toggleChatbot()">
+        <img src="https://img.icons8.com/?size=35&id=38977&format=png&color=ffffff" class="chat-icon" alt="chat">
+    </div>
+</div>
 
-        async function loadDashboardData() {
-            try {
-                const urlParams = new URLSearchParams(window.location.search)
-                currentPatientId = urlParams.get('id')
-                if (!currentPatientId) {
-                    showError('Patient ID not provided')
-                    return
-                }
 
-                const dashboardData = await PatientAPI.getDashboardData(currentPatientId)
-                const futureTalons = await PatientAPI.getFutureTalons(currentPatientId)
+<script>
+    let currentPatientId = null
 
-                // Update statistics
-                document.querySelector('.stat-card:nth-child(1) p').textContent = dashboardData.next_appointment || "No upcoming appointments"
-                document.querySelector('.stat-card:nth-child(2) p').textContent = dashboardData.medical_records_count
-
-                // Update charts
-                updateVisitsByMonthChart(dashboardData.visits_by_month)
-                updateVisitsByDepartmentChart(dashboardData.visits_by_department)
-
-                // Update appointments tables
-                updateFutureAppointments(futureTalons)
-                updateAppointmentHistory(dashboardData.appointment_history)
-
-            } catch (error) {
-                showError(error.message)
-            }
-        }
-
-        function updateVisitsByMonthChart(data) {
-            const ctx = document.getElementById('visitsByMonthChart').getContext('2d')
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                    datasets: [{
-                        label: 'Visits by Month',
-                        data: data,
-                        borderColor: '#2196f3',
-                        tension: 0.4,
-                        fill: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            })
-        }
-
-        function updateVisitsByDepartmentChart(data) {
-            const ctx = document.getElementById('visitsByDepartmentChart').getContext('2d')
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: data.map(item => item.department),
-                    datasets: [{
-                        label: 'Visits by Department',
-                        data: data.map(item => item.count),
-                        backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                        borderColor: '#2196f3',
-                        pointBackgroundColor: '#2196f3'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            })
-        }
-
-        function updateFutureAppointments(appointments) {
-            const tbody = document.querySelector('#appointments tbody')
-            tbody.innerHTML = ''
-
-            if (appointments.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Нет будущих назначений</td></tr>'
+    async function loadDashboardData() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search)
+            currentPatientId = urlParams.get('id')
+            if (!currentPatientId) {
+                showError('Patient ID not provided')
                 return
             }
+            const userData = await PatientAPI.getPatientProfile(currentPatientId)
+            const dashboardData = await PatientAPI.getDashboardData(currentPatientId)
+            const futureTalons = await PatientAPI.getFutureTalons(currentPatientId)
 
-            appointments.forEach(appointment => {
-                const tr = document.createElement('tr')
-                tr.innerHTML = `
+            // Update statistics
+            document.querySelector('.stat-card:nth-child(1) p').textContent = dashboardData.next_appointment || "No upcoming appointments"
+            document.querySelector('.stat-card:nth-child(2) p').textContent = dashboardData.medical_records_count
+
+            // Update charts
+            updateVisitsByMonthChart(dashboardData.visits_by_month)
+            updateVisitsByDepartmentChart(dashboardData.visits_by_department)
+
+            // Update appointments tables
+            updateFutureAppointments(futureTalons)
+            updateAppointmentHistory(dashboardData.appointment_history)
+
+        } catch (error) {
+            showError(error.message)
+        }
+    }
+
+    function updateVisitsByMonthChart(data) {
+        const ctx = document.getElementById('visitsByMonthChart').getContext('2d')
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Visits by Month',
+                    data: data,
+                    borderColor: '#2196f3',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        })
+    }
+
+    function updateVisitsByDepartmentChart(data) {
+        const ctx = document.getElementById('visitsByDepartmentChart').getContext('2d')
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: data.map(item => item.department),
+                datasets: [{
+                    label: 'Visits by Department',
+                    data: data.map(item => item.count),
+                    backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                    borderColor: '#2196f3',
+                    pointBackgroundColor: '#2196f3'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        })
+    }
+
+    function updateFutureAppointments(appointments) {
+        const tbody = document.querySelector('#appointments tbody')
+        tbody.innerHTML = ''
+
+        if (appointments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Нет будущих назначений</td></tr>'
+            return
+        }
+
+        appointments.forEach(appointment => {
+            const tr = document.createElement('tr')
+            tr.innerHTML = `
                 <td>Dr. ${appointment.doctor_name}</td>
                 <td>${appointment.department}</td>
                 <td>${appointment.date}</td>
@@ -701,120 +688,120 @@
                     <button class="status-btn cancel" onclick="cancelAppointment(${appointment.id})">Cancel</button>
                 </td>
             `
-                tbody.appendChild(tr)
-            })
+            tbody.appendChild(tr)
+        })
+    }
+
+    function updateAppointmentHistory(history) {
+        const tbody = document.querySelector('#history tbody')
+        tbody.innerHTML = ''
+
+        if (history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Нет прошедших записей</td></tr>'
+            return
         }
 
-        function updateAppointmentHistory(history) {
-            const tbody = document.querySelector('#history tbody')
-            tbody.innerHTML = ''
-
-            if (history.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Нет прошедших записей</td></tr>'
-                return
-            }
-
-            history.forEach(appointment => {
-                const tr = document.createElement('tr')
-                tr.innerHTML = `
+        history.forEach(appointment => {
+            const tr = document.createElement('tr')
+            tr.innerHTML = `
                 <td>Dr. ${appointment.doctor_name}</td>
                 <td>${appointment.department}</td>
                 <td>${appointment.date}</td>
                 <td>${appointment.time}</td>
                 <td><span class="status-${appointment.status.toLowerCase()}">${appointment.status}</span></td>
             `
-                tbody.appendChild(tr)
+            tbody.appendChild(tr)
+        })
+    }
+
+    async function cancelAppointment(appointmentId) {
+        try {
+            await PatientAPI.cancelAppointment(appointmentId)
+            showSuccess('Appointment cancelled successfully')
+            loadDashboardData() // Refresh data
+        } catch (error) {
+            showError(error.message)
+        }
+    }
+
+    function showSuccess(message) {
+        const messageElement = document.getElementById('error-message')
+        messageElement.textContent = message
+        messageElement.style.backgroundColor = '#4CAF50'
+        messageElement.style.display = 'block'
+        setTimeout(() => {
+            messageElement.style.display = 'none'
+        }, 3000)
+    }
+
+    function showError(message) {
+        const messageElement = document.getElementById('error-message')
+        messageElement.textContent = message
+        messageElement.style.backgroundColor = '#f44336'
+        messageElement.style.display = 'block'
+        setTimeout(() => {
+            messageElement.style.display = 'none'
+        }, 3000)
+    }
+
+    // Load data when page loads
+    document.addEventListener('DOMContentLoaded', loadDashboardData)
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none')
+        document.querySelector(`#${tab}`).style.display = 'block'
+
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+        document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
+    }
+
+    let isChatbotOpen = false
+
+    function toggleChatbot() {
+        const chatbotBody = document.getElementById('chatbot-body')
+        if (isChatbotOpen) {
+            chatbotBody.classList.add('hidden')
+        } else {
+            chatbotBody.classList.remove('hidden')
+        }
+        isChatbotOpen = !isChatbotOpen
+    }
+
+    function sendMessage() {
+        const inputField = document.getElementById('chatbot-input')
+        const message = inputField.value.trim()
+        const messagesContainer = document.getElementById('chatbot-messages')
+
+        if (message) {
+            const userMessage = document.createElement('div')
+            userMessage.className = 'user-message'
+            userMessage.textContent = message
+            messagesContainer.appendChild(userMessage)
+
+            fetch('/ai_assistant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({question: message}),
             })
-        }
+                .then((response) => response.json())
+                .then((data) => {
+                    const botMessage = document.createElement('div')
+                    botMessage.className = 'bot-message'
+                    botMessage.textContent = data.answer
+                    messagesContainer.appendChild(botMessage)
 
-        async function cancelAppointment(appointmentId) {
-            try {
-                await PatientAPI.cancelAppointment(appointmentId)
-                showSuccess('Appointment cancelled successfully')
-                loadDashboardData() // Refresh data
-            } catch (error) {
-                showError(error.message)
-            }
-        }
-
-        function showSuccess(message) {
-            const messageElement = document.getElementById('error-message')
-            messageElement.textContent = message
-            messageElement.style.backgroundColor = '#4CAF50'
-            messageElement.style.display = 'block'
-            setTimeout(() => {
-                messageElement.style.display = 'none'
-            }, 3000)
-        }
-
-        function showError(message) {
-            const messageElement = document.getElementById('error-message')
-            messageElement.textContent = message
-            messageElement.style.backgroundColor = '#f44336'
-            messageElement.style.display = 'block'
-            setTimeout(() => {
-                messageElement.style.display = 'none'
-            }, 3000)
-        }
-
-        // Load data when page loads
-        document.addEventListener('DOMContentLoaded', loadDashboardData)
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none')
-            document.querySelector(`#${tab}`).style.display = 'block'
-
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
-            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
-        }
-
-        let isChatbotOpen = false
-
-        function toggleChatbot() {
-            const chatbotBody = document.getElementById('chatbot-body')
-            if (isChatbotOpen) {
-                chatbotBody.classList.add('hidden')
-            } else {
-                chatbotBody.classList.remove('hidden')
-            }
-            isChatbotOpen = !isChatbotOpen
-        }
-
-        function sendMessage() {
-            const inputField = document.getElementById('chatbot-input')
-            const message = inputField.value.trim()
-            const messagesContainer = document.getElementById('chatbot-messages')
-
-            if (message) {
-                const userMessage = document.createElement('div')
-                userMessage.className = 'user-message'
-                userMessage.textContent = message
-                messagesContainer.appendChild(userMessage)
-
-                fetch('/ai_assistant', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ question: message }),
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight
                 })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        const botMessage = document.createElement('div')
-                        botMessage.className = 'bot-message'
-                        botMessage.textContent = data.answer
-                        messagesContainer.appendChild(botMessage)
+                .catch((error) => {
+                    console.error('Error:', error)
+                })
 
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error)
-                    })
-
-                inputField.value = ''
-            }
+            inputField.value = ''
         }
-    </script>
+    }
+</script>
 
 </body>
 
