@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -169,7 +170,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #f0f0f0;
@@ -229,127 +231,131 @@
             margin: 0 auto;
         }
 
+        .btn-primary {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item ">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
-        <div class="menu-item  active">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
+
+
+        <div class="main-content">
+            <h1 class="section-title">Дашборд</h1>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h2>8</h2>
+                    <p>Врачи</p>
+                </div>
+                <div class="stat-card">
+                    <h2>6</h2>
+                    <p>Пациенты</p>
+                </div>
+                <div class="stat-card">
+                    <h2>10</h2>
+                    <p>Записи в мае</p>
+                </div>
+                <div class="stat-card">
+                    <h2>27</h2>
+                    <p>Всего записей</p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <label for="months-ahead">Выберите количество месяцев для прогноза: </label>
+                <select id="months-ahead">
+                    <option value="3">3 месяца</option>
+                    <option value="6" selected>6 месяцев</option>
+                    <option value="9">9 месяцев</option>
+                    <option value="12">12 месяцев</option>
+                </select>
+                <button class="btn btn-primary" onclick="fetchVisitForecast()">Сформировать прогноз</button>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card animated">
+                    <h3>Талоны по месяцам</h3>
+                    <div class="chart-container">
+                        <canvas id="visitsByMonthChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card animated">
+                    <h3>Талоны по отделам</h3>
+                    <div class="chart-container">
+                        <canvas id="visitsByDepartmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card animated">
+                    <h3>Доход по отделам</h3>
+                    <div class="chart-container">
+                        <canvas id="revenueByDepartmentChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card animated">
+                    <h3>Прогноз посещений</h3>
+                    <div class="chart-container">
+                        <canvas id="visitForecastChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
     </div>
-
-
-    <div class="main-content">
-        <h1 class="section-title">Admin Dashboard</h1>
-
-        <div class="stats-container">
-            <div class="stat-card">
-                <h2>15</h2>
-                <p>Doctors</p>
-            </div>
-            <div class="stat-card">
-                <h2>2000</h2>
-                <p>Patients</p>
-            </div>
-            <div class="stat-card">
-                <h2>120</h2>
-                <p>Today's Appointments</p>
-            </div>
-            <div class="stat-card">
-                <h2>5000</h2>
-                <p>All Appointments</p>
-            </div>
-        </div>
-
-        <div class="controls">
-            <label for="months-ahead">Select Months for Visit Forecast: </label>
-            <select id="months-ahead">
-                <option value="3">3 months</option>
-                <option value="6" selected>6 months</option>
-                <option value="9">9 months</option>
-                <option value="12">12 months</option>
-            </select>
-            <button onclick="fetchVisitForecast()">Generate Forecast</button>
-        </div>
-
-        <div class="dashboard-grid">
-            <div class="card animated">
-                <h3>Appointments by Month</h3>
-                <div class="chart-container">
-                    <canvas id="visitsByMonthChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card animated">
-                <h3>Visits by Departments</h3>
-                <div class="chart-container">
-                    <canvas id="visitsByDepartmentChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card animated">
-                <h3>Revenue by Department</h3>
-                <div class="chart-container">
-                    <canvas id="revenueByDepartmentChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card animated">
-                <h3>Visit Forecast</h3>
-                <div class="chart-container">
-                    <canvas id="visitForecastChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Load initial charts with mock data
-            fetchVisitForecast();
-            fetchVisitsByMonth();
-            fetchVisitsByDepartment();
-            fetchRevenueByDepartment();
-        });
-
-        // Mock data for appointments by month chart
-        function fetchVisitsByMonth() {
-            const visitsByMonthCtx = document.getElementById('visitsByMonthChart').getContext('2d');
-            const visitsByMonthData = [120, 110, 125, 140, 130, 150, 160, 170, 180, 190, 200, 210]; // Mock data
+            // Visits by month chart
+            const visitsByMonthCtx = document.getElementById('visitsByMonthChart').getContext('2d')
+            // Historical data including all appointments
+            const visitsByMonthData = [0, 0, 0, 0, 0, 1, 0, 2, 1, 1, 12, 10] // [Jun-Apr] including both lists
 
             new Chart(visitsByMonthCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    labels: ['Июнь', 'Июль', 'Авг', 'Сент', 'Окт', 'Нояб', 'Дек', 'Янв', 'Февр', 'Март', 'Апр', 'Май'],
                     datasets: [{
                         label: 'Visits by Month',
                         data: visitsByMonthData,
@@ -365,23 +371,31 @@
                         legend: {
                             display: false
                         }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Количество записей'
+                            },
+                            max: 15 // Adjusted for new maximum
+                        }
                     }
                 }
-            });
-        }
+            })
 
-        // Mock data for visits by department radar chart
-        function fetchVisitsByDepartment() {
-            const visitsByDepartmentCtx = document.getElementById('visitsByDepartmentChart').getContext('2d');
-            const departmentLabels = ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Gynecology']; // Mock data
-            const departmentData = [90, 120, 110, 140, 100]; // Mock data
+            // Visits by department radar chart
+            const visitsByDepartmentCtx = document.getElementById('visitsByDepartmentChart').getContext('2d')
+            const departmentLabels = ['Кардиология', 'Неврология', 'Педиатрия', 'Терапия', 'Хирургия']
+            const departmentData = [8, 7, 4, 6, 2] // Actual appointments by department
 
             new Chart(visitsByDepartmentCtx, {
                 type: 'radar',
                 data: {
                     labels: departmentLabels,
                     datasets: [{
-                        label: 'Visits by Department',
+                        label: 'Записи по отделам',
                         data: departmentData,
                         backgroundColor: 'rgba(33, 150, 243, 0.2)',
                         borderColor: '#2196f3',
@@ -394,28 +408,31 @@
                     scales: {
                         r: {
                             beginAtZero: true,
-                            max: 200
+                            max: 10
                         }
                     }
                 }
-            });
-        }
+            })
 
-        // Mock data for revenue by department chart
-        function fetchRevenueByDepartment() {
-            const revenueByDepartmentCtx = document.getElementById('revenueByDepartmentChart').getContext('2d');
-            const departmentLabels = ['Cardiology', 'Neurology', 'Orthopedics', 'Pediatrics', 'Gynecology']; // Mock data
-            const revenueData = [20000, 25000, 22000, 28000, 23000]; // Mock data
+            // Revenue by department chart
+            const revenueByDepartmentCtx = document.getElementById('revenueByDepartmentChart').getContext('2d')
+            const revenueData = [
+                400, // Cardiology (4 primary × 45р + 4 follow-up × 55р)
+                355, // Neurology (3 primary × 45р + 4 follow-up × 55р)
+                200, // Pediatrics (2 primary × 45р + 2 follow-up × 55р)
+                300, // Therapy (3 primary × 45р + 3 follow-up × 55р)
+                100  // Surgery (1 primary × 45р + 1 follow-up × 55р)
+            ]
 
             new Chart(revenueByDepartmentCtx, {
                 type: 'bar',
                 data: {
                     labels: departmentLabels,
                     datasets: [{
-                        label: 'Revenue by Department',
+                        label: 'Доход по отделам',
                         data: revenueData,
-                        backgroundColor: '#4caf50',
-                        borderColor: '#388e3c',
+                        backgroundColor: '#712aff',
+                        borderColor: '#5c23cd',
                         borderWidth: 1
                     }]
                 },
@@ -423,39 +440,92 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: {
-                            beginAtZero: true
-                        },
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Доход (BYN)'
+                            },
+                            max: 450
                         }
                     }
                 }
-            });
-        }
+            })
 
-        // Mock data for visit forecast chart based on selected months
-        function fetchVisitForecast() {
-            const monthsAhead = document.getElementById('months-ahead').value;
-            const forecastCtx = document.getElementById('visitForecastChart').getContext('2d');
+            // Visit forecast chart with seasonality
+            const forecastCtx = document.getElementById('visitForecastChart').getContext('2d')
 
-            // Simulate different forecast data based on the number of months selected
-            let forecastData = [];
-            let forecastLabels = [];
-
-            for (let i = 0; i < monthsAhead; i++) {
-                forecastData.push(Math.floor(Math.random() * 500) + 100); // Mock predicted visits
-                forecastLabels.push(`Month ${i + 1}`);
+            // 1. Исторические данные по месяцам за последние 2 года
+            const historicalData = {
+                '2023': {
+                    '01': 5, '02': 4, '03': 6, '04': 8, '05': 7, '06': 6,
+                    '07': 8, '08': 6, '09': 8, '10': 9, '11': 7, '12': 6
+                },
+                '2024': {
+                    '01': 6, '02': 5, '03': 7, '04': 12, '05': 10, '06': 0,
+                    '07': 5, '08': 3, '09': 0, '10': 5, '11': 8, '12': 0
+                }
             }
+
+            // 2. Вычисление средних значений по месяцам
+            const monthlyAverages = {}
+            for (let month = 1; month <= 12; month++) {
+                const monthStr = month.toString().padStart(2, '0')
+                const values = Object.values(historicalData).map(year => year[monthStr])
+                monthlyAverages[monthStr] = values.reduce((a, b) => a + b, 0) / values.length
+            }
+
+            // 3. Вычисление тренда (линейная регрессия)
+            const months = Object.keys(historicalData['2023']).concat(Object.keys(historicalData['2024']))
+            const values = months.map(month => {
+                const year = month in historicalData['2023'] ? '2023' : '2024'
+                return historicalData[year][month]
+            })
+
+            // Расчет коэффициентов линейной регрессии
+            const n = months.length
+            const xMean = (n - 1) / 2
+            const yMean = values.reduce((a, b) => a + b, 0) / n
+
+            let numerator = 0
+            let denominator = 0
+            for (let i = 0; i < n; i++) {
+                numerator += (i - xMean) * (values[i] - yMean)
+                denominator += Math.pow(i - xMean, 2)
+            }
+
+            const slope = numerator / denominator
+            const intercept = yMean - slope * xMean
+
+            // 4. Формирование прогноза
+            const forecastMonths = ['06', '07', '08', '09', '10', '11']
+            const forecastData = forecastMonths.map((month, index) => {
+                // Базовый прогноз = тренд + сезонность
+                const trendValue = slope * (n + index) + intercept
+                const seasonalFactor = monthlyAverages[month] / yMean
+
+                // Учет отпусков врачей
+                let leaveImpact = 0
+                if (month === '06') leaveImpact = -3  // 1 врач в отпуске
+                if (month === '07') leaveImpact = -4  // 2 врача в отпуске
+                if (month === '08') leaveImpact = -4  // 1 врач в отпуске
+                if (month === '09') leaveImpact = -2  // возвращение к работе
+                if (month === '10') leaveImpact = -2  // плановые отпуска
+                if (month === '11') leaveImpact = -2  // плановые отпуска
+
+                // Итоговый прогноз с проверкой на минимальное значение
+                const forecast = trendValue * seasonalFactor + leaveImpact
+                return Math.max(0, Math.round(forecast)) // Не допускаем отрицательные значения
+            })
 
             new Chart(forecastCtx, {
                 type: 'line',
                 data: {
-                    labels: forecastLabels,
+                    labels: ['Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь'],
                     datasets: [{
-                        label: 'Visit Forecast',
+                        label: 'Прогноз посещений',
                         data: forecastData,
-                        borderColor: '#ff5722',
+                        borderColor: '#ac1212',
                         tension: 0.4,
                         fill: false
                     }]
@@ -467,12 +537,23 @@
                         legend: {
                             display: false
                         }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Ожидаемое количество записей'
+                            },
+                            max: 15
+                        }
                     }
                 }
-            });
-        }
+            })
+        });
     </script>
 
 
 </body>
+
 </html>

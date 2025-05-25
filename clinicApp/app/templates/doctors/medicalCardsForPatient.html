@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Medical Card</title>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Poppins', sans-serif;
+		}
+
+		body {
+			background-color: #f8f9fa;
+			color: #272b41;
+			min-height: 100vh;
+			display: flex;
+		}
+
+		.sidebar {
+			width: 280px;
+			background: #ffffff;
+			padding: 20px;
+			height: 100vh;
+			position: fixed;
+			box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+		}
+
+		.doctor-profile {
+			text-align: center;
+			padding: 20px 0;
+			border-bottom: 1px solid #f0f0f0;
+		}
+
+		.doctor-profile img {
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			object-fit: cover;
+			box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+		}
+
+		.nav-menu {
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+		}
+
+		.nav-menu .nav-item {
+			padding: 12px 20px;
+			margin: 8px 0;
+			border-radius: 10px;
+			color: #272b41;
+			display: flex;
+			align-items: center;
+			box-shadow: 4px 4px 8px #e6e6e6, -4px -4px 8px #ffffff;
+			text-decoration: none;
+		}
+
+		.nav-item.active {
+			background: #4a90e2;
+			color: white;
+		}
+
+		.nav-item:hover {
+			background: rgba(74, 144, 226, 0.36);
+			color: white;
+		}
+
+		.logout {
+			padding: 12px 20px;
+			color: #272b41;
+			margin-top: 190%;
+			text-decoration: none;
+		}
+
+		.main-content {
+			margin-left: 280px;
+			padding: 30px;
+			flex: 1;
+		}
+
+		.patient-info-card {
+			background: white;
+			padding: 25px;
+			border-radius: 15px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			margin-bottom: 30px;
+		}
+
+		.patient-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.patient-name {
+			font-size: 24px;
+			font-weight: 600;
+			color: #272b41;
+		}
+
+		.patient-details {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 20px;
+		}
+
+		.detail-item {
+			padding: 10px;
+		}
+
+		.detail-label {
+			font-size: 14px;
+			color: #757575;
+			margin-bottom: 5px;
+		}
+
+		.detail-value {
+			font-size: 16px;
+			color: #272b41;
+			font-weight: 500;
+		}
+
+		.records-section {
+			background: white;
+			padding: 25px;
+			border-radius: 15px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		}
+
+		.records-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: 20px;
+		}
+
+		.add-record-btn {
+			padding: 10px 20px;
+			background: #4a90e2;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 14px;
+			display: flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.add-record-btn:hover {
+			background: #357abd;
+		}
+
+		.record-card {
+			background: #f8f9fa;
+			padding: 20px;
+			border-radius: 10px;
+			margin-bottom: 15px;
+			cursor: pointer;
+			transition: transform 0.2s;
+		}
+
+		.record-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.record-date {
+			font-size: 14px;
+			color: #757575;
+			margin-bottom: 10px;
+		}
+
+		.record-doctor {
+			font-size: 14px;
+			color: #272b41;
+			margin-bottom: 10px;
+		}
+
+		.record-diagnosis {
+			font-size: 16px;
+			color: #272b41;
+			font-weight: 500;
+		}
+
+		.back-btn {
+			padding: 8px 15px;
+			background: transparent;
+			color: #4a90e2;
+			border: 1px solid #4a90e2;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 14px;
+			margin-bottom: 20px;
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.back-btn:hover {
+			background: rgba(74, 144, 226, 0.1);
+		}
+
+		.no-records {
+			text-align: center;
+			color: #757575;
+			font-size: 16px;
+			margin-top: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="sidebar">
+		<div class="doctor-profile">
+			<img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+		</div>
+		<div class="nav-menu">
+			<a href="/doctor/dashboard" class="nav-item">Дашборд</a>
+			<a href="/doctor/myLeaves" class="nav-item">Мои заявления</a>
+			<a href="/doctor/patientsCards" class="nav-item active">Мед. карты пациентов</a>
+			<a href="/doctor/profile" class="nav-item">Профиль</a>
+			<a href="/doctor/chat" class="nav-item">Чат</a>
+			<a href="/doctor/video" class="nav-item">Видеочат</a>
+			<a href='/' class="logout">Выход</a>
+		</div>
+	</div>
+
+	<div class="main-content">
+		<button class="back-btn" onclick="window.location.href='/doctor/patientsCards'">
+			<i class="fas fa-arrow-left"></i> Назад к списку пациентов
+		</button>
+
+		<div class="patient-info-card">
+			<div class="patient-header">
+				<h2 class="patient-name" id="patientName">Загрузка...</h2>
+			</div>
+			<div class="patient-details" id="patientDetails">
+				<!-- Patient details will be loaded here -->
+			</div>
+		</div>
+
+		<div class="records-section">
+			<div class="records-header">
+				<h3>История посещений</h3>
+				<button class="add-record-btn" onclick="addNewRecord()">
+					<i class="fas fa-plus"></i> Добавить запись
+				</button>
+			</div>
+
+			<div id="recordsList">
+				<!-- Medical records will be loaded here -->
+			</div>
+		</div>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', async () => {
+			const patientId = window.location.pathname.split('/').pop()
+			await loadPatientData(patientId)
+			await loadMedicalRecords(patientId)
+		})
+
+		async function loadPatientData(patientId) {
+			try {
+				// Mock patient data (replace with actual API call)
+				const mockPatient = {
+					id: patientId,
+					first_name: "Диана",
+					last_name: "Кононцева",
+					birth_date: "2004-07-26",
+					phone: "+375295141679",
+					email: "diana.konontseva@mail.ru",
+					address: "г. Минск, ул. Могилевская, 4/1",
+					blood_type: "A+",
+					allergies: "Нет"
+				}
+
+				// Update patient name
+				document.getElementById('patientName').textContent =
+					`${mockPatient.last_name} ${mockPatient.first_name}`
+
+				// Update patient details
+				const detailsContainer = document.getElementById('patientDetails')
+				detailsContainer.innerHTML = `
+                    <div class="detail-item">
+                        <div class="detail-label">Дата рождения</div>
+                        <div class="detail-value">${new Date(mockPatient.birth_date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Телефон</div>
+                        <div class="detail-value">${mockPatient.phone}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value">${mockPatient.email}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Адрес</div>
+                        <div class="detail-value">${mockPatient.address}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Группа крови</div>
+                        <div class="detail-value">${mockPatient.blood_type}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Аллергии</div>
+                        <div class="detail-value">${mockPatient.allergies}</div>
+                    </div>
+                `
+
+			} catch (error) {
+				console.error('Error loading patient data:', error)
+			}
+		}
+
+		async function loadMedicalRecords(patientId) {
+			try {
+				// Mock medical records (replace with actual API call)
+				const mockRecords = [
+					{
+						id: "N001",
+						date: "2025-04-20",
+						doctor: "Иванов А.П.",
+						diagnosis: "ОРВИ",
+						complaints: "Высокая температура, кашель",
+						treatment: "Противовирусные препараты"
+					},
+					{
+						id: "N002",
+						date: "2025-03-15",
+						doctor: "Петрова М.С.",
+						diagnosis: "Гастрит",
+						complaints: "Боль в желудке",
+						treatment: "Диета, медикаментозное лечение"
+					},
+					{
+						id: "N003",
+						date: "2025-02-01",
+						doctor: "Сидоров К.В.",
+						diagnosis: "Профилактический осмотр",
+						complaints: "Нет",
+						treatment: "Не требуется"
+					}
+				]
+
+				const container = document.getElementById('recordsList')
+
+				if (mockRecords.length === 0) {
+					container.innerHTML = '<div class="no-records">Нет записей</div>'
+					return
+				}
+
+				container.innerHTML = mockRecords.map(record => `
+                    <div class="record-card" onclick="viewRecord('${record.id}')">
+                        <div class="record-date">${new Date(record.date).toLocaleDateString()}</div>
+                        <div class="record-doctor">Врач: ${record.doctor}</div>
+                        <div class="record-diagnosis">Диагноз: ${record.diagnosis}</div>
+                    </div>
+                `).join('')
+
+			} catch (error) {
+				console.error('Error loading medical records:', error)
+				document.getElementById('recordsList').innerHTML =
+					'<div class="no-records">Ошибка загрузки записей</div>'
+			}
+		}
+
+		function addNewRecord() {
+			const patientId = window.location.pathname.split('/').pop()
+			window.location.href = `/doctor/notesPatient/${patientId}`
+		}
+
+		function viewRecord(recordId) {
+			window.location.href = `/doctor/notesPatient/${recordId}`
+		}
+	</script>
+</body>
+
+</html>

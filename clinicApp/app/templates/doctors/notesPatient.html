@@ -4,13 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Appointment</title>
+    <title>Добавить запись</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Стилизация страницы */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +23,6 @@
             display: flex;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 280px;
             background: #ffffff;
@@ -47,16 +44,6 @@
             border-radius: 50%;
             object-fit: cover;
             box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
-        }
-
-        .doctor-info h3 {
-            color: #272b41;
-            font-size: 18px;
-        }
-
-        .doctor-info p {
-            color: #757575;
-            font-size: 14px;
         }
 
         .nav-menu {
@@ -93,24 +80,30 @@
             text-decoration: none;
         }
 
-        /* Main Content */
         .main-content {
             margin-left: 280px;
             padding: 30px;
             flex: 1;
         }
 
-        .appointment-section {
+        .form-container {
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 8px 8px 16px #e6e6e6, -8px -8px 16px #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        .appointment-header {
-            margin-bottom: 20px;
-            color: #272b41;
+        .form-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-title {
             font-size: 24px;
+            color: #272b41;
             font-weight: 600;
         }
 
@@ -122,257 +115,197 @@
             display: block;
             margin-bottom: 8px;
             color: #272b41;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-        }
-
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .form-group:focus {
-            border-color: #4a90e2;
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(9, 220, 164, 0.1);
+            font-weight: 500;
         }
 
         .form-control {
             width: 100%;
             padding: 12px;
-            border: 2px solid #eee;
-            border-radius: 10px;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
 
         .form-control:focus {
             border-color: #4a90e2;
             outline: none;
-            box-shadow: 0 0 0 3px rgba(9, 220, 164, 0.1);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
         }
 
         .btn {
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
+            padding: 12px 25px;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
         .btn-primary {
             background: #4a90e2;
             color: white;
+            border: none;
         }
 
         .btn-secondary {
-            background: #f0f0f0;
-            color: #272b41;
+            background: transparent;
+            color: #4a90e2;
+            border: 1px solid #4a90e2;
         }
 
         .btn:hover {
-            opacity: 0.9;
+            transform: translateY(-1px);
         }
 
-        .flatpickr-calendar {
-            background-color: #565fa5;
-            /* Темный фон */
-            color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        .btn-primary:hover {
+            background: #357abd;
         }
 
-        .flatpickr-day,
-        .flatpickr-weekday {
-            color: white;
+        .btn-secondary:hover {
+            background: rgba(74, 144, 226, 0.1);
         }
 
-        .flatpickr-day:hover {
-            background-color: rgba(108, 135, 255, 0.3);
-            color: white;
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 15px;
+            background: transparent;
+            color: #4a90e2;
+            border: 1px solid #4a90e2;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-decoration: none;
         }
 
-        .flatpickr-day.today {
-            background-color: #6c87ff;
-            color: white;
-        }
-
-        .flatpickr-month {
-            background-color: #262626;
-        }
-
-        .flatpickr-prev-month,
-        .flatpickr-next-month {
-            color: #6c87ff;
-        }
-
-        .flatpickr-current-month {
-            color: #6c87ff;
+        .back-btn:hover {
+            background: rgba(74, 144, 226, 0.1);
         }
     </style>
 </head>
 
 <body>
-<div class="sidebar">
-    <div class="doctor-profile">
-        <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
-    </div>
-    <div class="nav-menu">
-        <a href="/doctor/dashboard" class="nav-item active">Dashboard</a>
-        <a href="/doctor/myLeaves" class="nav-item">My Leaves</a>
-        <a href="/doctor/patientsCards" class="nav-item">Patients' cards</a>
-        <a href="/doctor/profile" class="nav-item">Profile Settings</a>
-        <a href="/doctor/chat" class="nav-item">Chat</a>
-        <a href='/' class="logout">Logout</a>
-    </div>
-</div>
-
-<form id="medical-record-form">
-    <div class="form-group">
-        <label for="date">Date</label>
-        <input type="date" id="date" name="date" value="{{ request.form.date or today_date }}" required>
+    <div class="sidebar">
+        <div class="doctor-profile">
+            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+        </div>
+        <div class="nav-menu">
+            <a href="/doctor/dashboard" class="nav-item">Дашборд</a>
+            <a href="/doctor/myLeaves" class="nav-item">Мои заявления</a>
+            <a href="/doctor/patientsCards" class="nav-item active">Мед. карты пациентов</a>
+            <a href="/doctor/profile" class="nav-item">Профиль</a>
+            <a href="/doctor/chat" class="nav-item">Чат</a>
+            <a href="/doctor/video" class="nav-item">Видеочат</a>
+            <a href='/' class="logout">Выход</a>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="doctor-name">Doctor's Name</label>
-        <input type="text" id="doctor-name" class="form-control" readonly>
+    <div class="main-content">
+        <a href="#" onclick="goBack()" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Назад к карте пациента
+        </a>
+
+        <div class="form-container">
+            <div class="form-header">
+                <h1 class="form-title">Добавить запись в медицинскую карту</h1>
+            </div>
+
+            <form id="medical-record-form" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="date">Дата</label>
+                    <input type="date" id="date" name="date" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="complaints">Жалобы</label>
+                    <textarea id="complaints" name="complaints" class="form-control"
+                        placeholder="Опишите жалобы пациента" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="examination">Данные осмотра</label>
+                    <textarea id="examination" name="examination" class="form-control" placeholder="Результаты осмотра"
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="diagnosis">Диагноз</label>
+                    <textarea id="diagnosis" name="diagnosis" class="form-control" placeholder="Поставленный диагноз"
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="recommendations">Рекомендации</label>
+                    <textarea id="recommendations" name="recommendations" class="form-control"
+                        placeholder="Рекомендации по лечению"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="button" class="btn btn-secondary" onclick="goBack()">Отмена</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="patient-name">Patient's Name</label>
-        <input type="text" id="patient-name" class="form-control" readonly>
-    </div>
-
-    <div class="form-group">
-        <label for="symptoms">Complaints</label>
-        <textarea id="symptoms" name="symptoms" rows="3" class="form-control" placeholder="Enter symptoms"
-                  required></textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="results">Wellness Check</label>
-        <textarea id="results" name="results" rows="3" class="form-control" placeholder="Enter examination results"
-                  required></textarea>
-    </div>
-
-    <div class="form-group">
-        <label for="diagnosis">Diagnosis</label>
-        <textarea id="diagnosis" name="diagnosis" rows="3" class="form-control" placeholder="Enter diagnosis"
-                  required></textarea>
-    </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="/doctor/dashboard" class="btn btn-secondary">Cancel</a>
-    </div>
-</form>
-
-<script>
-    let currentDoctorId = null
-    let currentPatientId = null
-
-    async function handleNoteSubmit(event) {
-        event.preventDefault()
-
-        try {
-            // Собираем данные из формы
-            const form = event.target
-            const formData = new FormData(form)
-            const payload = {
-                patient_id: currentPatientId, // ID пациента из URL
-                date: formData.get('date'),
-                complaints: formData.get('symptoms'),
-                wellness_check: formData.get('results'),
-                diagnosis: formData.get('diagnosis')
-            }
-
-            // Отправляем данные на сервер через fetch
-            const response = await fetch(`/api/v1/clinic/medical_record/add_note?doctor_id=${currentDoctorId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-
-            const result = await response.json()
-
-            if (!response.ok) {
-                throw new Error(result.detail || "Failed to add note")
-            }
-
-            // Если все ок, перенаправляем на страницу с пациентами
-            showSuccess('Medical note added successfully')
-            window.location.href = '/doctor/dashboard'
-
-        } catch (error) {
-            showError(error.message)
-        }
-    }
-
-    // Отображаем ошибку
-    function showError(message) {
-        alert(`Error: ${message}`)
-    }
-
-    // Отображаем успех
-    function showSuccess(message) {
-        console.log(message)
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        // Извлекаем параметры из URL
-        const urlParams = new URLSearchParams(window.location.search)
-        currentDoctorId = urlParams.get('doctor_id')
-        currentPatientId = urlParams.get('patient_id')
-
-        if (!currentDoctorId || !currentPatientId) {
-            showError('Doctor ID or Patient ID not provided')
-            return
-        }
-
-        // Запрашиваем данные пациента и врача
-        try {
-            const [doctorRes, patientRes] = await Promise.all([
-                fetch(`/api/v1/clinic/doctors/get_data?doctor_id=${currentDoctorId}`),
-                fetch(`/api/v1/clinic/patients/get_data?patient_id=${currentPatientId}`)
-            ])
-
-            const doctor = await doctorRes.json()
-            const patient = await patientRes.json()
-
-            // Устанавливаем данные в поля формы
-            document.getElementById('doctor-name').value = `${doctor.last_name} ${doctor.first_name} ${doctor.second_name || ''}`
-            document.getElementById('patient-name').value = `${patient.last_name} ${patient.first_name} ${patient.second_name || ''}`
-        } catch (error) {
-            showError("Failed to fetch doctor or patient data")
-        }
-
-        // Инициализируем flatpickr для поля даты
-        flatpickr("#date", {
-            dateFormat: "Y-m-d", // Стандартный формат ISO
-            defaultDate: new Date(),
-            static: true
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0]
+            document.getElementById('date').value = today
         })
 
-        // При отправке формы обрабатываем данные
-        document.querySelector('#medical-record-form').addEventListener('submit', handleNoteSubmit)
-    })
-</script>
+        function handleSubmit(event) {
+            event.preventDefault()
+
+            const formData = {
+                date: document.getElementById('date').value,
+                complaints: document.getElementById('complaints').value,
+                examination: document.getElementById('examination').value,
+                diagnosis: document.getElementById('diagnosis').value,
+                recommendations: document.getElementById('recommendations').value
+            }
+
+            // Here you would typically send the data to your backend
+            console.log('Form data:', formData)
+
+            // For now, just go back to the previous page
+            goBack()
+        }
+
+        function goBack() {
+            // Extract patient ID from URL if it exists
+            const patientId = window.location.pathname.split('/').pop()
+            if (patientId) {
+                window.location.href = `/doctor/medicalCard/${patientId}`
+            } else {
+                window.history.back()
+            }
+        }
+
+        flatpickr("#from_date", {
+            dateFormat: "d-m-Y",
+            static: true
+        })
+        flatpickr("#to_date", {
+            dateFormat: "d-m-Y",
+            static: true
+        });
+    </script>
 </body>
+
 </html>

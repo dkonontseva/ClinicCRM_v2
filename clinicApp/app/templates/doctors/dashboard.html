@@ -208,113 +208,115 @@
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="doctor-profile">
-      <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
-    </div>
-    <div class="nav-menu">
-      <a href="/doctor/dashboard" class="nav-item active">Dashboard</a>
-      <a href="/doctor/myLeaves" class="nav-item">My leaves</a>
-      <a href="/doctor/patientsCards" class="nav-item">Patients' cards</a>
-      <a href="/doctor/profile" class="nav-item">Profile Settings</a>
-      <a href="/doctor/chat" class="nav-item">Chat</a>
-      <a href="/doctor/video" class="nav-item">Video</a>
-      <a href='/' class="logout">Logout</a>
-    </div>
-  </div>
-
-  <div class="main-content">
-    <h1 class="section-title">Dashboard</h1>
-
-    <div class="stats-container">
-      <div class="stat-card">
-        <h2 id="total-patients">0</h2>
-        <p>Total Patients</p>
-      </div>
-      <div class="stat-card">
-        <h2 id="today-appointments">0</h2>
-        <p>Today's Patients</p>
-      </div>
-      <div class="stat-card">
-        <h2 id="pending-appointments">0</h2>
-        <p>Total Appointments</p>
-      </div>
+    <div class="sidebar">
+        <div class="doctor-profile">
+            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+        </div>
+        <div class="nav-menu">
+            <a href="/doctor/dashboard" class="nav-item active">Дашборд</a>
+            <a href="/doctor/myLeaves" class="nav-item">Мои заявления</a>
+            <a href="/doctor/patientsCards" class="nav-item">Мед. карты пациентов</a>
+            <a href="/doctor/profile" class="nav-item">Профиль</a>
+            <a href="/doctor/chat" class="nav-item">Чат</a>
+            <a href="/doctor/video" class="nav-item">Видеочат</a>
+            <a href='/' class="logout">Выход</a>
+        </div>
     </div>
 
-    <div class="appointments-section">
-      <div class="tabs">
-        <div class="tab active" onclick="switchTab('upcoming')">Upcoming Appointments</div>
-        <div class="tab" onclick="switchTab('today')">Today's Appointments</div>
-      </div>
+    <div class="main-content">
+        <h1 class="section-title">Дашборд</h1>
 
-      <div id="upcoming" class="tab-content">
-        <table>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Appointment Date</th>
-              <th>Purpose</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="upcoming-appointments-body">
-          </tbody>
-        </table>
-      </div>
+        <div class="stats-container">
+            <div class="stat-card">
+                <h2 id="total-patients">0</h2>
+                <p>Всего пациентов</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="today-appointments">0</h2>
+                <p>Сегодняшние талоны</p>
+            </div>
+            <div class="stat-card">
+                <h2 id="pending-appointments">0</h2>
+                <p>Всего талонов</p>
+            </div>
+        </div>
 
-      <div id="today" class="tab-content" style="display: none;">
-        <table>
-          <thead>
-            <tr>
-              <th>Patient</th>
-              <th>Appointment Time</th>
-              <th>Purpose</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="today-appointments-body">
-          </tbody>
-        </table>
-      </div>
+        <div class="appointments-section">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('upcoming')">Предстоящие записи</div>
+                <div class="tab" onclick="switchTab('today')">Сегодняшние записи</div>
+            </div>
+
+            <div id="upcoming" class="tab-content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Пациент</th>
+                            <th>Дата приема</th>
+                            <th>Цель</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="upcoming-appointments-body">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="today" class="tab-content" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Пациент</th>
+                            <th>Время приема</th>
+                            <th>Цель</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="today-appointments-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div id="error-message" class="error-message" style="display: none;"></div>
+    <div id="error-message" class="error-message" style="display: none;"></div>
 
-  <script>
-    let doctorId = null
+    <script>
+        let doctorId = null
 
-    document.addEventListener('DOMContentLoaded', async function () {
-      const urlParams = new URLSearchParams(window.location.search)
-      doctorId = urlParams.get('id')
-      if (!doctorId) return showError('Doctor ID not provided')
+        document.addEventListener('DOMContentLoaded', async function () {
+            // const urlParams = new URLSearchParams(window.location.search)
+            // doctorId = urlParams.get('id')
+            // if (!doctorId) return showError('Doctor ID not provided')
 
-      try {
-        const data = await DoctorAPI.getDashboardData(doctorId)
-        updateDashboard(data)
-        renderAppointments(data.today_appointments, data.upcoming_appointments)
-      } catch (err) {
-        showError(err.message || 'Failed to load dashboard')
-      }
-    })
+            try {
+                // const data = await DoctorAPI.getDashboardData(doctorId)
+                const data = await loadMockDashboardData()
 
-    function updateDashboard(data) {
-      document.getElementById('total-patients').textContent = data.total_patients
-      document.getElementById('today-appointments').textContent = data.today_patients
-      document.getElementById('pending-appointments').textContent = data.total_appointments
-    }
+                updateDashboard(data)
+                renderAppointments(data.today_appointments, data.upcoming_appointments)
+            } catch (err) {
+                showError(err.message || 'Failed to load dashboard')
+            }
+        })
 
-    function renderAppointments(todayList, upcomingList) {
-      const todayBody = document.getElementById('today-appointments-body')
-      const upcomingBody = document.getElementById('upcoming-appointments-body')
+        function updateDashboard(data) {
+            document.getElementById('total-patients').textContent = data.total_patients
+            document.getElementById('today-appointments').textContent = data.today_patients
+            document.getElementById('pending-appointments').textContent = data.total_appointments
+        }
 
-      todayBody.innerHTML = ''
-      upcomingBody.innerHTML = ''
+        function renderAppointments(todayList, upcomingList) {
+            const todayBody = document.getElementById('today-appointments-body')
+            const upcomingBody = document.getElementById('upcoming-appointments-body')
 
-      todayList.forEach(app => {
-        todayBody.innerHTML += `
+            todayBody.innerHTML = ''
+            upcomingBody.innerHTML = ''
+
+            todayList.forEach(app => {
+                todayBody.innerHTML += `
           <tr>
-            <td>Patient #${app.patient_id}</td>
+            <td>${app.patient_name}</td>
             <td>${app.time}</td>
             <td>${app.service || '-'}</td>
             <td>
@@ -323,46 +325,104 @@
             </td>
           </tr>
         `
-      })
+            })
 
-      upcomingList.forEach(app => {
-        upcomingBody.innerHTML += `
+            upcomingList.forEach(app => {
+                upcomingBody.innerHTML += `
           <tr>
-            <td>Patient #${app.patient_id}</td>
+            <td>${app.patient_name}</td>
             <td>${app.date}<br>${app.time}</td>
             <td>${app.service || '-'}</td>
             <td>
-              <button class="status-btn cancel" onclick="cancelAppointment(${app.id})">Cancel</button>
+              <button class="status-btn cancel" onclick="cancelAppointment(${app.id})">Отменить</button>
             </td>
           </tr>
         `
-      })
-    }
+            })
+        }
 
-    async function cancelAppointment(appointmentId) {
-      try {
-        await DoctorAPI.updateAppointmentStatus(appointmentId, 'declined')
-        location.reload()
-      } catch (error) {
-        showError('Failed to cancel appointment')
-      }
-    }
+        async function cancelAppointment(appointmentId) {
+            try {
+                await DoctorAPI.updateAppointmentStatus(appointmentId, 'declined')
+                location.reload()
+            } catch (error) {
+                showError('Failed to cancel appointment')
+            }
+        }
 
-    function showError(message) {
-      const el = document.getElementById('error-message')
-      el.textContent = message
-      el.style.backgroundColor = '#f44336'
-      el.style.display = 'block'
-      setTimeout(() => el.style.display = 'none', 3000)
-    }
+        function showError(message) {
+            const el = document.getElementById('error-message')
+            el.textContent = message
+            el.style.backgroundColor = '#f44336'
+            el.style.display = 'block'
+            setTimeout(() => el.style.display = 'none', 3000)
+        }
 
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none')
-      document.getElementById(tab).style.display = 'block'
-      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
-      document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
-    }
-  </script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none')
+            document.getElementById(tab).style.display = 'block'
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'))
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
+        }
+
+        async function loadMockDashboardData() {
+            return {
+                total_patients: 23,
+                today_patients: 4,
+                total_appointments: 12,
+                today_appointments: [
+                    {
+                        id: 1,
+                        patient_name: "Кононцева Диана",
+                        time: "09:00",
+                        service: "Первичная консультация"
+                    },
+                    {
+                        id: 2,
+                        patient_name: "Маркова Людмила",
+                        time: "10:30",
+                        service: "Повторная консультация"
+                    },
+                    {
+                        id: 3,
+                        patient_name: "Сидорчук Анна",
+                        time: "11:00",
+                        service: "Повторная консультация"
+                    },
+                    {
+                        id: 4,
+                        patient_name: "Кудрявцева Валерия",
+                        time: "13:00",
+                        service: "Повторная консультация"
+                    }
+                ],
+                upcoming_appointments: [
+                    {
+                        id: 5,
+                        patient_name: "Голубь Кира",
+                        date: "2024-05-03",
+                        time: "09:30",
+                        service: "Первичная консультация"
+                    },
+                    {
+                        id: 6,
+                        patient_name: "Иванов Иван",
+                        date: "2024-05-04",
+                        time: "14:00",
+                        service: "Повторная консультация"
+                    },
+                    {
+                        id: 7,
+                        patient_name: "Кононцева Диана",
+                        date: "2024-05-05",
+                        time: "11:00",
+                        service: "Повторная консультация"
+                    }
+                ]
+            }
+        }
+
+    </script>
 </body>
 
 </html>

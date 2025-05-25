@@ -1,6 +1,6 @@
 import asyncio
 import os
-from datetime import date
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 import uvicorn
@@ -10,6 +10,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from sqlalchemy import select
 
 from clinicApp.app.api.auth.router import router as auth_router
 from clinicApp.app.api.chat.router_socket import router as chat_router
@@ -22,6 +24,9 @@ from clinicApp.app.api.talons.router import router as talons_router
 from clinicApp.app.api.talons.dao import AppointmentsDAO
 from clinicApp.app.core.kafka import ensure_topics_exist, wait_for_kafka
 from clinicApp.app.api.admin import router as admin_router
+from clinicApp.core.database import async_session_maker
+from clinicApp.models.models import Talons, Users, Doctors
+from clinicApp.core.email import send_email
 
 app = FastAPI(openapi_url="/api/v1/clinic/openapi.json", docs_url="/api/v1/clinic/docs")
 
@@ -113,6 +118,66 @@ async def doctor_add_leave(request: Request):
 async def doctor_edit_leave(request: Request, leave_id: int):
     return templates.TemplateResponse("doctors/editLeaves.html", {"request": request, "leave_id": leave_id})
 
+
+@app.get("/admin/dashboard", response_class=HTMLResponse)
+async def admin_dashboard(request: Request):
+    return templates.TemplateResponse("adminDashboard.html", {"request": request})
+
+
+# === Manage Users (Doctors / Patients) ===
+
+@app.get("/admin/doctors", response_class=HTMLResponse)
+async def admin_doctor_list(request: Request):
+    return templates.TemplateResponse("doctorsList.html", {"request": request})
+
+@app.get("/admin/patients", response_class=HTMLResponse)
+async def admin_patient_list(request: Request):
+    return templates.TemplateResponse("patientsList.html", {"request": request})
+
+@app.get("/admin/editUser/{user_id}", response_class=HTMLResponse)
+async def admin_edit_user(request: Request, user_id: int):
+    return templates.TemplateResponse("editPatient.html", {"request": request, "user_id": user_id})
+
+# === Schedule Management ===
+
+@app.get("/admin/schedule", response_class=HTMLResponse)
+async def admin_schedule(request: Request):
+    return templates.TemplateResponse("scheduleList.html", {"request": request})
+
+@app.get("/admin/editSchedule/{schedule_id}", response_class=HTMLResponse)
+async def admin_edit_schedule(request: Request, schedule_id: int):
+    return templates.TemplateResponse("editSchedule.html", {"request": request, "schedule_id": schedule_id})
+
+# === Leave Management ===
+
+@app.get("/admin/leaves", response_class=HTMLResponse)
+async def admin_leaves(request: Request):
+    return templates.TemplateResponse("doctorLeaves.html", {"request": request})
+
+@app.get("/admin/editLeave/{leave_id}", response_class=HTMLResponse)
+async def admin_edit_leave(request: Request, leave_id: int):
+    return templates.TemplateResponse("editLeaves.html", {"request": request, "leave_id": leave_id})
+
+# === Medical Records Management ===
+
+@app.get("/admin/medicalCards", response_class=HTMLResponse)
+async def admin_medical_cards(request: Request):
+    return templates.TemplateResponse("doctors/medicalCardsForPatient.html", {"request": request})
+
+@app.get("/admin/medicalCard/{card_id}", response_class=HTMLResponse)
+async def admin_medical_card_detail(request: Request, card_id: int):
+    return templates.TemplateResponse("doctors/medicalCard.html", {"request": request, "card_id": card_id})
+
+# === Admin Chat & Video Room ===
+
+@app.get("/admin/chat", response_class=HTMLResponse)
+async def admin_chat(request: Request):
+    return templates.TemplateResponse("doctors/chat.html", {"request": request})
+
+@app.get("/admin/video", response_class=HTMLResponse)
+async def admin_video(request: Request):
+    return templates.TemplateResponse("doctors/video.html", {"request": request})
+
 app.include_router(auth_router, prefix="/api/v1/clinic")
 app.include_router(patients_router, prefix="/api/v1/clinic")
 app.include_router(doctors_router, prefix="/api/v1/clinic")
@@ -129,6 +194,59 @@ producer = AIOKafkaProducer(bootstrap_servers=KAFKA_BOOTSTRAP_SERVERS)
 
 # Хранилище для фоновых задач
 background_tasks = set()
+
+scheduler = AsyncIOScheduler()
+
+async def send_appointment_reminders():
+    async with async_session_maker() as session:
+        tomorrow = datetime.now().date() + timedelta(days=1)
+        
+        query = (
+            select(
+                Users.login.label('patient_email'),
+                Doctors.users.has(Users.first_name).label('doctor_first_name'),
+                Doctors.users.has(Users.last_name).label('doctor_last_name'),
+                Talons.date,
+                Talons.time
+            )
+            .join(Users, Talons.patient_id == Users._id)
+            .join(Doctors, Talons.doctor_id == Doctors._id)
+            .where(Talons.date == tomorrow)
+            .where(Talons.status == 'approved')
+        )
+        
+        result = await session.execute(query)
+        appointments = result.all()
+        
+        for appointment in appointments:
+            subject = "Напоминание о записи к врачу"
+            body = f"""
+            <html>
+                <body>
+                    <h2>Уважаемый пациент!</h2>
+                    <p>Напоминаем о вашей записи к врачу:</p>
+                    <ul>
+                        <li>Дата: {appointment.date}</li>
+                        <li>Время: {appointment.time}</li>
+                        <li>Врач: {appointment.doctor_last_name} {appointment.doctor_first_name}</li>
+                    </ul>
+                    <p>С уважением,<br>Ваша клиника</p>
+                </body>
+            </html>
+            """
+            
+            await send_email(
+                subject=subject,
+                recipients=[appointment.patient_email],
+                body=body
+            )
+
+scheduler.add_job(
+    send_appointment_reminders,
+    CronTrigger(hour=7, minute=0),
+    id='appointment_reminders',
+    replace_existing=True
+)
 
 @app.on_event("startup")
 async def startup_event():
@@ -158,6 +276,8 @@ async def startup_event():
     
     print("🔁 Kafka consumers запущены в фоновом режиме.")
 
+    scheduler.start()
+
 @app.on_event("shutdown")
 async def shutdown_event():
     print("🛑 Остановка Kafka producer...")
@@ -168,6 +288,8 @@ async def shutdown_event():
     for task in background_tasks:
         task.cancel()
     await asyncio.gather(*background_tasks, return_exceptions=True)
+
+    scheduler.shutdown()
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=True)

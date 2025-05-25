@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -201,7 +202,11 @@
             margin: 10px 0 5px;
         }
 
-        input[type="text"], input[type="date"], input[type="time"], select, textarea {
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -277,7 +282,11 @@
             margin-bottom: 8px;
         }
 
-        input[type="text"], input[type="date"], input[type="time"], select, textarea {
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
             padding: 10px;
             font-size: 14px;
             border: 1px solid #dcdfe6;
@@ -368,43 +377,44 @@
         }
     </style>
 </head>
+
 <body>
 <div class="container">
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+            <span>CarePuls</span>
         </div>
         <div class="menu-item">
             <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/dashboard">Дашборд</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
+            <a href="/admin/doctorsList">Врачи</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
+            <a href="/admin/patientsList">Пациенты</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
+            <a href="/admin/appointmentList">Талоны</a>
         </div>
         <div class="menu-item">
             <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
+            <a href="/admin/scheduleList">Графики</a>
         </div>
-        <div class="menu-item  active">
+        <div class="menu-item active">
             <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
+            <a href="/admin/doctorLeaves">Заявления</a>
         </div>
-        <a href='/' class="logout">Logout</a>
+        <a href='/' class="logout">Выход</a>
     </div>
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <h2 id="form-title">Create Leave</h2>
+            <h2 id="form-title">Заявление</h2>
         </div>
 
         <div class="container1">
@@ -415,46 +425,46 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="doctor-name">Doctor Name *</label>
+                            <label for="doctor-name">ФИО врача *</label>
                             <input type="text" id="doctor-name" autocomplete="off" required>
                             <ul id="doctor-suggestions" class="suggestions"></ul>
                         </div>
                         <div class="form-group">
-                            <label for="leave-type">Leave Type *</label>
+                            <label for="leave-type">Тип *</label>
                             <select id="leave-type" name="leave_type" required>
-                                <option value="Medical Reason">Medical Reason</option>
-                                <option value="Casual Leave">Casual Leave</option>
-                                <option value="Family Reason">Family Reason</option>
+                                <option value="Medical Reason">Больничный</option>
+                                <option value="Casual Leave">Отпуск</option>
+                                <option value="Family Reason">Иные причины</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="from-date">From *</label>
+                            <label for="from-date">С *</label>
                             <input type="date" id="from-date" name="from_date" required>
                         </div>
                         <div class="form-group">
-                            <label for="to-date">To *</label>
+                            <label for="to-date">До *</label>
                             <input type="date" id="to-date" name="to_date" required>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="notes">Notes *</label>
+                        <label for="notes">Заметки *</label>
                         <textarea id="notes" name="notes" required></textarea>
                     </div>
                     <div class="form-group status-group">
-                        <label>Status *</label>
+                        <label>Статус *</label>
                         <input type="radio" id="approved" name="status" value="Approved">
-                        <label for="approved">Approved</label>
+                        <label for="approved">Одобрено</label>
                         <input type="radio" id="pending" name="status" value="Pending">
-                        <label for="pending">Pending</label>
+                        <label for="pending">Ожидание</label>
                         <input type="radio" id="declined" name="status" value="Declined">
-                        <label for="declined">Declined</label>
+                        <label for="declined">Отклонено</label>
                     </div>
                     <div class="button-group">
-                        <button type="submit" class="submit-button">Save</button>
+                        <button type="submit" class="submit-button">Сохранить</button>
                         <button type="button" class="cancel-button"
-                                onclick="window.location.href='/admin/doctorLeaves';">Cancel
+                                onclick="window.location.href='/admin/doctorLeaves';">Отменить
                         </button>
                     </div>
                 </form>
@@ -465,62 +475,75 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const leaveId = document.getElementById('leave-id').value;
-        const doctorIdInput = document.getElementById('doctor-id');
-        const doctorNameInput = document.getElementById('doctor-name');
-        const suggestionsList = document.getElementById('doctor-suggestions');
+        const leaveId = document.getElementById('leave-id').value
+        const doctorIdInput = document.getElementById('doctor-id')
+        const doctorNameInput = document.getElementById('doctor-name')
+        const suggestionsList = document.getElementById('doctor-suggestions')
 
-        // Если редактирование, загрузить данные заявления
         if (leaveId) {
-            document.getElementById('form-title').innerText = 'Edit Leave';
-            fetch(`/admin/leaves/getLeave?leave_id=${leaveId}`)
-                .then(res => res.json())
-                .then(data => {
-                    doctorNameInput.value = `${data.doctor_first_name} ${data.doctor_last_name} ${data.doctor_second_name || ''}`;
-                    doctorIdInput.value = data.doctor_id;
-                    document.getElementById('leave-type').value = data.leave_type;
-                    document.getElementById('from-date').value = data.from_date;
-                    document.getElementById('to-date').value = data.to_date;
-                    document.getElementById('notes').value = data.reason;
-                    document.querySelector(`input[name="status"][value="${data.status}"]`).checked = true;
-                    doctorNameInput.disabled = true;
-                })
-                .catch(err => {
-                    alert('Failed to load leave data');
-                    console.error(err);
-                });
+            document.getElementById('form-title').innerText = 'Форма заявления'
+            // Mock leave data
+            const data = {
+                doctor_first_name: "Мария",
+                doctor_last_name: "Смирнова",
+                doctor_second_name: "Александровна",
+                doctor_id: 1,
+                leave_type: "Больничный",
+                from_date: "01-05-2025",
+                to_date: "03-05-2025",
+                reason: "Плановое медицинское обследование",
+                status: "Одобрено"
+            }
+            let stat
+            if (data.status === "Ожидание") {
+                stat = 'pending'
+            } else if (data.status === "Одобрено") {
+                stat = 'approved'
+            } else {
+                stat = 'declined'
+            }
+            doctorNameInput.value = `${data.doctor_first_name} ${data.doctor_last_name} ${data.doctor_second_name}`
+            doctorIdInput.value = data.doctor_id
+            document.getElementById('leave-type').value = data.leave_type
+            document.getElementById('from-date').value = data.from_date
+            document.getElementById('to-date').value = data.to_date
+            document.getElementById('notes').value = data.reason
+            document.querySelector(`input[name="status"][value="${stat}"]`).checked = true
+            doctorNameInput.disabled = true
         }
 
-        // Поиск врача по имени
+        // Mock doctor search
         doctorNameInput.addEventListener('input', () => {
-            const query = doctorNameInput.value.trim();
+            const query = doctorNameInput.value.trim()
             if (query.length < 2) {
-                suggestionsList.innerHTML = '';
-                return;
+                suggestionsList.innerHTML = ''
+                return
             }
-            fetch(`/admin/leaves/search_by_name?name=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    suggestionsList.innerHTML = '';
-                    data.forEach(doctor => {
-                        const li = document.createElement('li');
-                        li.textContent = `${doctor.first_name} ${doctor.last_name} ${doctor.second_name || ''}`;
-                        li.addEventListener('click', () => {
-                            doctorNameInput.value = li.textContent;
-                            doctorIdInput.value = doctor._id;
-                            suggestionsList.innerHTML = '';
-                        });
-                        suggestionsList.appendChild(li);
-                    });
+
+            // Mock doctor data
+            const doctors = [{
+                _id: 1,
+                first_name: "Мария",
+                last_name: "Смирнова",
+                second_name: "Александровна"
+            }]
+
+            suggestionsList.innerHTML = ''
+            doctors.forEach(doctor => {
+                const li = document.createElement('li')
+                li.textContent = `${doctor.first_name} ${doctor.last_name} ${doctor.second_name}`
+                li.addEventListener('click', () => {
+                    doctorNameInput.value = li.textContent
+                    doctorIdInput.value = doctor._id
+                    suggestionsList.innerHTML = ''
                 })
-                .catch(err => {
-                    console.error('Error fetching doctor suggestions:', err);
-                });
-        });
+                suggestionsList.appendChild(li)
+            })
+        })
 
         // Отправка формы
         document.getElementById('leave-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault()
 
             const payload = {
                 from_date: document.getElementById('from-date').value,
@@ -528,34 +551,43 @@
                 leave_type: document.getElementById('leave-type').value,
                 reason: document.getElementById('notes').value,
                 status: document.querySelector('input[name="status"]:checked')?.value
-            };
+            }
 
-            const isEdit = Boolean(leaveId);
+            const isEdit = Boolean(leaveId)
             const url = isEdit
                 ? `/admin/leaves/updateLeave?leave_id=${leaveId}`
-                : `/admin/leaves/addLeave?doctor_id=${doctorIdInput.value}`;
-            const method = isEdit ? 'PUT' : 'POST';
+                : `/admin/leaves/addLeave?doctor_id=${doctorIdInput.value}`
+            const method = isEdit ? 'PUT' : 'POST'
 
             try {
                 const response = await fetch(url, {
                     method,
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(isEdit ? {_id: parseInt(leaveId), ...payload} : payload)
-                });
+                })
 
                 if (response.ok) {
-                    alert(isEdit ? 'Leave updated!' : 'Leave created!');
-                    window.location.href = '/admin/doctorLeaves';
+                    alert(isEdit ? 'Leave updated!' : 'Leave created!')
+                    window.location.href = '/admin/doctorLeaves'
                 } else {
-                    const err = await response.json();
-                    alert(`Error: ${err.detail || 'Could not save leave'}`);
+                    const err = await response.json()
+                    alert(`Error: ${err.detail || 'Could not save leave'}`)
                 }
             } catch (error) {
-                console.error('Error submitting form:', error);
-                alert('An error occurred while submitting the form.');
+                console.error('Error submitting form:', error)
+                alert('An error occurred while submitting the form.')
             }
-        });
+        })
+    });
+    flatpickr("#from-date", {
+        dateFormat: "d-m-Y",
+        static: true
+    })
+    flatpickr("#to-date", {
+        dateFormat: "d-m-Y",
+        static: true
     });
 </script>
 </body>
+
 </html>

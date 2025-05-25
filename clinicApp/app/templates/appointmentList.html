@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -55,7 +56,7 @@
             display: flex;
         }
 
-               /* Sidebar */
+        /* Sidebar */
         .container {
             display: flex;
             min-height: 100vh;
@@ -426,183 +427,556 @@
                 grid-template-columns: 1fr 1fr;
             }
         }
-
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
+
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Список талонов</h2>
+            </div>
+            <form id="searchForm">
+                <div class="filters" style="display: flex; gap: 15px; align-items: center;">
+                    <input type="text" name="search_query" class="filter-input" placeholder="Поиск по ФИО врача...">
+                    <input type="date" id="date-from" class="filter-input" name="from_date">
+                    <input type="date" id="date-to" class="filter-input" name="to_date">
+                    <select class="filter-input" name="status">
+                        <option value="">Статус</option>
+                        <option>Одобрено</option>
+                        <option>Ожидание</option>
+                        <option>Отклонено</option>
+                    </select>
+                    <button type="submit" class="search-button">Поиск</button>
+                </div>
+            </form>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="action-buttons">
+                    <button class="action-btn add-btn" onclick="window.location.href='/admin/addAppointment'">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                    <button class="action-btn delete-btn" style="float: right;"
+                        onclick="deleteSelected()">Удалить</button>
+                    <button class="action-btn refresh-btn" onclick="fetchAppointments()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Врач</th>
+                            <th>Пациент</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Статус</th>
+                            <th>Причина</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-table-body">
+                        <!-- Appointments will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <!-- Pagination controls will be inserted here -->
+                </div>
+            </div>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item active">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-         <a href='/' class="logout">Logout</a>
     </div>
 
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h2>Appointments List</h2>
-        </div>
-        <form id="searchForm">
-            <div class="filters" style="display: flex; gap: 15px; align-items: center;">
-                <input type="text" name="search_query" class="filter-input" placeholder="Search by doctor name">
-                <input type="date" id="date-from" class="filter-input" name="from_date">
-                <input type="date" id="date-to" class="filter-input" name="to_date">
-                <select class="filter-input" name="status">
-                    <option value="">Appointment Status</option>
-                    <option>Approved</option>
-                    <option>Pending</option>
-                    <option>Declined</option>
-                </select>
-                <button type="submit" class="search-button">Search</button>
-            </div>
-        </form>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div class="action-buttons">
-                <button class="action-btn add-btn" onclick="window.location.href='/admin/addAppointment'">
-                    <i class="fas fa-plus"></i> Add New
-                </button>
-                <button class="action-btn refresh-btn" onclick="fetchAppointments()">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <button class="action-btn delete-btn" style="float: right;" onclick="deleteSelected()">Delete</button>
-            <table>
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Doctor Name</th>
-                    <th>Patient Name</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Reason</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- Appointments will be dynamically inserted here -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-<script>
-    const today = new Date().toISOString().split("T")[0];
-    flatpickr("#date-from", {
+    <script>
+        const today = new Date().toISOString().split("T")[0]
+        flatpickr("#date-from", {
             dateFormat: "d-m-y",
             static: true,
             minDate: today
-        });
-    flatpickr("#date-to", {
-        dateFormat: "d-m-y",
-        static: true,
-        minDate: today
-    });
+        })
+        flatpickr("#date-to", {
+            dateFormat: "d-m-y",
+            static: true,
+            minDate: today
+        })
 
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchAppointments();
+        let currentPage = 1
+        const recordsPerPage = 8
+        let allAppointments = []
 
-        document.querySelector('form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            fetchAppointments();
-        });
-    });
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAppointments()
 
-    async function fetchAppointments() {
-        const form = document.getElementById('searchForm');
-        const params = new URLSearchParams(new FormData(form));
-        const response = await fetch(`/admin/appointments/get_all?${params}`);
-        const appointments = await response.json();
+            document.querySelector('form').addEventListener('submit', function (e) {
+                e.preventDefault()
+                currentPage = 1
+                fetchAppointments()
+            })
+        })
 
-        const tbody = document.querySelector('tbody');
-        tbody.innerHTML = '';
+        async function fetchAppointments() {
+            const form = document.getElementById('searchForm')
+            const params = new URLSearchParams(new FormData(form))
 
-        if (appointments.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">No appointments found.</td></tr>`;
-            return;
+            // Mock data for demonstration
+            allAppointments = [
+                {
+                    id: 1,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Диана",
+                    patient_last_name: "Кононцева",
+                    date: "2024-04-25",
+                    time: "09:00",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 2,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Людмила",
+                    patient_last_name: "Маркова",
+                    date: "2024-04-25",
+                    time: "10:30",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 3,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Анна",
+                    patient_last_name: "Сидорчук",
+                    date: "2024-04-25",
+                    time: "11:00",
+                    status: "Approved",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 4,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Валерия",
+                    patient_last_name: "Кудрявцева",
+                    date: "2024-04-25",
+                    time: "13:00",
+                    status: "Approved",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 5,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Кира",
+                    patient_last_name: "Голубь",
+                    date: "2024-05-03",
+                    time: "09:30",
+                    status: "Отклонено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 6,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Иван",
+                    patient_last_name: "Иванов",
+                    date: "2024-05-04",
+                    time: "14:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 7,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Диана",
+                    patient_last_name: "Кононцева",
+                    date: "2024-05-05",
+                    time: "11:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 8,
+                    doctor_first_name: "Александр",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Елена",
+                    patient_last_name: "Соколова",
+                    date: "2024-04-25",
+                    time: "09:00",
+                    status: "Approved",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 9,
+                    doctor_first_name: "Александр",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Михаил",
+                    patient_last_name: "Козлов",
+                    date: "2024-04-25",
+                    time: "10:30",
+                    status: "Approved",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 10,
+                    doctor_first_name: "Елена",
+                    doctor_last_name: "Иванова",
+                    patient_first_name: "Ольга",
+                    patient_last_name: "Новикова",
+                    date: "2024-04-25",
+                    time: "09:00",
+                    status: "Approved",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 11,
+                    doctor_first_name: "Елена",
+                    doctor_last_name: "Иванова",
+                    patient_first_name: "Сергей",
+                    patient_last_name: "Морозов",
+                    date: "2024-04-25",
+                    time: "11:00",
+                    status: "Approved",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 12,
+                    doctor_first_name: "Дмитрий",
+                    doctor_last_name: "Сидоров",
+                    patient_first_name: "Анна",
+                    patient_last_name: "Кузнецова",
+                    date: "2024-04-25",
+                    time: "09:30",
+                    status: "Approved",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 13,
+                    doctor_first_name: "Дмитрий",
+                    doctor_last_name: "Сидоров",
+                    patient_first_name: "Павел",
+                    patient_last_name: "Волков",
+                    date: "2024-04-25",
+                    time: "10:30",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 14,
+                    doctor_first_name: "Александр",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Мария",
+                    patient_last_name: "Смирнова",
+                    date: "2024-05-03",
+                    time: "14:00",
+                    status: "Ожидание",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 15,
+                    doctor_first_name: "Елена",
+                    doctor_last_name: "Иванова",
+                    patient_first_name: "Алексей",
+                    patient_last_name: "Соколов",
+                    date: "2024-05-04",
+                    time: "09:00",
+                    status: "Ожидание",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 16,
+                    doctor_first_name: "Дмитрий",
+                    doctor_last_name: "Сидоров",
+                    patient_first_name: "Екатерина",
+                    patient_last_name: "Попова",
+                    date: "2024-05-05",
+                    time: "11:30",
+                    status: "Ожидание",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 17,
+                    doctor_first_name: "Александр",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Ирина",
+                    patient_last_name: "Лебедева",
+                    date: "2024-05-06",
+                    time: "10:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 18,
+                    doctor_first_name: "Елена",
+                    doctor_last_name: "Иванова",
+                    patient_first_name: "Николай",
+                    patient_last_name: "Козлов",
+                    date: "2024-05-07",
+                    time: "13:00",
+                    status: "Отклонено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 19,
+                    doctor_first_name: "Дмитрий",
+                    doctor_last_name: "Сидоров",
+                    patient_first_name: "Татьяна",
+                    patient_last_name: "Морозова",
+                    date: "2024-05-08",
+                    time: "09:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 20,
+                    doctor_first_name: "Александр",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Виктор",
+                    patient_last_name: "Новиков",
+                    date: "2024-05-09",
+                    time: "11:00",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 21,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Анна",
+                    patient_last_name: "Иванова",
+                    date: "2024-11-03",
+                    time: "10:00",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 22,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Игорь",
+                    patient_last_name: "Петров",
+                    date: "2025-01-20",
+                    time: "09:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 23,
+                    doctor_first_name: "Алексей",
+                    doctor_last_name: "Смирнов",
+                    patient_first_name: "Мария",
+                    patient_last_name: "Соколова",
+                    date: "2025-01-09",
+                    time: "11:30",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 24,
+                    doctor_first_name: "Алексей",
+                    doctor_last_name: "Смирнов",
+                    patient_first_name: "Иван",
+                    patient_last_name: "Кузнецов",
+                    date: "2025-02-15",
+                    time: "14:00",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 25,
+                    doctor_first_name: "Игорь",
+                    doctor_last_name: "Петров",
+                    patient_first_name: "Мария",
+                    patient_last_name: "Соколова",
+                    date: "2025-03-28",
+                    time: "10:00",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                },
+                {
+                    id: 26,
+                    doctor_first_name: "Алексей",
+                    doctor_last_name: "Смирнов",
+                    patient_first_name: "Анна",
+                    patient_last_name: "Иванова",
+                    date: "2025-04-10",
+                    time: "15:30",
+                    status: "Одобрено",
+                    reason: "Повторная консультация"
+                },
+                {
+                    id: 27,
+                    doctor_first_name: "Мария",
+                    doctor_last_name: "Смирнова",
+                    patient_first_name: "Алексей",
+                    patient_last_name: "Смирнов",
+                    date: "2025-04-12",
+                    time: "09:00",
+                    status: "Одобрено",
+                    reason: "Первичная консультация"
+                }
+            ]
+
+            // Sort appointments by date in descending order
+            allAppointments.sort((a, b) => {
+                const dateA = new Date(a.date + 'T' + a.time)
+                const dateB = new Date(b.date + 'T' + b.time)
+                return dateB - dateA
+            })
+
+            displayAppointments()
+            setupPagination()
         }
 
-        appointments.forEach(app => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
+        function displayAppointments() {
+            const tbody = document.getElementById('appointments-table-body')
+            tbody.innerHTML = ''
+
+            const startIndex = (currentPage - 1) * recordsPerPage
+            const endIndex = startIndex + recordsPerPage
+            const paginatedAppointments = allAppointments.slice(startIndex, endIndex)
+
+            if (paginatedAppointments.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align: center;">Нет записей.</td></tr>`
+                return
+            }
+
+            paginatedAppointments.forEach(app => {
+                let stat
+                if (app.status === "Ожидание" || app.status === "Pending") {
+                    stat = 'pending'
+                } else if (app.status === "Одобрено" || app.status === "Approved") {
+                    stat = 'approved'
+                } else {
+                    stat = 'declined'
+                }
+
+                const row = document.createElement('tr')
+                row.innerHTML = `
                 <td><input type="checkbox" name="selectedRows" value="${app.id}"></td>
                 <td>${app.doctor_first_name} ${app.doctor_last_name}</td>
                 <td>${app.patient_first_name} ${app.patient_last_name}</td>
                 <td>${app.date}</td>
                 <td>${app.time}</td>
-                <td><span class="status-${app.status.toLowerCase()}">${app.status}</span></td>
+                    <td><span class="status-${stat}">${app.status}</span></td>
                 <td>${app.reason || ''}</td>
                 <td>
                     <button class="download-btn" style="background-color: transparent; border-color: transparent" onclick="redirectToPage(${app.id})">
                         <img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Edit"/>
                     </button>
                 </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function redirectToPage(appointmentId) {
-        window.location.href = `/admin/addAppointment/${appointmentId}`;
-    }
-
-    async function deleteSelected() {
-        const checkboxes = document.querySelectorAll('input[name="selectedRows"]:checked');
-        const ids = Array.from(checkboxes).map(cb => cb.value);
-
-        if (!ids.length) {
-            alert("No appointments selected.");
-            return;
+                `
+                tbody.appendChild(row)
+            })
         }
 
-        for (const id of ids) {
-            try {
-                const res = await fetch(`/admin/appointments/delete?appointment_id=${id}`, {
-                    method: 'DELETE'
-                });
+        function setupPagination() {
+            const paginationContainer = document.getElementById('pagination')
+            const totalPages = Math.ceil(allAppointments.length / recordsPerPage)
 
-                if (!res.ok) {
-                    const err = await res.json();
-                    console.error(`Failed to delete ID ${id}:`, err.detail);
-                }
-            } catch (e) {
-                console.error(`Error deleting ID ${id}:`, e);
+            let paginationHTML = ''
+
+            paginationHTML += `
+                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                    Предыдущая
+                </button>
+            `
+
+            for (let i = 1; i <= totalPages; i++) {
+                paginationHTML += `
+                    <button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                        ${i}
+                    </button>
+                `
+            }
+
+            // Next button
+            paginationHTML += `
+                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                    Следующая
+                </button>
+            `
+
+            paginationContainer.innerHTML = paginationHTML
+        }
+
+        function changePage(newPage) {
+            const totalPages = Math.ceil(allAppointments.length / recordsPerPage)
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage
+                displayAppointments()
+                setupPagination()
             }
         }
 
-        await fetchAppointments(); // Обновить таблицу
-    }
-</script>
+        function redirectToPage(appointmentId) {
+            window.location.href = `/admin/addAppointment/${appointmentId}`
+        }
+
+        async function deleteSelected() {
+            const checkboxes = document.querySelectorAll('input[name="selectedRows"]:checked')
+            const ids = Array.from(checkboxes).map(cb => cb.value)
+
+            if (!ids.length) {
+                alert("Не выбрано ни одной записи.")
+                return
+            }
+
+            for (const id of ids) {
+                try {
+                    const res = await fetch(`/admin/appointments/delete?appointment_id=${id}`, {
+                        method: 'DELETE'
+                    })
+
+                    if (!res.ok) {
+                        const err = await res.json()
+                        console.error(`Failed to delete ID ${id}:`, err.detail)
+                    }
+                } catch (e) {
+                    console.error(`Error deleting ID ${id}:`, e)
+                }
+            }
+
+            await fetchAppointments()
+        }
+    </script>
 </body>
+
 </html>

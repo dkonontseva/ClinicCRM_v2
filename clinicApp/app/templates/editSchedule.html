@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -394,243 +394,253 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item active">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h2>Doctor Schedule</h2>
-        </div>
-
-        <div class="container1">
-            <div class="header">
-                <a href="/admin/scheduleList" class="breadcrumb">Doctor Schedule</a>
+    <div class="container">
+               <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
             </div>
-            <section class="edit-schedule">
-                <h2>{{ 'Edit Schedule' if schedule_id else 'Create Schedule' }}</h2>
-                <form id="edit-schedule-form">
-                    <!-- Doctor Selection -->
-                    <div class="form-row">
-                        <div class="form-group" style="position: relative;">
-                            <label for="doctor-name">Doctor Name *</label>
-                            <input type="text" id="doctor-name" name="doctor_name" autocomplete="off" required>
-                            <input type="hidden" id="doctor-id" name="doctor_id">
-                            <div id="autocomplete-list" class="autocomplete-items"></div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item active">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>График работы</h2>
+            </div>
+
+            <div class="container1">
+                <div class="header">
+                    <a href="/admin/scheduleList" class="breadcrumb">График</a>
+                </div>
+                <section class="edit-schedule">
+                    <h2>Отредактировать график</h2>
+                    <form id="edit-schedule-form">
+                        <!-- Doctor Selection -->
+                        <div class="form-row">
+                            <div class="form-group" style="position: relative;">
+                                <label for="doctor-name">Врач *</label>
+                                <input type="text" id="doctor-name" name="doctor_name" autocomplete="off" required>
+                                <input type="hidden" id="doctor-id" name="doctor_id">
+                                <div id="autocomplete-list" class="autocomplete-items"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Shift Selection -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="shift">Shift *</label>
-                            <select id="shift" name="shift_id" class="filter-input" required></select>
+                        <!-- Shift Selection -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="shift">Смена *</label>
+                                <select id="shift" name="shift_id" class="filter-input" required></select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="day-of-week">День недели *</label>
+                                <select id="day-of-week" name="day_of_week" class="filter-input" required></select>
+
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="day-of-week">Day of Week *</label>
-                            <select id="day-of-week" name="day_of_week" class="filter-input" required></select>
-
+                        <div class="button-group">
+                            <button type="submit" class="submit-button">Сохранить</button>
+                            <button type="button" class="cancel-button"
+                                onclick="window.location.href='/admin/scheduleList';">Отменить
+                            </button>
                         </div>
-                    </div>
+                    </form>
 
-                    <div class="button-group">
-                        <button type="submit" class="submit-button">Save</button>
-                        <button type="button" class="cancel-button"
-                                onclick="window.location.href='/admin/scheduleList';">Cancel
-                        </button>
-                    </div>
-                </form>
-
-            </section>
+                </section>
+            </div>
         </div>
     </div>
-</div>
-<script>
-    const scheduleId = window.location.pathname.split('/').pop().match(/^\d+$/) ? parseInt(window.location.pathname.split('/').pop()) : null;
+    <script>
+        const scheduleId = window.location.pathname.split('/').pop().match(/^\d+$/) ? parseInt(window.location.pathname.split('/').pop()) : null
 
-    document.addEventListener('DOMContentLoaded', () => {
-        const scheduleId = '{{ schedule_id or "" }}';
+        document.addEventListener('DOMContentLoaded', () => {
+            const scheduleId = '{{ schedule_id or "" }}'
 
-        if (scheduleId) {
-            // Режим редактирования
-            fetch(`/api/getSchedule?schedule_id=${scheduleId}`)
-                .then(res => res.json())
-                .then(data => {
-                    fetchShifts(data.shift_id);
-                    populateWeekdays(parseInt(data.day_of_week));
-                    document.getElementById('doctor-name').value = `${data.first_name} ${data.last_name} ${data.second_name}`;
-                    document.getElementById('doctor-name').readOnly = true;
-                });
-        } else {
-            // Режим создания
-            fetchShifts(1);       // по умолчанию — первая смена
-            populateWeekdays(1);  // по умолчанию — понедельник
-        }
-    });
-
-    function fetchShifts() {
-        const shifts = [
-            {id: 1, start: '08:00', end: '14:00'},
-            {id: 2, start: '14:00', end: '20:00'}
-        ];
-
-        const select = document.getElementById('shift');
-        select.innerHTML = ''; // очищаем сначала
-
-        shifts.forEach(shift => {
-            const option = document.createElement('option');
-            option.value = shift.id;
-            option.textContent = `${shift.start} - ${shift.end}`;
-            if (shift.id === 1) {
-                option.selected = true;
+            if (scheduleId) {
+                // Режим редактирования
+                fetchScheduleDetails(scheduleId)
+            } else {
+                // Режим создания
+                fetchShifts()
+                populateWeekdays()
             }
-            select.appendChild(option);
-        });
-    }
-
-
-    function fetchScheduleDetails(id) {
-        fetch(`/admin/getSchedule?schedule_id=${id}`)
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('doctor-name').value = `${data.first_name} ${data.last_name} ${data.second_name}`;
-                document.getElementById('doctor-id').value = data._id;
-                document.getElementById('day-of-week').value = data.day_of_week;
-                // Shift будет подставлен, когда fetchShifts сработает — при совпадении ID
-            });
-    }
-
-    function setupDoctorAutocomplete() {
-        const input = document.getElementById('doctor-name');
-        const autocompleteList = document.getElementById('autocomplete-list');
-
-        input.addEventListener('input', function () {
-            const query = this.value;
-            if (query.length < 2) return;
-
-            fetch(`/admin/search_by_name?name=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    autocompleteList.innerHTML = '';
-                    data.forEach(doctor => {
-                        const item = document.createElement('div');
-                        item.classList.add('autocomplete-item');
-                        item.textContent = `${doctor.first_name} ${doctor.last_name} ${doctor.second_name}`;
-                        item.addEventListener('click', () => {
-                            input.value = item.textContent;
-                            document.getElementById('doctor-id').value = doctor.id;
-                            autocompleteList.innerHTML = '';
-                        });
-                        autocompleteList.appendChild(item);
-                    });
-                });
-        });
-
-        document.addEventListener('click', () => {
-            autocompleteList.innerHTML = '';
-        });
-    }
-
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        const doctorId = document.getElementById('doctor-id').value;
-        const shiftId = document.getElementById('shift').value;
-        const dayOfWeek = document.getElementById('day-of-week').value;
-
-        if (!doctorId || !shiftId || !dayOfWeek) {
-            alert('Please fill out all required fields.');
-            return;
-        }
-
-        const payload = {
-            doctor_id: parseInt(doctorId),
-            shift_id: parseInt(shiftId),
-            day_of_week: dayOfWeek
-        };
-
-        const url = scheduleId ? `/admin/update?schedule_id=${scheduleId}` : '/admin/add';
-        const method = scheduleId ? 'PUT' : 'POST';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(scheduleId ? {shift_id: shiftId, day_of_week: dayOfWeek} : payload)
         })
-            .then(res => res.json())
-            .then(data => {
-                alert('Schedule saved successfully!');
-                window.location.href = '/admin/scheduleList';
-            })
-            .catch(err => {
-                console.error('Error:', err);
-                alert('Failed to save schedule.');
-            });
-    }
 
-    function populateWeekdays(selectedDay = 1) {
-        const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        const select = document.getElementById('day-of-week');
-        select.innerHTML = '<option value="" disabled>Select a day</option>';
-
-        weekdays.forEach((day, index) => {
-            const value = index + 1; // потому что Monday = 1, Sunday = 7
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = day;
-            if (value === selectedDay) {
-                option.selected = true; // установить выбранный день
+        function fetchScheduleDetails(scheduleId) {
+            // Мок данные для расписания Марии Смирновой (ID=6)
+            const mockSchedule = {
+                _id: scheduleId,
+                doctor_id: 6,
+                first_name: "Мария",
+                last_name: "Смирнова",
+                second_name: "Александровна",
+                department_id: 4,
+                department_name: "Терапия",
+                shift_id: 1, // Утренняя смена
+                day_of_week: 1, // Понедельник
+                shifts: [
+                    { id: 1, start: "08:00", end: "14:00", name: "Утренняя смена" },
+                    { id: 2, start: "14:00", end: "20:00", name: "Вечерняя смена" }
+                ]
             }
-            select.appendChild(option);
+
+            // Заполняем форму данными
+            document.getElementById('doctor-name').value = `${mockSchedule.last_name} ${mockSchedule.first_name} ${mockSchedule.second_name}`
+            document.getElementById('doctor-id').value = mockSchedule.doctor_id
+            document.getElementById('doctor-name').readOnly = true
+
+            // Загружаем смены
+            fetchShifts(mockSchedule.shift_id)
+            populateWeekdays(parseInt(mockSchedule.day_of_week))
+        }
+
+        function fetchShifts(selectedShiftId = 1) {
+            const shifts = [
+                { id: 1, start: "08:00", end: "14:00", name: "Утренняя смена" },
+                { id: 2, start: "14:00", end: "20:00", name: "Вечерняя смена" }
+            ]
+
+            const select = document.getElementById('shift')
+            select.innerHTML = '<option value="" disabled>Выберите смену</option>'
+
+            shifts.forEach(shift => {
+                const option = document.createElement('option')
+                option.value = shift.id
+                option.textContent = `${shift.name} (${shift.start} - ${shift.end})`
+                if (shift.id === selectedShiftId) {
+                    option.selected = true
+                }
+                select.appendChild(option)
+            })
+        }
+
+        function populateWeekdays(selectedDay = 1) {
+            const weekdays = [
+                'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница'
+            ]
+            const select = document.getElementById('day-of-week')
+            select.innerHTML = '<option value="" disabled>Выберите день</option>'
+
+            weekdays.forEach((day, index) => {
+                const value = index + 1
+                const option = document.createElement('option')
+                option.value = value
+                option.textContent = day
+                if (value === selectedDay) {
+                    option.selected = true
+                }
+                select.appendChild(option)
+            })
+        }
+
+        function setupDoctorAutocomplete() {
+            const input = document.getElementById('doctor-name')
+            const autocompleteList = document.getElementById('autocomplete-list')
+
+            input.addEventListener('input', function () {
+                const query = this.value.toLowerCase()
+                if (query.length < 2) return
+
+                // Фильтруем список врачей
+                const filteredDoctors = doctors.filter(doctor => {
+                    const fullName = `${doctor.lastName} ${doctor.firstName} ${doctor.patronymic}`.toLowerCase()
+                    return fullName.includes(query)
+                })
+
+                autocompleteList.innerHTML = ''
+                filteredDoctors.forEach(doctor => {
+                    const item = document.createElement('div')
+                    item.className = 'autocomplete-item'
+                    item.textContent = `${doctor.lastName} ${doctor.firstName} ${doctor.patronymic} (${doctor.specialization})`
+                    item.addEventListener('click', () => {
+                        input.value = item.textContent
+                        document.getElementById('doctor-id').value = doctor.id
+                        autocompleteList.innerHTML = ''
+                    })
+                    autocompleteList.appendChild(item)
+                })
+            })
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault()
+
+            const doctorId = document.getElementById('doctor-id').value
+            const shiftId = document.getElementById('shift').value
+            const dayOfWeek = document.getElementById('day-of-week').value
+
+            if (!doctorId || !shiftId || !dayOfWeek) {
+                alert('Please fill out all required fields.')
+                return
+            }
+
+            const payload = {
+                doctor_id: parseInt(doctorId),
+                shift_id: parseInt(shiftId),
+                day_of_week: dayOfWeek
+            }
+
+            const url = scheduleId ? `/admin/update?schedule_id=${scheduleId}` : '/admin/add'
+            const method = scheduleId ? 'PUT' : 'POST'
+
+            fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(scheduleId ? { shift_id: shiftId, day_of_week: dayOfWeek } : payload)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert('Schedule saved successfully!')
+                    window.location.href = '/admin/scheduleList'
+                })
+                .catch(err => {
+                    console.error('Error:', err)
+                    alert('Failed to save schedule.')
+                })
+        }
+
+        flatpickr("#from-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        })
+
+        flatpickr("#to-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
         });
-    }
-
-    flatpickr("#from-time", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        time_24hr: true
-    })
-
-    flatpickr("#to-time", {
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        time_24hr: true
-    });
-</script>
+    </script>
 </body>
+
 </html>

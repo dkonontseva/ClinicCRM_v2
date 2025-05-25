@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -224,6 +225,18 @@
             padding: 8px 12px;
         }
 
+        .export-btn {
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
         /* Table Styles */
         .table-container {
             background: white;
@@ -346,20 +359,16 @@
             border: none;
         }
 
-        .export-buttons {
+        .export-btn {
+            background: #28a745;
+            color: white;
             display: flex;
-            margin-bottom: 10px;
+            align-items: center;
             gap: 8px;
         }
 
-        .export-btn {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            background: white;
-            cursor: pointer;
-            font-size: 14px;
-            color: #525252;
+        .export-btn:hover {
+            background: #218838;
         }
 
         .actions-cell {
@@ -427,151 +436,257 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item active">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h2>Leave Request</h2>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
 
-        <div class="filters" style="display: flex; gap: 15px; align-items: center;">
-            <input type="text" id="search_query" class="filter-input" placeholder="Search by doctor name">
-            <select id="leave_type" class="filter-input">
-                <option value="">Leave Type</option>
-                <option value="Medical Reason">Medical Reason</option>
-                <option value="Casual Leave">Casual Leave</option>
-                <option value="Family Reason">Family Reason</option>
-            </select>
-            <input type="date" id="from_date" class="filter-input">
-            <input type="date" id="to_date" class="filter-input">
-            <select id="status" class="filter-input">
-                <option value="">Leave Status</option>
-                <option value="Approved">Approved</option>
-                <option value="Pending">Pending</option>
-                <option value="Declined">Declined</option>
-            </select>
-            <button class="search-button" onclick="searchLeaves()">Search</button>
-        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Заявления</h2>
+            </div>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <div class="action-buttons">
-                <button class="action-btn add-btn" onclick="window.location.href = '/admin/addLeave'">
-                    <i class="fas fa-plus"></i> Add New
-                </button>
-                <button class="action-btn refresh-btn" onclick="loadAllLeaves()">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
+            <div class="filters" style="display: flex; gap: 15px; align-items: center;">
+                <input type="text" id="search_query" class="filter-input" placeholder="Поиск по ФИО врача...">
+                <select id="leave_type" class="filter-input">
+                    <option value="">Тип</option>
+                    <option value="Medical Reason">Больничный</option>
+                    <option value="Casual Leave">Отпуск</option>
+                    <option value="Family Reason">Иные причины</option>
+                </select>
+                <input type="date" id="from_date" class="filter-input">
+                <input type="date" id="to_date" class="filter-input">
+                <select id="status" class="filter-input">
+                    <option value="">Статус</option>
+                    <option value="Approved">Одобрено</option>
+                    <option value="Pending">Ожидание</option>
+                    <option value="Declined">Отклонено</option>
+                </select>
+                <button class="search-button" onclick="searchLeaves()">Поиск</button>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div class="action-buttons">
+                    <button class="action-btn add-btn" onclick="window.location.href = '/admin/addLeave'">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                    <button class="action-btn refresh-btn" onclick="loadAllLeaves()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="action-btn delete-btn" onclick="deleteSelected()">Удалить
+                    </button>
+                    <button class="action-btn export-btn" onclick="exportVacationSchedule()">
+                        <i class="fas fa-file-excel"></i> График отпусков
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Врач</th>
+                            <th>Тип</th>
+                            <th>С</th>
+                            <th>До</th>
+                            <th>Количество дней</th>
+                            <th>Причина</th>
+                            <th>Статус</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leave-table-body">
+                        <!-- rows injected by JS -->
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <button class="page-btn">Предыдущий</button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">Следующий</button>
+                </div>
             </div>
         </div>
-
-        <div class="table-container">
-            <button class="action-btn delete-btn" style="margin-left: 84%" onclick="deleteSelected()">Delete</button>
-            <table>
-                <thead>
-                <tr>
-                    <th></th>
-                    <th>Doctor Name</th>
-                    <th>Leave Type</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>No of days</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody id="leave-table-body">
-                <!-- rows injected by JS -->
-                </tbody>
-            </table>
-
-            <div class="pagination">
-                <button class="page-btn">Previous</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">Next</button>
-            </div>
-        </div>
     </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        loadAllLeaves();
-    });
+    <script>
+        let allLeaves = [] // Добавляем глобальную переменную
 
-    async function loadAllLeaves() {
-        const res = await fetch('/get_all');
-        const data = await res.json();
-        renderLeaveTable(data);
-    }
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllLeaves()
+        })
 
-    async function searchLeaves() {
-        const name = document.getElementById('search_query').value;
-        const reason = document.getElementById('leave_type').value;
-        const from = document.getElementById('from_date').value;
-        const to = document.getElementById('to_date').value;
-        const status = document.getElementById('status').value;
+        async function loadAllLeaves() {
+            // Mock data for demonstration
+            const data = [
+                {
+                    id: 6,
+                    doctor: {
+                        first_name: "Мария",
+                        last_name: "Петрова",
+                        second_name: "Сергеевна",
+                        department: "Неврология"
+                    },
+                    reason: "Отпуск",
+                    from_date: "01-06-2025",
+                    to_date: "27-06-2025",
+                    days: 28,
+                    description: "Отпуск",
+                    status: "Одобрено"
+                },
+                {
+                    _id: 3,
+                    doctor: {
+                        first_name: "Мария",
+                        last_name: "Смирнова",
+                        second_name: "Александровна",
+                        department: "Терапия"
+                    },
+                    reason: "Отпуск",
+                    from_date: "01-06-2025",
+                    to_date: "14-06-2025",
+                    days: 15,
+                    description: "Отпуск",
+                    status: "Одобрено"
+                },
+                {
+                    id: 2,
+                    doctor: {
+                        first_name: "Мария",
+                        last_name: "Смирнова",
+                        second_name: "Александровна"
+                    },
+                    reason: "Иные причины",
+                    from_date: "10-05-2025",
+                    to_date: "12-05-2025",
+                    days: 2,
+                    description: "Семейные обстоятельства",
+                    status: "Ожидание"
+                },
+                {
+                    id: 1,
+                    doctor: {
+                        first_name: "Мария",
+                        last_name: "Смирнова",
+                        second_name: "Александровна"
+                    },
+                    reason: "Больничный",
+                    from_date: "01-05-2025",
+                    to_date: "03-05-2025",
+                    days: 3,
+                    description: "Полное медицинское обследование",
+                    status: "Одобрено"
+                },
 
-        const params = new URLSearchParams();
-        if (name) params.append('full_name', name);
-        if (reason) params.append('reason', reason);
-        if (from) params.append('from_date', from);
-        if (to) params.append('to_date', to);
-        if (status) params.append('status', status);
+                {
+                    id: 4,
+                    doctor: {
+                        first_name: "Владислав",
+                        last_name: "Лишкович",
+                        second_name: "Александрович"
+                    },
+                    reason: "Иные причины",
+                    from_date: "10-03-2025",
+                    to_date: "12-03-2025",
+                    days: 2,
+                    description: "Семейные обстоятельства",
+                    status: "Одобрено"
+                },
+                {
+                    id: 5,
+                    doctor: {
+                        first_name: "Анна",
+                        last_name: "Иванова",
+                        second_name: "Ивановна"
+                    },
+                    reason: "Иные причины",
+                    from_date: "10-03-2025",
+                    to_date: "12-03-2025",
+                    days: 2,
+                    description: "Свадьба",
+                    status: "Одобрено"
+                }
+            ]
 
-        const res = await fetch(`/admin/leaves/search?${params.toString()}`);
-        const data = await res.json();
-        renderLeaveTable(data);
-    }
+            allLeaves = data // Сохраняем данные в глобальную переменную
+            renderLeaveTable(data)
+        }
 
-    function renderLeaveTable(leaves) {
-        const tbody = document.getElementById('leave-table-body');
-        tbody.innerHTML = '';
+        async function searchLeaves() {
+            const name = document.getElementById('search_query').value
+            const reason = document.getElementById('leave_type').value
+            const from = document.getElementById('from_date').value
+            const to = document.getElementById('to_date').value
+            const status = document.getElementById('status').value
 
-        leaves.forEach(leave => {
-            const tr = document.createElement('tr');
+            const params = new URLSearchParams()
+            if (name) params.append('full_name', name)
+            if (reason) params.append('reason', reason)
+            if (from) params.append('from_date', from)
+            if (to) params.append('to_date', to)
+            if (status) params.append('status', status)
 
-            tr.innerHTML = `
+            const res = await fetch(`/admin/leaves/search?${params.toString()}`)
+            const data = await res.json()
+            renderLeaveTable(data)
+        }
+
+        function renderLeaveTable(leaves) {
+            const tbody = document.getElementById('leave-table-body')
+            tbody.innerHTML = ''
+
+            leaves.forEach(leave => {
+                const tr = document.createElement('tr')
+                let stat
+                if (leave.status === "Ожидание") {
+                    stat = 'pending'
+                } else if (leave.status === "Одобрено") {
+                    stat = 'approved'
+                } else {
+                    stat = 'declined'
+                }
+
+                tr.innerHTML = `
                 <td><input type="checkbox" name="selectedRows" value="${leave.id}"></td>
-                <td>${leave.doctor.first_name} ${leave.doctor.last_name} ${leave.doctor.second_name || ''}</td>
+                <td>${leave.doctor.last_name} ${leave.doctor.first_name} ${leave.doctor.second_name || ''}</td>
                 <td>${leave.reason}</td>
                 <td>${leave.from_date}</td>
                 <td>${leave.to_date}</td>
                 <td>${leave.days}</td>
                 <td>${leave.description || ''}</td>
-                <td><span class="status-${leave.status.toLowerCase()}">${leave.status}</span></td>
+                <td><span class="status-${stat}">${leave.status}</span></td>
                 <td>
                     <button class="download-btn"
                             style="background-color: transparent; border-color: transparent"
@@ -581,53 +696,132 @@
                             alt="edit"/>
                     </button>
                 </td>
-            `;
+            `
 
-            tbody.appendChild(tr);
-        });
-    }
-
-    function editLeave(leaveId) {
-        window.location.href = `/admin/addLeave/${leaveId}`;
-    }
-
-    function deleteSelected() {
-        const selected = [...document.getElementsByName('selectedRows')]
-            .filter(checkbox => checkbox.checked)
-            .map(cb => cb.value);
-
-        if (!selected.length) {
-            alert("Please select at least one record to delete.");
-            return;
+                tbody.appendChild(tr)
+            })
         }
 
-        fetch('/admin/delete_leave', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({values: selected})
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Deleted successfully!');
-                    loadAllLeaves();
-                } else {
-                    alert('Delete failed!');
-                }
+        function editLeave(leaveId) {
+            window.location.href = `/admin/addLeave/${leaveId}`
+        }
+
+        function deleteSelected() {
+            const selected = [...document.getElementsByName('selectedRows')]
+                .filter(checkbox => checkbox.checked)
+                .map(cb => cb.value)
+
+            if (!selected.length) {
+                alert("Please select at least one record to delete.")
+                return
+            }
+
+            fetch('/admin/delete_leave', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ values: selected })
             })
-            .catch(err => console.error(err));
-    }
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Deleted successfully!')
+                        loadAllLeaves()
+                    } else {
+                        alert('Delete failed!')
+                    }
+                })
+                .catch(err => console.error(err))
+        }
+        flatpickr("#from_date", {
+            dateFormat: "d-m-Y",
+            static: true
+        })
+        flatpickr("#to_date", {
+            dateFormat: "d-m-Y",
+            static: true
+        })
+        function exportVacationSchedule() {
+            // Фильтруем только отпуска из текущих данных
+            const vacations = allLeaves.filter(leave =>
+                leave.reason === "Отпуск" && leave.status === "Одобрено"
+            )
 
-    flatpickr("#from_date", {
-        dateFormat: "d-m-Y",
-        static: true
-    });
-    flatpickr("#to_date", {
-        dateFormat: "d-m-Y",
-        static: true
-    });
+            if (vacations.length === 0) {
+                alert("Нет одобренных отпусков для экспорта")
+                return
+            }
 
+            // Сортируем по дате начала отпуска
+            vacations.sort((a, b) => {
+                const dateA = new Date(a.from_date.split('-').reverse().join('-'))
+                const dateB = new Date(b.from_date.split('-').reverse().join('-'))
+                return dateA - dateB
+            })
 
-</script>
+            const currentYear = new Date().getFullYear()
+            let excelData = []
+
+            // Заголовок
+            excelData.push(['УТВЕРЖДАЮ'])
+            excelData.push(['Главный врач ____________________'])
+            excelData.push([`"___" ____________ ${currentYear} г.`])
+            excelData.push([''])
+            excelData.push([`ГРАФИК ОТПУСКОВ НА ${currentYear} ГОД`])
+            excelData.push([''])
+
+            // Заголовки таблицы
+            excelData.push([
+                '№ п/п',
+                'Отделение',
+                'ФИО',
+                'Должность',
+                'Количество дней',
+                'Дата начала отпуска',
+                'Дата окончания отпуска'
+            ])
+
+            // Добавляем данные
+            vacations.forEach((vacation, index) => {
+                excelData.push([
+                    index + 1,
+                    vacation.doctor.department || 'Общая практика',
+                    `${vacation.doctor.last_name} ${vacation.doctor.first_name} ${vacation.doctor.second_name}`,
+                    'Врач',
+                    vacation.days,
+                    vacation.from_date,
+                    vacation.to_date
+                ])
+            })
+
+            // Добавляем итоговую строку
+            excelData.push([''])
+            excelData.push(['Итого количество человек:', vacations.length])
+            excelData.push(['Итого календарных дней:',
+                vacations.reduce((sum, v) => sum + v.days, 0)
+            ])
+
+            // Добавляем подписи
+            excelData.push([''])
+            excelData.push([''])
+            excelData.push(['Начальник отдела кадров ____________________'])
+
+            // Создаем CSV строку
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"
+            excelData.forEach(row => {
+                const formattedRow = row.map(cell => `"${cell || ''}"`)
+                csvContent += formattedRow.join(';') + '\n'
+            })
+
+            // Скачиваем файл
+            const encodedUri = encodeURI(csvContent)
+            const link = document.createElement("a")
+            link.setAttribute("href", encodedUri)
+            link.setAttribute("download", `График_отпусков_${currentYear}.csv`)
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+    </script>
 </body>
+
 </html>

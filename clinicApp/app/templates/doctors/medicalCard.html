@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Record Report</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -74,87 +75,89 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h1>Medical Record Report</h1>
+    <div class="container">
+        <h1>Medical Record Report</h1>
 
-    <div class="report-section">
-        <h2>Patient Details</h2>
-        <div class="report-details" id="patient-details"></div>
+        <div class="report-section">
+            <h2>Patient Details</h2>
+            <div class="report-details" id="patient-details"></div>
+        </div>
+
+        <div class="report-section">
+            <h2>Doctor</h2>
+            <div class="report-details" id="doctor-details"></div>
+        </div>
+
+        <div class="report-section">
+            <h2>Symptoms</h2>
+            <div class="report-details" id="symptoms"></div>
+        </div>
+
+        <div class="report-section">
+            <h2>Examination Results</h2>
+            <div class="report-details" id="results"></div>
+        </div>
+
+        <div class="report-section">
+            <h2>Diagnosis</h2>
+            <div class="report-details" id="diagnosis"></div>
+        </div>
+
+        <button class="print-btn" onclick="window.print()">Print Report</button>
+        <a href="/doctor/patientsCards" class="print-btn" style="background-color: #757575;">Back to Patients Cards</a>
     </div>
 
-    <div class="report-section">
-        <h2>Doctor</h2>
-        <div class="report-details" id="doctor-details"></div>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search)
+            const recordId = urlParams.get('record_id')
 
-    <div class="report-section">
-        <h2>Symptoms</h2>
-        <div class="report-details" id="symptoms"></div>
-    </div>
+            // if (!recordId) {
+            //     alert("No record ID provided.")
+            //     return
+            // }
 
-    <div class="report-section">
-        <h2>Examination Results</h2>
-        <div class="report-details" id="results"></div>
-    </div>
+            try {
+                const response = await fetch(`/api/v1/clinic/medical_record?record_id=${recordId}`)
+                if (!response.ok) {
+                    const error = await response.json()
+                    throw new Error(error.detail || "Failed to fetch medical record")
+                }
 
-    <div class="report-section">
-        <h2>Diagnosis</h2>
-        <div class="report-details" id="diagnosis"></div>
-    </div>
+                const data = await response.json()
 
-    <button class="print-btn" onclick="window.print()">Print Report</button>
-    <a href="/doctor/patientsCards" class="print-btn" style="background-color: #757575;">Back to Patients Cards</a>
-</div>
+                // Запрашиваем расширенные данные пациента и врача
+                const [patientRes, doctorRes] = await Promise.all([
+                    fetch(`/api/v1/clinic/patients/get_data?patient_id=${data.patient_id}`),
+                    fetch(`/api/v1/clinic/doctors/get_data?doctor_id=${data.doctor_id}`)
+                ])
 
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const recordId = urlParams.get('record_id');
+                const patient = await patientRes.json()
+                const doctor = await doctorRes.json()
 
-        if (!recordId) {
-            alert("No record ID provided.");
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/v1/clinic/medical_record?record_id=${recordId}`);
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.detail || "Failed to fetch medical record");
-            }
-
-            const data = await response.json();
-
-            // Запрашиваем расширенные данные пациента и врача
-            const [patientRes, doctorRes] = await Promise.all([
-                fetch(`/api/v1/clinic/patients/get_data?patient_id=${data.patient_id}`),
-                fetch(`/api/v1/clinic/doctors/get_data?doctor_id=${data.doctor_id}`)
-            ]);
-
-            const patient = await patientRes.json();
-            const doctor = await doctorRes.json();
-
-            // Вставляем данные
-            document.getElementById("patient-details").innerHTML = `
+                // Вставляем данные
+                document.getElementById("patient-details").innerHTML = `
                 <p><span>Patient Name:</span> ${patient.last_name} ${patient.first_name} ${patient.second_name || ''}</p>
                 <p><span>Birth Day:</span> ${patient.birth_date}</p>
                 <p><span>Date:</span> ${data.date}</p>
-            `;
+            `
 
-            document.getElementById("doctor-details").innerHTML = `
+                document.getElementById("doctor-details").innerHTML = `
                 <p><span>Doctor:</span> ${doctor.last_name} ${doctor.first_name} ${doctor.second_name || ''}</p>
-            `;
+            `
 
-            document.getElementById("symptoms").innerHTML = `<p>${data.complaints}</p>`;
-            document.getElementById("results").innerHTML = `<p>${data.wellness_check}</p>`;
-            document.getElementById("diagnosis").innerHTML = `<p>${data.diagnosis}</p>`;
+                document.getElementById("symptoms").innerHTML = `<p>${data.complaints}</p>`
+                document.getElementById("results").innerHTML = `<p>${data.wellness_check}</p>`
+                document.getElementById("diagnosis").innerHTML = `<p>${data.diagnosis}</p>`
 
-        } catch (error) {
-            console.error("Error loading record:", error);
-            alert("Error loading medical record. See console for details.");
-        }
-    });
-</script>
+            } catch (error) {
+                console.error("Error loading record:", error)
+                alert("Error loading medical record. See console for details.")
+            }
+        });
+    </script>
 </body>
+
 </html>

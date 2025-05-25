@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -138,7 +139,6 @@
         }
 
         .header {
-            display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
@@ -230,7 +230,7 @@
             display: none;
         }
 
-        input[type="radio"]:checked + .gender-option {
+        input[type="radio"]:checked+.gender-option {
             background-color: #eef3fd;
             /* Light neon green */
             border-color: #6c87ff;
@@ -329,284 +329,325 @@
 </head>
 
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
-        </div>
-        <div class="menu-item  active">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
-    </div>
-
-    <div class="main-content">
-        <div class="header">
-            <h2>{{ 'Edit Doctor' if doctor_id else 'Add Doctor' }}</h2>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item  active">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
 
-        <div class="card">
+        <div class="main-content">
             <div class="header">
-                <a href="/admin/doctorsList" class="breadcrumb">Doctors</a>
+                <h2>Редактировать врача</h2>
             </div>
 
-            <section class="content">
-                <form id="doctor-form">
-                    <div class="two-columns">
-                        <div class="form-field">
-                            <label for="lastname">Surname</label>
-                            <input type="text" id="lastname" name="lastname" placeholder="Enter your surname" required>
-                        </div>
+            <div class="card">
+                <div class="header">
+                    <a href="/admin/doctorsList" class="breadcrumb">Врачи/</a>
+                    <span class="breadcrumb-active">Редактирование врача</span>
+                </div>
 
-                        <div class="form-field">
-                            <label for="firstname">Name</label>
-                            <input type="text" id="firstname" name="firstname" placeholder="Enter your name" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="secondname">Second Name</label>
-                            <input type="text" id="secondname" name="secondname" placeholder="Enter your second name"
-                                   required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="phone">Phone Number</label>
-                            <input type="text" id="phone" name="phone" placeholder="Enter your phone number" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="dob">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" placeholder="Select your date of birth" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label>Gender</label>
-                            <div>
-                                <input type="radio" id="male" name="gender" value="male" required>
-                                <label for="male" class="gender-option">Male</label>
-
-                                <input type="radio" id="female" name="gender" value="female">
-                                <label for="female" class="gender-option">Female</label>
-                            </div>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="department">Department</label>
-                            <select id="department" name="department" required>
-                                <option value="">Select Department</option>
-                                <!-- Department options will be filled dynamically -->
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="education-info">
-                        <h2>Education Information</h2>
+                <section class="content">
+                    <form id="doctor-form">
                         <div class="two-columns">
                             <div class="form-field">
-                                <label for="university">University</label>
-                                <input type="text" id="university" name="university" placeholder="Enter university"
-                                       required>
+                                <label for="lastname">Фамилия</label>
+                                <input type="text" id="lastname" name="lastname" placeholder="Введите фамилию" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="faculty">Faculty</label>
-                                <input type="text" id="faculty" name="faculty" placeholder="Enter faculty" required>
+                                <label for="firstname">Имя</label>
+                                <input type="text" id="firstname" name="firstname" placeholder="Введите имя" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="specialization">Specialization</label>
-                                <input type="text" id="specialization" name="specialization"
-                                       placeholder="Enter specialization" required>
+                                <label for="secondname">Отчество</label>
+                                <input type="text" id="secondname" name="secondname" placeholder="Введите отчество"
+                                    required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="phone">Номер телефона</label>
+                                <input type="text" id="phone" name="phone" placeholder="Введите номер телефона"
+                                    required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="email">Электронная почта</label>
+                                <input type="email" id="email" name="email" placeholder="Введите email" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="dob">Дата рождения</label>
+                                <input type="date" id="dob" name="dob" placeholder="Выберите дату рождения" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Пол</label>
+                                <div>
+                                    <input type="radio" id="male" name="gender" value="male" required>
+                                    <label for="male" class="gender-option">Мужской</label>
+
+                                    <input type="radio" id="female" name="gender" value="female">
+                                    <label for="female" class="gender-option">Женский</label>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="department">Отделение</label>
+                                <select id="department" name="department" required>
+                                    <option value="">Выберите отделение</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="address-info">
-                        <h2>Address Information</h2>
-                        <div class="two-columns">
-                            <div class="form-field">
-                                <label for="country">Country</label>
-                                <input type="text" id="country" name="country" placeholder="Enter your country"
-                                       required>
-                            </div>
+                        <div class="education-info">
+                            <h2>Образование</h2>
+                            <div class="two-columns">
+                                <div class="form-field">
+                                    <label for="university">Университет</label>
+                                    <input type="text" id="university" name="university"
+                                        placeholder="Введите университет" required>
+                                </div>
 
-                            <div class="form-field">
-                                <label for="city">City</label>
-                                <input type="text" id="city" name="city" placeholder="Enter your city" required>
-                            </div>
+                                <div class="form-field">
+                                    <label for="faculty">Факультет</label>
+                                    <input type="text" id="faculty" name="faculty" placeholder="Введите факультет"
+                                        required>
+                                </div>
 
-                            <div class="form-field">
-                                <label for="street">Street</label>
-                                <input type="text" id="street" name="street" placeholder="Enter your street" required>
-                            </div>
-
-                            <div class="form-field">
-                                <label for="house">House</label>
-                                <input type="text" id="house" name="house" placeholder="Enter your house number"
-                                       required>
-                            </div>
-
-                            <div class="form-field">
-                                <label for="flat">Flat</label>
-                                <input type="text" id="flat" name="flat" placeholder="Enter your flat number" required>
+                                <div class="form-field">
+                                    <label for="specialization">Специализация</label>
+                                    <input type="text" id="specialization" name="specialization"
+                                        placeholder="Введите специализацию" required>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="button-group">
-                        <button type="submit" class="submit-button">Save Changes</button>
-                        <button type="button" class="cancel-button"
-                                onclick="window.location.href='/admin/doctorsList';">Cancel
-                        </button>
-                    </div>
-                </form>
-            </section>
+                        <div class="address-info">
+                            <h2>Адрес</h2>
+                            <div class="two-columns">
+                                <div class="form-field">
+                                    <label for="country">Страна</label>
+                                    <input type="text" id="country" name="country" placeholder="Введите страну"
+                                        required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="city">Город</label>
+                                    <input type="text" id="city" name="city" placeholder="Введите город" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="street">Улица</label>
+                                    <input type="text" id="street" name="street" placeholder="Введите улицу" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="house">Дом</label>
+                                    <input type="text" id="house" name="house" placeholder="Введите номер дома"
+                                        required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="flat">Квартира</label>
+                                    <input type="text" id="flat" name="flat" placeholder="Введите номер квартиры"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="submit-button">Сохранить</button>
+                            <button type="button" class="cancel-button"
+                                onclick="window.location.href='/admin/doctorsList';">Отмена
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
     </div>
-</div>
-<script>
-    document.addEventListener('DOMContentLoaded', async function () {
-        try {
-            const doctorId = new URLSearchParams(window.location.search).get('doctor_id');
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            try {
+                const urlSegments = window.location.pathname.split('/')
+                const doctorId = urlSegments[urlSegments.length - 1]
 
-            if (doctorId) {
-                // Load doctor data for editing
-                const doctorData = await getDoctorData(doctorId);
-                populateForm(doctorData);
+                if (doctorId && doctorId !== 'addDoctor') {
+                    // Load doctor data for editing
+                    const doctorData = getDoctorData(doctorId)
+                    populateForm(doctorData)
+                }
+
+                // Load departments
+                loadDepartments()
+
+                // Initialize Flatpickr for date inputs
+                flatpickr('#dob', {
+                    dateFormat: "Y-m-d",
+                    maxDate: "today",
+                    locale: "ru"
+                })
+            } catch (error) {
+                alert('Ошибка загрузки данных врача: ' + error.message)
+            }
+        })
+
+        function getDoctorData(doctorId) {
+            // Mock data для Смирновой Марии
+            const mockDoctor = {
+                _id: 6,
+                users: {
+                    surname: "Смирнова",
+                    name: "Мария",
+                    patronymic: "Александровна",
+                    phone_number: "+375 29 123-45-67",
+                    email: "smirnova.ma@clinic.by",
+                    gender: "female",
+                    login: "smirnova.ma@clinic.by"
+                },
+                departments: {
+                    department_name: "Терапия",
+                    _id: 4
+                },
+                education: {
+                    university: "Белорусский государственный медицинский университет",
+                    faculty: "Лечебный факультет",
+                    specialization: "Терапевт"
+                },
+                addresses: {
+                    country: "Беларусь",
+                    region: "Минская область",
+                    city: "Минск",
+                    street: "пр. Независимости",
+                    house: "95",
+                    flat: "42"
+                },
+                birthday: "1985-06-15"
             }
 
-            // Load departments
-            await loadDepartments();
-
-            // Initialize Flatpickr for date inputs
-            flatpickr('#dob', {dateFormat: "Y-m-d", maxDate: "today"});
-        } catch (error) {
-            alert('Error loading doctor data: ' + error.message);
+            return mockDoctor
         }
-    });
 
-    async function getDoctorData(doctorId) {
-        const response = await fetch(`/admin/get_data?doctor_id=${doctorId}`);
-        const data = await response.json();
-        return data;
-    }
+        function loadDepartments() {
+            const departments = [
+                { _id: 1, department_name: "Кардиология" },
+                { _id: 2, department_name: "Неврология" },
+                { _id: 3, department_name: "Педиатрия" },
+                { _id: 4, department_name: "Терапия" },
+                { _id: 5, department_name: "Хирургия" }
+            ]
 
-    async function loadDepartments() {
-        const response = await fetch('/admin/department');
-        const departments = await response.json();
-        const departmentSelect = document.getElementById('department');
-        departments.forEach(department => {
-            const option = document.createElement('option');
-            option.value = department.id;
-            option.textContent = department.name;
-            departmentSelect.appendChild(option);
-        });
-    }
+            const departmentSelect = document.getElementById('department')
+            departments.forEach(department => {
+                const option = document.createElement('option')
+                option.value = department._id
+                option.textContent = department.department_name
+                departmentSelect.appendChild(option)
+            })
+        }
 
-    function populateForm(data) {
-        document.getElementById('lastname').value = data.users.last_name || '';
-        document.getElementById('firstname').value = data.users.first_name || '';
-        document.getElementById('secondname').value = data.users.second_name || '';
-        document.getElementById('phone').value = data.users.phone_number || '';
-        document.getElementById('email').value = data.users.login || '';
-        document.getElementById('dob').value = data.birthday || '';
-        document.querySelector(`input[name="gender"][value="${data.users.gender}"]`).checked = true;
-        document.getElementById('department').value = data.department_id || '';
-        document.getElementById('university').value = data.education.university || '';
-        document.getElementById('faculty').value = data.education.faculty || '';
-        document.getElementById('specialization').value = data.education.specialization || '';
-        document.getElementById('country').value = data.addresses.country || '';
-        document.getElementById('city').value = data.addresses.city || '';
-        document.getElementById('street').value = data.addresses.street || '';
-        document.getElementById('house').value = data.addresses.house_number || '';
-        document.getElementById('flat').value = data.addresses.flat_number || '';
-    }
+        function populateForm(data) {
+            if (!data) return
 
-    document.getElementById('doctor-form').addEventListener('submit', async function (event) {
-        event.preventDefault();
+            document.getElementById('lastname').value = data.users.surname || ''
+            document.getElementById('firstname').value = data.users.name || ''
+            document.getElementById('secondname').value = data.users.patronymic || ''
+            document.getElementById('phone').value = data.users.phone_number || ''
+            document.getElementById('email').value = data.users.email || ''
+            document.getElementById('dob').value = data.birthday || ''
 
-        const formData = new FormData(event.target);
-        const doctorData = {
-            users: {
-                first_name: formData.get('firstname'),
-                last_name: formData.get('lastname'),
-                second_name: formData.get('secondname'),
-                login: formData.get('email'),
-                phone_number: formData.get('phone'),
-                gender: formData.get('gender'),
-            },
-            birthday: formData.get('dob'),
-            education: {
-                university: formData.get('university'),
-                faculty: formData.get('faculty'),
-                specialization: formData.get('specialization'),
-            },
-            addresses: {
-                country: formData.get('country'),
-                city: formData.get('city'),
-                street: formData.get('street'),
-                house_number: formData.get('house'),
-                flat_number: formData.get('flat'),
-            },
-            department_id: formData.get('department')
-        };
-
-        const doctorId = new URLSearchParams(window.location.search).get('doctor_id');
-        try {
-            let response;
-            if (doctorId) {
-                response = await fetch(`/admin/update?doctor_id=${doctorId}`, {
-                    method: 'PUT',
-                    body: JSON.stringify(doctorData),
-                    headers: {'Content-Type': 'application/json'},
-                });
-            } else {
-                response = await fetch('/admin/add_doctor', {
-                    method: 'POST',
-                    body: JSON.stringify(doctorData),
-                    headers: {'Content-Type': 'application/json'},
-                });
+            const genderRadio = document.querySelector(`input[name="gender"][value="${data.users.gender}"]`)
+            if (genderRadio) {
+                genderRadio.checked = true
             }
-            const result = await response.json();
-            alert(result.message);
-            window.location.href = '/admin/doctorsList';
-        } catch (error) {
-            alert('Error saving doctor: ' + error.message);
-        }
-    });
 
-    const today = new Date().toISOString().split("T")[0];
-    flatpickr("#dob", {
-        dateFormat: "d-m-Y",
-        maxDate: today
-    });
-</script>
+            document.getElementById('department').value = data.departments._id || ''
+            document.getElementById('university').value = data.education.university || ''
+            document.getElementById('faculty').value = data.education.faculty || ''
+            document.getElementById('specialization').value = data.education.specialization || ''
+            document.getElementById('country').value = data.addresses.country || ''
+            document.getElementById('city').value = data.addresses.city || ''
+            document.getElementById('street').value = data.addresses.street || ''
+            document.getElementById('house').value = data.addresses.house || ''
+            document.getElementById('flat').value = data.addresses.flat || ''
+        }
+
+        document.getElementById('doctor-form').addEventListener('submit', async function (event) {
+            event.preventDefault()
+
+            const formData = new FormData(event.target)
+            const doctorData = {
+                users: {
+                    surname: formData.get('lastname'),
+                    name: formData.get('firstname'),
+                    patronymic: formData.get('secondname'),
+                    login: formData.get('email'),
+                    phone_number: formData.get('phone'),
+                    gender: formData.get('gender'),
+                },
+                birthday: formData.get('dob'),
+                education: {
+                    university: formData.get('university'),
+                    faculty: formData.get('faculty'),
+                    specialization: formData.get('specialization'),
+                },
+                addresses: {
+                    country: formData.get('country'),
+                    city: formData.get('city'),
+                    street: formData.get('street'),
+                    house: formData.get('house'),
+                    flat: formData.get('flat'),
+                },
+                departments: {
+                    _id: formData.get('department')
+                }
+            }
+
+            try {
+                const urlSegments = window.location.pathname.split('/')
+                const doctorId = urlSegments[urlSegments.length - 1]
+
+                if (doctorId && doctorId !== 'addDoctor') {
+                    alert('Данные врача успешно обновлены')
+                } else {
+                    alert('Врач успешно добавлен')
+                }
+
+                window.location.href = '/admin/doctorsList'
+            } catch (error) {
+                console.error('Ошибка при сохранении:', error)
+                alert('Произошла ошибка при сохранении данных. Пожалуйста, проверьте введенную информацию.')
+            }
+        })
+    </script>
 </body>
+
 </html>

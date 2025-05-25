@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -153,7 +154,12 @@
             margin-bottom: 5px;
         }
 
-        input[type="text"], input[type="email"], input[type="date"], input[type="file"], input[type="password"], select {
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="file"],
+        input[type="password"],
+        select {
             width: 80%;
             padding: 10px;
             border-radius: 10px;
@@ -165,9 +171,14 @@
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
-        input[type="text"]:focus, input[type="email"]:focus, input[type="date"]:focus, input[type="password"]:focus, select:focus {
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        input[type="password"]:focus,
+        select:focus {
             outline: none;
-            border-color: #617dff; /* Neon green border on focus */
+            border-color: #617dff;
+            /* Neon green border on focus */
             box-shadow: 0 0 5px rgb(29, 68, 255);
         }
 
@@ -184,7 +195,7 @@
             display: none;
         }
 
-        input[type="radio"]:checked + .gender-option {
+        input[type="radio"]:checked+.gender-option {
             background-color: #eef3fd;
             /* Light neon green */
             border-color: #6c87ff;
@@ -202,7 +213,9 @@
             color: #333;
         }
 
-        .personal-info, .medical-info, .document-upload {
+        .personal-info,
+        .medical-info,
+        .document-upload {
             margin-top: 30px;
             width: 100%;
             padding: 20px;
@@ -261,240 +274,264 @@
             transition: background-color 0.3s ease;
             margin-bottom: 30px;
         }
-
-
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item active">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h2>{{ 'Edit Patient' if patient_id else 'Add Patinet' }}</h2>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item ">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
 
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>{{ 'Редактировать пациента' if patient_id else 'Добавить пациента' }}</h2>
+            </div>
 
-        <div class="card">
-
-            <form id="patient-form">
-
-                <div class="personal-info">
-                    <div class="header">
-                        <a href="/admin/patientsList" class="breadcrumb">Patients</a>
-                    </div>
-                    <div class="two-columns">
-                        <div class="form-field">
-                            <label for="surname">Surname</label>
-                            <input type="text" id="surname" required>
+            <div class="card">
+                <form id="patient-form">
+                    <div class="personal-info">
+                        <div class="header">
+                            <a href="/admin/patientsList" class="breadcrumb">Пациенты</a>
                         </div>
-
-                        <div class="form-field">
-                            <label for="name">Name</label>
-                            <input type="text" id="name" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="patronymic">Second Name</label>
-                            <input type="text" id="patronymic">
-                        </div>
-
-                        <div class="form-field">
-                            <label for="phone_number">Phone Number</label>
-                            <input type="text" id="phone_number" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label for="b_date">Date of Birth</label>
-                            <input type="date" id="b_date" name="b_date" required>
-                        </div>
-
-                        <div class="form-field">
-                            <label>Gender</label>
-                            <div>
-                                <input type="radio" id="male" name="gender" value="male" required>
-                                <label for="male" class="gender-option">Male</label>
-
-                                <input type="radio" id="female" name="gender" value="female">
-                                <label for="female" class="gender-option">Female</label>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="address-info">
-                        <h2>Address Information</h2>
                         <div class="two-columns">
                             <div class="form-field">
-                                <label for="country">Country</label>
-                                <input type="text" id="country" required>
+                                <label for="surname">Фамилия</label>
+                                <input type="text" id="surname" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="region">Region</label>
-                                <input type="text" id="region">
+                                <label for="name">Имя</label>
+                                <input type="text" id="name" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="city">City</label>
-                                <input type="text" id="city" required>
+                                <label for="patronymic">Отчество</label>
+                                <input type="text" id="patronymic">
                             </div>
 
                             <div class="form-field">
-                                <label for="street">Street</label>
-                                <input type="text" id="street" required>
+                                <label for="phone_number">Номер телефона</label>
+                                <input type="text" id="phone_number" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="house">House</label>
-                                <input type="text" id="house" required>
+                                <label for="email">Электронная почта</label>
+                                <input type="email" id="email" required>
                             </div>
 
                             <div class="form-field">
-                                <label for="flat">Flat</label>
-                                <input type="text" id="flat">
+                                <label for="b_date">Дата рождения</label>
+                                <input type="date" id="b_date" name="b_date" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label>Пол</label>
+                                <div>
+                                    <input type="radio" id="male" name="gender" value="male" required>
+                                    <label for="male" class="gender-option">Мужской</label>
+
+                                    <input type="radio" id="female" name="gender" value="female">
+                                    <label for="female" class="gender-option">Женский</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="address-info">
+                            <h2>Адрес</h2>
+                            <div class="two-columns">
+                                <div class="form-field">
+                                    <label for="country">Страна</label>
+                                    <input type="text" id="country" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="region">Область</label>
+                                    <input type="text" id="region">
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="city">Город</label>
+                                    <input type="text" id="city" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="street">Улица</label>
+                                    <input type="text" id="street" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="house">Дом</label>
+                                    <input type="text" id="house" required>
+                                </div>
+
+                                <div class="form-field">
+                                    <label for="flat">Квартира</label>
+                                    <input type="text" id="flat">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="btn">
-                    <button type="submit" class="submit-btn">Save Changes</button>
-                    <button type="button" class="button-btn" onclick="window.location.href='/admin/patientsList';">
-                        Close
-                    </button>
-                </div>
-            </form>
+                    <div class="btn">
+                        <button type="submit" class="submit-btn">Сохранить</button>
+                        <button type="button" class="button-btn" onclick="window.location.href='/admin/patientsList';">
+                            Закрыть
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        </section>
     </div>
-</div>
-<script>
-    const urlParams = new URLSearchParams(window.location.pathname.split('/'));
-    const patientId = urlParams.get('3') || window.location.pathname.split('/').pop();
+    <script>
+        const today = new Date().toISOString().split("T")[0]
+        flatpickr("#b_date", {
+            dateFormat: "Y-m-d",
+            maxDate: today
+        })
 
-    if (Number(patientId)) {
-        document.getElementById('form-title').innerText = 'Edit Patient';
-        loadPatientData(patientId);
-    }
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlSegments = window.location.pathname.split('/')
+            const patientId = urlSegments[urlSegments.length - 1]
 
-    async function loadPatientData(id) {
-        try {
-            const res = await fetch(`/admin/patient?id=${id}`);
-            const data = await res.json();
-
-            document.getElementById('surname').value = data.users.surname || '';
-            document.getElementById('name').value = data.users.name || '';
-            document.getElementById('patronymic').value = data.users.patronymic || '';
-            document.getElementById('phone_number').value = data.users.phone_number || '';
-            document.getElementById('email').value = data.users.email || '';
-            document.getElementById('b_date').value = data.b_date || '';
-            document.querySelector(`input[name="gender"][value="${data.users.gender}"]`).checked = true;
-
-            document.getElementById('country').value = data.addresses.country || '';
-            document.getElementById('region').value = data.addresses.region || '';
-            document.getElementById('city').value = data.addresses.city || '';
-            document.getElementById('street').value = data.addresses.street || '';
-            document.getElementById('house').value = data.addresses.house || '';
-            document.getElementById('flat').value = data.addresses.flat || '';
-
-        } catch (err) {
-            console.error('Failed to fetch patient data:', err);
-        }
-    }
-
-    document.getElementById('patient-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const data = {
-            b_date: document.getElementById('b_date').value,
-            users: {
-                surname: document.getElementById('surname').value,
-                name: document.getElementById('name').value,
-                patronymic: document.getElementById('patronymic').value,
-                phone_number: document.getElementById('phone_number').value,
-                email: document.getElementById('email').value,
-                gender: document.querySelector('input[name="gender"]:checked').value,
-                login: document.getElementById('email').value  // можно как идентификатор
-            },
-            addresses: {
-                country: document.getElementById('country').value,
-                region: document.getElementById('region').value,
-                city: document.getElementById('city').value,
-                street: document.getElementById('street').value,
-                house: document.getElementById('house').value,
-                flat: document.getElementById('flat').value
+            if (patientId && patientId !== 'addPatient') {
+                loadPatientData(patientId)
             }
-        };
+        })
 
-        try {
-            if (Number(patientId)) {
-                const res = await fetch(`/admin/update/${patientId}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                alert(result.message);
-            } else {
-                const res = await fetch('/admin/add_patient', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(data)
-                });
-                const result = await res.json();
-                alert(result.message);
+        async function loadPatientData(id) {
+            try {
+                // Mock patient data
+                const data = {
+                    users: {
+                        surname: "Кононцева",
+                        name: "Диана",
+                        patronymic: "Владимировна",
+                        phone_number: "+375 (29) 514-16-79",
+                        email: "diana.konontseva@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "2004-07-26",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Могилевская",
+                        house: "4/1",
+                        flat: "276"
+                    }
+                }
+
+                // Fill form fields with data
+                document.getElementById('surname').value = data.users.surname || ''
+                document.getElementById('name').value = data.users.name || ''
+                document.getElementById('patronymic').value = data.users.patronymic || ''
+                document.getElementById('phone_number').value = data.users.phone_number || ''
+                document.getElementById('email').value = data.users.email || ''
+                document.getElementById('b_date').value = data.b_date || ''
+
+                // Set gender radio button
+                const genderRadio = document.querySelector(`input[name="gender"][value="${data.users.gender}"]`)
+                if (genderRadio) {
+                    genderRadio.checked = true
+                }
+
+                // Fill address fields
+                document.getElementById('country').value = data.addresses.country || ''
+                document.getElementById('region').value = data.addresses.region || ''
+                document.getElementById('city').value = data.addresses.city || ''
+                document.getElementById('street').value = data.addresses.street || ''
+                document.getElementById('house').value = data.addresses.house || ''
+                document.getElementById('flat').value = data.addresses.flat || ''
+
+            } catch (err) {
+                console.error('Failed to fetch patient data:', err)
+                alert('Ошибка при загрузке данных пациента. Пожалуйста, попробуйте снова.')
+            }
+        }
+
+        document.getElementById('patient-form').addEventListener('submit', async function (e) {
+            e.preventDefault()
+
+            const data = {
+                b_date: document.getElementById('b_date').value,
+                users: {
+                    surname: document.getElementById('surname').value,
+                    name: document.getElementById('name').value,
+                    patronymic: document.getElementById('patronymic').value,
+                    phone_number: document.getElementById('phone_number').value,
+                    email: document.getElementById('email').value,
+                    gender: document.querySelector('input[name="gender"]:checked').value,
+                    login: document.getElementById('email').value
+                },
+                addresses: {
+                    country: document.getElementById('country').value,
+                    region: document.getElementById('region').value,
+                    city: document.getElementById('city').value,
+                    street: document.getElementById('street').value,
+                    house: document.getElementById('house').value,
+                    flat: document.getElementById('flat').value
+                }
             }
 
-            window.location.href = '/admin/patientsList';
-        } catch (err) {
-            console.error('Ошибка при сохранении:', err);
-            alert('Произошла ошибка. Проверьте данные.');
-        }
-    });
+            try {
+                const urlSegments = window.location.pathname.split('/')
+                const patientId = urlSegments[urlSegments.length - 1]
 
-    const today = new Date().toISOString().split("T")[0];
-    flatpickr("#b_date", {
-        dateFormat: "d-m-Y",
-        maxDate: today
-    });
+                if (patientId && patientId !== 'addPatient') {
+                    const res = await fetch(`/admin/update/${patientId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const result = await res.json()
+                    alert(result.message)
+                } else {
+                    const res = await fetch('/admin/add_patient', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    })
+                    const result = await res.json()
+                    alert(result.message)
+                }
 
-</script>
+                window.location.href = '/admin/patientsList'
+            } catch (err) {
+                console.error('Ошибка при сохранении:', err)
+                alert('Произошла ошибка. Проверьте данные.')
+            }
+        })
+    </script>
 </body>
+
 </html>

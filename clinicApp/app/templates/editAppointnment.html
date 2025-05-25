@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pre Clinic - Leave Management</title>
+    <title>Pre Clinic - Edit Appointment</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -37,7 +38,7 @@
             display: flex;
         }
 
-                /* Sidebar */
+        /* Sidebar */
         .container {
             display: flex;
             min-height: 100vh;
@@ -131,7 +132,7 @@
         }
 
         .header {
-            display: flex;
+
             justify-content: space-between;
             align-items: center;
             margin-bottom: 25px;
@@ -202,7 +203,11 @@
             margin: 10px 0 5px;
         }
 
-        input[type="text"], input[type="date"], input[type="time"], select, textarea {
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -278,7 +283,11 @@
             margin-bottom: 8px;
         }
 
-        input[type="text"], input[type="date"], input[type="time"], select, textarea {
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
             padding: 10px;
             font-size: 14px;
             border: 1px solid #dcdfe6;
@@ -369,192 +378,202 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-     <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item active">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Редактирование талона</h2>
+            </div>
+
+            <div class="container1">
+                <div class="header">
+                    <a href="/admin/appointmentList" class="breadcrumb">Талоны/</a>
+                    <span class="breadcrumb-active">Редактирование талона</span>
+                </div>
+
+                <section class="edit-schedule">
+                    <h2>Редактирование талона</h2>
+                    <form id="edit-appointment-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="doctor-name">Врач *</label>
+                                <input type="text" id="doctor-name" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="patient-name">Пациент *</label>
+                                <input type="text" id="patient-name" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date">Дата *</label>
+                                <input type="date" id="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="time">Время *</label>
+                                <input type="time" id="time" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="service">Услуга *</label>
+                                <select id="service" required>
+                                    <!-- Options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="notes">Причина обращения *</label>
+                            <textarea id="notes" rows="4" required></textarea>
+                        </div>
+
+                        <div class="form-group status-group">
+                            <label>Статус *</label>
+                            <input type="radio" id="approved" name="status" value="approved">
+                            <label for="approved">Одобрено</label>
+                            <input type="radio" id="pending" name="status" value="pending">
+                            <label for="pending">Ожидание</label>
+                            <input type="radio" id="rejected" name="status" value="rejected">
+                            <label for="rejected">Отклонено</label>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="submit-button">Сохранить</button>
+                            <button type="button" class="cancel-button"
+                                onclick="window.location.href='/admin/appointmentList';">Отменить</button>
+                        </div>
+                    </form>
+                </section>
+            </div>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item  active">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-          <a href='/' class="logout">Logout</a>
     </div>
-    <!-- Main Content -->
-    <div class="main-content">
-    <div class="header">
-        <h2>{{ 'Edit Appointment' if appointment_id else 'Create Appointment' }}</h2>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const appointmentId = window.location.pathname.split("/").pop().match(/^\d+$/) ? parseInt(window.location.pathname.split("/").pop()) : null
+            const doctorNameInput = document.getElementById('doctor-name')
+            const patientNameInput = document.getElementById('patient-name')
+            const dateInput = document.getElementById('date')
+            const timeInput = document.getElementById('time')
+            const statusRadios = document.getElementsByName('status')
+            const reasonInput = document.getElementById('notes')
+            const serviceSelect = document.getElementById('service')
 
-    <div class="container1">
-        <div class="header">
-            <a href="/admin/appointmentList" class="breadcrumb">Appointments</a> &gt;
-            <span class="breadcrumb-active">{{ 'Edit Appointment' if appointment_id else 'Create Appointment' }}</span>
-        </div>
+            // Mock services data
+            const services = [
+                { id: 1, name: "Первичная консультация" },
+                { id: 2, name: "Повторная консультация" }
+            ]
 
-        <section class="edit-schedule">
-            <h2>{{ 'Edit Appointment' if appointment_id else 'Create Appointment' }}</h2>
-            <form id="edit-appointment-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="doctor-name">Doctor Name *</label>
-                        <input type="text" id="doctor-name" name="doctor_name" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="patient-name">Patient Name *</label>
-                        <input type="text" id="patient-name" name="patient_name" readonly>
-                    </div>
-                </div>
+            // Load services
+            serviceSelect.innerHTML = services.map(service =>
+                `<option value="${service.id}">${service.name}</option>`
+            ).join('')
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date">Date *</label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="time">Time *</label>
-                        <input type="time" id="time" name="time" required>
-                    </div>
-                    <div class="form-group">
-                    <label for="service">Service *</label>
-                    <select id="service" name="service_id" required>
-                        <option value="">Loading...</option>
-                    </select>
-                </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="notes">Reason *</label>
-                    <textarea id="notes" name="reason" required></textarea>
-                </div>
-
-                <div class="form-group status-group">
-                    <label>Status *</label>
-                    <input type="radio" id="approved" name="status" value="approved">
-                    <label for="approved">Approved</label>
-                    <input type="radio" id="pending" name="status" value="pending">
-                    <label for="pending">Pending</label>
-                    <input type="radio" id="rejected" name="status" value="rejected">
-                    <label for="rejected">Rejected</label>
-                </div>
-
-                <div class="button-group">
-                    <button type="submit" class="submit-button">
-                        {{ 'Save Changes' if appointment_id else 'Create Appointment' }}
-                    </button>
-                    <button type="button" class="cancel-button" onclick="window.location.href='/admin/appointmentList';">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </section>
-    </div>
-</div>
-</div>
-<script>
-    const appointmentId = window.location.pathname.split("/").pop().match(/^\d+$/) ? parseInt(window.location.pathname.split("/").pop()) : null;
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        const doctorNameInput = document.getElementById('doctor-name');
-        const patientNameInput = document.getElementById('patient-name');
-        const dateInput = document.getElementById('date');
-        const timeInput = document.getElementById('time');
-        const statusRadios = document.getElementsByName('status');
-        const reasonInput = document.getElementById('notes');
-        const serviceSelect = document.getElementById('service');
-
-        // Загружаем список услуг
-        async function loadServices(selectedServiceId = null) {
-            const response = await fetch('/services');
-            const services = await response.json();
-            serviceSelect.innerHTML = '';
-
-            services.forEach(service => {
-                const option = document.createElement('option');
-                option.value = service.id;
-                option.textContent = service.name;
-                if (selectedServiceId && service.id === selectedServiceId) {
-                    option.selected = true;
-                }
-                serviceSelect.appendChild(option);
-            });
-        }
-
-        if (appointmentId) {
-            // Получаем данные для редактирования
-            const response = await fetch(`/admin/api/appointments/${appointmentId}`);
-            const data = await response.json();
-
-            // Подставляем значения в форму
-            doctorNameInput.value = `${data.doctor.first_name} ${data.doctor.last_name} ${data.doctor.second_name || ''}`;
-            patientNameInput.value = `${data.patient.first_name} ${data.patient.last_name} ${data.patient.second_name || ''}`;
-            dateInput.value = data.date;
-            timeInput.value = data.time.slice(0, 5);
-            reasonInput.value = data.reason;
-
-            statusRadios.forEach(r => {
-                if (r.value.toLowerCase() === data.status.toLowerCase()) r.checked = true;
-            });
-
-            await loadServices(data.service_id);
-        } else {
-            await loadServices(); // пустой выбор
-        }
-
-        // Отправка формы
-        document.getElementById('edit-appointment-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const payload = {
-                doctor_id: appointmentId ? null : parseInt(prompt("Enter Doctor ID")),  // временная заглушка
-                patient_id: appointmentId ? null : parseInt(prompt("Enter Patient ID")), // временная заглушка
-                date: dateInput.value,
-                time: timeInput.value,
-                status: document.querySelector('input[name="status"]:checked').value,
-                reason: reasonInput.value,
-                service_id: parseInt(serviceSelect.value)
-            };
-
-            const url = appointmentId ? `/update?appointment_id=${appointmentId}` : `/add?patient_id=${payload.patient_id}`;
-            const method = appointmentId ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (response.ok) {
-                alert('Appointment saved!');
-                window.location.href = '/admin/appointmentList';
-            } else {
-                const error = await response.json();
-                alert(`Error: ${error.detail || 'Unknown error'}`);
+            // Mock appointment data for ID 1
+            const data = {
+                doctor: {
+                    first_name: "Мария",
+                    last_name: "Смирнова",
+                    second_name: "Александровна"
+                },
+                patient: {
+                    first_name: "Диана",
+                    last_name: "Кононцева",
+                    second_name: "Владимировна"
+                },
+                date: "2024-04-25",
+                time: "09:00",
+                reason: "Первичная консультация",
+                status: "Одобрено",
+                service_id: 1
             }
+
+            // Fill form with data
+            doctorNameInput.value = `${data.doctor.last_name} ${data.doctor.first_name} ${data.doctor.second_name}`
+            patientNameInput.value = `${data.patient.last_name} ${data.patient.first_name} ${data.patient.second_name}`
+            dateInput.value = data.date
+            timeInput.value = data.time
+            reasonInput.value = data.reason
+            serviceSelect.value = data.service_id
+
+            // Set status radio button
+            statusRadios.forEach(r => {
+                if (r.value.toLowerCase() === data.status.toLowerCase()) {
+                    r.checked = true
+                }
+            })
+
+            // Form submission handler
+            document.getElementById('edit-appointment-form').addEventListener('submit', async (e) => {
+                e.preventDefault()
+
+                const payload = {
+                    date: dateInput.value,
+                    time: timeInput.value,
+                    status: document.querySelector('input[name="status"]:checked').value,
+                    reason: reasonInput.value,
+                    service_id: parseInt(serviceSelect.value)
+                }
+
+                try {
+                    const response = await fetch(`/admin/appointments/update?appointment_id=${appointmentId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    })
+
+                    if (response.ok) {
+                        alert('Appointment updated successfully!')
+                        window.location.href = '/admin/appointmentList'
+                    } else {
+                        const error = await response.json()
+                        alert(`Error: ${error.detail || 'Unknown error'}`)
+                    }
+                } catch (error) {
+                    console.error('Error updating appointment:', error)
+                    alert('An error occurred while updating the appointment.')
+                }
+            })
+        })
+
+        flatpickr("#date", {
+            dateFormat: "Y-m-d",
+            minDate: "today"
         });
-    });
-</script>
+    </script>
 </body>
+
 </html>

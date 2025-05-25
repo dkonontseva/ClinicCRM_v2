@@ -78,45 +78,47 @@
 
 <body>
 <div class="container">
-    <h1>Medical Record Report</h1>
+    <h1>Запись с приема</h1>
 
     <div class="report-section">
-        <h2>Patient Details</h2>
+        <h2>Пациент</h2>
         <div class="report-details">
-            <p><span>Patient Name:</span> <span id="patientName"></span></p>
-            <p><span>Birth Day:</span> <span id="birthDate"></span></p>
-            <p><span>Date:</span> <span id="visitDate"></span></p>
+            <p><span>ФИО:</span> Диана Кононцева</p>
+            <p><span>Дата рождения:</span> 26.07.2004</p>
+            <p><span>Дата приема:</span> 12.04.2025</p>
         </div>
     </div>
 
     <div class="report-section">
-        <h2>Doctor</h2>
+        <h2>Врач</h2>
         <div class="report-details">
-            <p><span>Doctor:</span> <span id="doctorName"></span></p>
+            <p><span>ФИО:</span> Мария Александровна Смирнова</p>
         </div>
     </div>
 
     <div class="report-section">
-        <h2>Symptoms</h2>
-        <div class="report-details" id="symptoms"></div>
+        <h2>Симптомы</h2>
+        <div class="report-details">
+            Головная боль, повышенная температура, боль в горле, увеличенные лимфоузлы.
+        </div>
     </div>
 
     <div class="report-section">
-        <h2>Examination Results</h2>
-        <div class="report-details" id="examination"></div>
+        <h2>Результаты осмотра</h2>
+        <div class="report-details">
+            АД: 140/90 мм рт. ст., температура 38.8°C. Осмотр терапевта: напряжение в области шеи, лёгкий тремор рук.
+        </div>
     </div>
 
     <div class="report-section">
-        <h2>Diagnosis</h2>
-        <div class="report-details" id="diagnosis"></div>
+        <h2>Диагноз</h2>
+        <div class="report-details">
+            ОРИ, рекомендуется АнтиГриппин 1п/1р в день, Ибупрофен 1т/2р в день 3 дня, наблюдение у терапевта.
+        </div>
     </div>
 
-    <button class="print-btn" onclick="window.print()">Print Report</button>
-
+    <button class="print-btn" onclick="window.print()">Печать</button>
 </div>
-
-<div id="error-message" class="error-message" style="display: none;"></div>
-
 <script>
     let currentNoteId = null
 
@@ -129,7 +131,20 @@
                 return
             }
 
-            const note = await PatientAPI.getMedicalCardNote(currentNoteId)
+            // const note = await PatientAPI.getMedicalCardNote(currentNoteId)
+            const note = {
+                patient_first_name: "Диана",
+                patient_last_name: "Кононцева",
+                patient_birth_date: "26.07.2004",
+                date_of_visit: "12.04.2025",
+                doctor_first_name: "Мария",
+                doctor_last_name: "Смирнова",
+                doctor_second_name: "Александровна",
+                symptoms: "Головная боль, повышенная температура. боль в горле, увеличенные лимфоузлы.",
+                examination_results: "АД: 140/90 мм рт. ст., температура 38.8°C. Осмотр терапевта: напряжение в области шеи, лёгкий тремор рук.",
+                diagnosis: "ОРИ, рекомендуется АнтиГриппин 1п/1р в день, Ибупрофен 1т/2р в день 3 дня, наблюдение у терапевта."
+            }
+
             updateMedicalCardNote(note)
 
         } catch (error) {

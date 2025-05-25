@@ -415,64 +415,65 @@
         </div>
     </div>
     <div class="nav-menu">
-        <a href="/doctor/dashboard" class="nav-item ">Dashboard</a>
-        <a href="/doctor/myLeaves" class="nav-item active">My Leaves</a>
-        <a href="/doctor/patientsCards" class="nav-item">Patients' cards</a>
-        <a href="/doctor/profile" class="nav-item">Profile Settings</a>
-        <a href="/doctor/chat" class="nav-item">Chat</a>
-        <a href='/' class="logout">Logout</a>
+        <a href="/doctor/dashboard" class="nav-item ">Дашборд</a>
+        <a href="/doctor/myLeaves" class="nav-item active">Мои заявления</a>
+        <a href="/doctor/patientsCards" class="nav-item ">Мед. карты пациентов</a>
+        <a href="/doctor/profile" class="nav-item">Профиль</a>
+        <a href="/doctor/chat" class="nav-item">Чат</a>
+        <a href="/doctor/video" class="nav-item">Видеочат</a>
+        <a href='/' class="logout">Выход</a>
     </div>
 </div>
 
 <div class="main-content">
     <div class="header">
-        <h2 id="form-title">Leave Form</h2>
+        <h2 id="form-title">Заявление</h2>
     </div>
 
     <div class="container1">
         <div class="header">
-            <a href="/doctor/myLeaves" class="breadcrumb">Doctor Leave</a>
+            <a href="/doctor/myLeaves" class="breadcrumb">Заявление врача</a>
         </div>
         <section class="edit-schedule">
-            <h2>Edit Leave</h2>
+            <h2>Форма для заявления</h2>
             <form id="leave-form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="doctor-search">Doctor Name *</label>
-                        <input type="text" id="doctor-search" placeholder="Start typing doctor name..." required/>
+                        <label for="doctor-search">ФИО *</label>
+                        <input type="text" id="doctor-search" placeholder="Начните заполнять поле..." required/>
                         <input type="hidden" name="doctor_id" id="doctor-id"/>
-                        <ul id="autocomplete-list" class="autocomplete-items"></ul>
+<!--                        <ul id="autocomplete-list" class="autocomplete-items"></ul>-->
                     </div>
                     <div class="form-group">
-                        <label for="leave-type">Leave Type *</label>
+                        <label for="leave-type">Тип *</label>
                         <select id="leave-type" name="leave_type" required>
-                            <option value="Medical Reason">Medical Reason</option>
-                            <option value="Casual Leave">Casual Leave</option>
-                            <option value="Family Reason">Family Reason</option>
+                            <option value="Medical Reason">Больничный</option>
+                            <option value="Casual Leave">Отпуск</option>
+                            <option value="Family Reason">Иные причины</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="from-date">From *</label>
+                        <label for="from-date">С *</label>
                         <input type="date" id="from-date" name="from_date" required/>
                     </div>
                     <div class="form-group">
-                        <label for="to-date">To *</label>
+                        <label for="to-date">До *</label>
                         <input type="date" id="to-date" name="to_date" required/>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="notes">Reasons</label>
+                    <label for="notes">Причина</label>
                     <textarea id="notes" name="reason"></textarea>
                 </div>
 
                 <div class="button-group">
-                    <button type="submit" class="submit-button">Save</button>
+                    <button type="submit" class="submit-button">Сохранить</button>
                     <button type="button" class="cancel-button" onclick="window.location.href='/doctor/myLeaves'">
-                        Cancel
+                        Отменить
                     </button>
                 </div>
             </form>
@@ -489,12 +490,12 @@
         const leaveId = new URLSearchParams(window.location.search).get('leave_id');
         const title = document.getElementById('form-title');
         if (leaveId) title.textContent = 'Edit Leave';
-        else title.textContent = 'Add Leave';
+        else title.textContent = 'Добавить заявление';
 
         const form = document.getElementById('leave-form');
         const doctorInput = document.getElementById("doctor-search");
         const doctorIdInput = document.getElementById("doctor-id");
-        const autocompleteList = document.getElementById("autocomplete-list");
+        // const autocompleteList = document.getElementById("autocomplete-list");
 
         doctorInput.addEventListener("input", async function () {
             const query = this.value.trim();

@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/luxon@3.0.1/build/global/luxon.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -120,7 +120,7 @@
 
 
         .dashboard-container {
-            width: 1780px;
+            width: 1620px;
             margin-left: 280px;
             padding: 30px;
             flex: 1;
@@ -390,7 +390,7 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
             flex-direction: column;
             overflow: hidden;
-            height: 400px;
+            height: 500px;
             display: none;
         }
 
@@ -481,204 +481,204 @@
 </head>
 
 <body data-theme="light">
-<div class="sidebar">
-    <div class="doctor-profile">
-        <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
-    </div>
-    <div class="nav-menu">
-        <a href='/patientDashboard' class="nav-item active">Dashboard</a>
-        <a href='/myMedicalCard' class="nav-item">My medical card</a>
-        <a href="/findAppointment" class="nav-item">Find appointment</a>
-        <a href='/patientProfile' class="nav-item">Profile Settings</a>
-        <a href='/' class="logout">Logout</a>
-    </div>
-</div>
-<div class="dashboard-container">
-    <header class="header">
-        <div class="profile-section">
-            <h2>{{ userData.first_name }} {{ userData.last_name }}</h2>
+    <div class="sidebar">
+        <div class="doctor-profile">
+            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
         </div>
-    </header>
-
-    <div class="tabs">
-        <div class="tab active" onclick="switchTab('statistics')">Statistics</div>
-        <div class="tab" onclick="switchTab('appointments')">Future Appointments</div>
-        <div class="tab" onclick="switchTab('history')">Appointments History</div>
+        <div class="nav-menu">
+            <a href='/patientDashboard' class="nav-item active">Дашборд</a>
+            <a href='/myMedicalCard' class="nav-item">Моя мед. карта</a>
+            <a href="/findAppointment" class="nav-item">Найти талон</a>
+            <a href='/patientProfile' class="nav-item">Профиль</a>
+            <a href='/' class="logout">Выйти</a>
+        </div>
     </div>
+    <div class="dashboard-container">
+        <header class="header">
+            <div class="profile-section">
+                <h2>Кононцева Дина Владимировна</h2>
+            </div>
+        </header>
 
-    <div id="statistics" class="tab-content">
-        <div class="quick-stats">
-            <div class="stat-card">
-                <i class="fas fa-calendar-check"></i>
-                <h3>Next Appointment</h3>
-                <p>{{ next_appointment if next_appointment else "No upcoming appointments" }}</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-file-medical"></i>
-                <h3>Medical Records</h3>
-                <p>{{ medical_records }}</p>
-            </div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('statistics')">Статистика</div>
+            <div class="tab" onclick="switchTab('appointments')">Предстоящие записи</div>
+            <div class="tab" onclick="switchTab('history')">История визитов</div>
         </div>
 
-        <div class="dashboard-grid">
-            <div class="chart-container">
-                <h3>Monthly Visits</h3>
-                <canvas id="visitsByMonthChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Departments Visits</h3>
-                <canvas id="visitsByDepartmentChart"></canvas>
+        <div id="statistics" class="tab-content">
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Ближайшая запись</h3>
+                    <p>15 мая 2025, 14:30</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-file-medical"></i>
+                    <h3>Записи в мед. карте</h3>
+                    <p>7 записей</p>
+                </div>
             </div>
 
+            <div class="dashboard-grid">
+                <div class="chart-container">
+                    <h3>Посещения в месяц</h3>
+                    <canvas id="visitsByMonthChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Посещения по отделам</h3>
+                    <canvas id="visitsByDepartmentChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="appointments" class="tab-content" style="display: none;">
+            <h3>Предстоящие визиты</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Доктор</th>
+                            <th>Отделение</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Статус</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="future-appointments-body">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="history" class="tab-content" style="display: none;">
+            <h3>История визитов</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Доктор</th>
+                            <th>Отделение</th>
+                            <th>Дата</th>
+                            <th>Время</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointment-history-body">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="chatbot-container" class="chatbot-container">
+        <div id="chatbot-body" class="chatbot-body hidden">
+            <div id="chatbot-messages" class="chatbot-messages"></div>
+            <div class="chatbot-input-container">
+                <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Send your question...">
+                <button onclick="sendMessage()" class="chatbot-send-btn">Отправить</button>
+            </div>
+        </div>
+        <div id="chatbot-header" class="chatbot-header" onclick="toggleChatbot()">
+            <img src="https://img.icons8.com/?size=35&id=38977&format=png&color=ffffff" class="chat-icon" alt="chat">
         </div>
     </div>
 
-    <div id="appointments" class="tab-content" style="display: none;">
-        <h3>Future Appointments</h3>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Doctor</th>
-                    <th>Department</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody id="future-appointments-body">
-                <!-- Will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
 
-    <div id="history" class="tab-content" style="display: none;">
-        <h3>Appointments History</h3>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Doctor</th>
-                    <th>Department</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody id="appointment-history-body">
-                <!-- Will be populated by JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div id="chatbot-container" class="chatbot-container">
-    <div id="chatbot-body" class="chatbot-body hidden">
-        <div id="chatbot-messages" class="chatbot-messages"></div>
-        <div class="chatbot-input-container">
-            <input type="text" id="chatbot-input" class="chatbot-input" placeholder="Send your question...">
-            <button onclick="sendMessage()" class="chatbot-send-btn">Send</button>
-        </div>
-    </div>
-    <div id="chatbot-header" class="chatbot-header" onclick="toggleChatbot()">
-        <img src="https://img.icons8.com/?size=35&id=38977&format=png&color=ffffff" class="chat-icon" alt="chat">
-    </div>
-</div>
+    <script>
+        let currentPatientId = null
 
+        async function loadDashboardData() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search)
+                currentPatientId = urlParams.get('id')
+                if (!currentPatientId) {
+                    showError('Patient ID not provided')
+                    return
+                }
+                const userData = await PatientAPI.getPatientProfile(currentPatientId)
+                const dashboardData = await PatientAPI.getDashboardData(currentPatientId)
+                const futureTalons = await PatientAPI.getFutureTalons(currentPatientId)
 
-<script>
-    let currentPatientId = null
+                // Update statistics
+                document.querySelector('.stat-card:nth-child(1) p').textContent = dashboardData.next_appointment || "No upcoming appointments"
+                document.querySelector('.stat-card:nth-child(2) p').textContent = dashboardData.medical_records_count
 
-    async function loadDashboardData() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search)
-            currentPatientId = urlParams.get('id')
-            if (!currentPatientId) {
-                showError('Patient ID not provided')
-                return
+                // Update charts
+                updateVisitsByMonthChart(dashboardData.visits_by_month)
+                updateVisitsByDepartmentChart(dashboardData.visits_by_department)
+
+                // Update appointments tables
+                updateFutureAppointments(futureTalons)
+                updateAppointmentHistory(dashboardData.appointment_history)
+
+            } catch (error) {
+                showError(error.message)
             }
-            const userData = await PatientAPI.getPatientProfile(currentPatientId)
-            const dashboardData = await PatientAPI.getDashboardData(currentPatientId)
-            const futureTalons = await PatientAPI.getFutureTalons(currentPatientId)
-
-            // Update statistics
-            document.querySelector('.stat-card:nth-child(1) p').textContent = dashboardData.next_appointment || "No upcoming appointments"
-            document.querySelector('.stat-card:nth-child(2) p').textContent = dashboardData.medical_records_count
-
-            // Update charts
-            updateVisitsByMonthChart(dashboardData.visits_by_month)
-            updateVisitsByDepartmentChart(dashboardData.visits_by_department)
-
-            // Update appointments tables
-            updateFutureAppointments(futureTalons)
-            updateAppointmentHistory(dashboardData.appointment_history)
-
-        } catch (error) {
-            showError(error.message)
         }
-    }
 
-    function updateVisitsByMonthChart(data) {
-        const ctx = document.getElementById('visitsByMonthChart').getContext('2d')
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Visits by Month',
-                    data: data,
-                    borderColor: '#2196f3',
-                    tension: 0.4,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        })
-    }
+        function updateVisitsByMonthChart(data) {
+            const ctx = document.getElementById('visitsByMonthChart').getContext('2d')
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                    datasets: [{
+                        label: 'Visits by Month',
+                        data: data,
+                        borderColor: '#2196f3',
+                        tension: 0.4,
+                        fill: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            })
+        }
 
-    function updateVisitsByDepartmentChart(data) {
-        const ctx = document.getElementById('visitsByDepartmentChart').getContext('2d')
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: data.map(item => item.department),
-                datasets: [{
-                    label: 'Visits by Department',
-                    data: data.map(item => item.count),
-                    backgroundColor: 'rgba(33, 150, 243, 0.2)',
-                    borderColor: '#2196f3',
-                    pointBackgroundColor: '#2196f3'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true
+        function updateVisitsByDepartmentChart(data) {
+            const ctx = document.getElementById('visitsByDepartmentChart').getContext('2d')
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: data.map(item => item.department),
+                    datasets: [{
+                        label: 'Visits by Department',
+                        data: data.map(item => item.count),
+                        backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                        borderColor: '#2196f3',
+                        pointBackgroundColor: '#2196f3'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        })
-    }
-
-    function updateFutureAppointments(appointments) {
-        const tbody = document.querySelector('#appointments tbody')
-        tbody.innerHTML = ''
-
-        if (appointments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Нет будущих назначений</td></tr>'
-            return
+            })
         }
 
-        appointments.forEach(appointment => {
-            const tr = document.createElement('tr')
-            tr.innerHTML = `
+        function updateFutureAppointments(appointments) {
+            const tbody = document.querySelector('#appointments tbody')
+            tbody.innerHTML = ''
+
+            if (appointments.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Нет будущих назначений</td></tr>'
+                return
+            }
+
+            appointments.forEach(appointment => {
+                const tr = document.createElement('tr')
+                tr.innerHTML = `
                 <td>Dr. ${appointment.doctor_name}</td>
                 <td>${appointment.department}</td>
                 <td>${appointment.date}</td>
@@ -688,120 +688,201 @@
                     <button class="status-btn cancel" onclick="cancelAppointment(${appointment.id})">Cancel</button>
                 </td>
             `
-            tbody.appendChild(tr)
-        })
-    }
-
-    function updateAppointmentHistory(history) {
-        const tbody = document.querySelector('#history tbody')
-        tbody.innerHTML = ''
-
-        if (history.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Нет прошедших записей</td></tr>'
-            return
+                tbody.appendChild(tr)
+            })
         }
 
-        history.forEach(appointment => {
-            const tr = document.createElement('tr')
-            tr.innerHTML = `
+        function updateAppointmentHistory(history) {
+            const tbody = document.querySelector('#history tbody')
+            tbody.innerHTML = ''
+
+            if (history.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Нет прошедших записей</td></tr>'
+                return
+            }
+
+            history.forEach(appointment => {
+                const tr = document.createElement('tr')
+                tr.innerHTML = `
                 <td>Dr. ${appointment.doctor_name}</td>
                 <td>${appointment.department}</td>
                 <td>${appointment.date}</td>
                 <td>${appointment.time}</td>
                 <td><span class="status-${appointment.status.toLowerCase()}">${appointment.status}</span></td>
             `
-            tbody.appendChild(tr)
-        })
-    }
-
-    async function cancelAppointment(appointmentId) {
-        try {
-            await PatientAPI.cancelAppointment(appointmentId)
-            showSuccess('Appointment cancelled successfully')
-            loadDashboardData() // Refresh data
-        } catch (error) {
-            showError(error.message)
-        }
-    }
-
-    function showSuccess(message) {
-        const messageElement = document.getElementById('error-message')
-        messageElement.textContent = message
-        messageElement.style.backgroundColor = '#4CAF50'
-        messageElement.style.display = 'block'
-        setTimeout(() => {
-            messageElement.style.display = 'none'
-        }, 3000)
-    }
-
-    function showError(message) {
-        const messageElement = document.getElementById('error-message')
-        messageElement.textContent = message
-        messageElement.style.backgroundColor = '#f44336'
-        messageElement.style.display = 'block'
-        setTimeout(() => {
-            messageElement.style.display = 'none'
-        }, 3000)
-    }
-
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', loadDashboardData)
-
-    function switchTab(tab) {
-        document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none')
-        document.querySelector(`#${tab}`).style.display = 'block'
-
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
-        document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
-    }
-
-    let isChatbotOpen = false
-
-    function toggleChatbot() {
-        const chatbotBody = document.getElementById('chatbot-body')
-        if (isChatbotOpen) {
-            chatbotBody.classList.add('hidden')
-        } else {
-            chatbotBody.classList.remove('hidden')
-        }
-        isChatbotOpen = !isChatbotOpen
-    }
-
-    function sendMessage() {
-        const inputField = document.getElementById('chatbot-input')
-        const message = inputField.value.trim()
-        const messagesContainer = document.getElementById('chatbot-messages')
-
-        if (message) {
-            const userMessage = document.createElement('div')
-            userMessage.className = 'user-message'
-            userMessage.textContent = message
-            messagesContainer.appendChild(userMessage)
-
-            fetch('/ai_assistant', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({question: message}),
+                tbody.appendChild(tr)
             })
-                .then((response) => response.json())
-                .then((data) => {
+        }
+
+        async function cancelAppointment(appointmentId) {
+            try {
+                await PatientAPI.cancelAppointment(appointmentId)
+                showSuccess('Appointment cancelled successfully')
+                loadDashboardData() // Refresh data
+            } catch (error) {
+                showError(error.message)
+            }
+        }
+
+        function showSuccess(message) {
+            const messageElement = document.getElementById('error-message')
+            messageElement.textContent = message
+            messageElement.style.backgroundColor = '#4CAF50'
+            messageElement.style.display = 'block'
+            setTimeout(() => {
+                messageElement.style.display = 'none'
+            }, 3000)
+        }
+
+        function showError(message) {
+            const messageElement = document.getElementById('error-message')
+            messageElement.textContent = message
+            messageElement.style.backgroundColor = '#f44336'
+            messageElement.style.display = 'block'
+            setTimeout(() => {
+                messageElement.style.display = 'none'
+            }, 3000)
+        }
+
+        // Load data when page loads
+        // document.addEventListener('DOMContentLoaded', loadDashboardData)
+        document.addEventListener('DOMContentLoaded', () => {
+            updateVisitsByMonthChart([1, 2, 3, 5, 6, 4, 8, 9, 7, 5, 3, 1])
+            updateVisitsByDepartmentChart([
+                { department: 'Терапия', count: 8 },
+                { department: 'Кардиология', count: 5 },
+                { department: 'Гастроэнтерология', count: 3 },
+                { department: 'Дерматология', count: 2 },
+                { department: 'Офтальмология', count: 1 }
+            ])
+            updateFutureAppointments([
+                {
+                    doctor_name: "Мария Смирнова",
+                    department: "Кардиология",
+                    date: "02.05.2025",
+                    time: "9:00",
+                    status: "Ожидается"
+                },
+                {
+                    id: 1,
+                    doctor_name: "Алексей Смирнов",
+                    department: "Кардиология",
+                    date: "15.05.2025",
+                    time: "14:30",
+                    status: "Ожидается"
+                },
+                {
+                    id: 2,
+                    doctor_name: "Мария Соколова",
+                    department: "Терапия",
+                    date: "20.05.2025",
+                    time: "10:00",
+                    status: "Ожидается"
+                }
+            ])
+            updateAppointmentHistory([
+                {
+                    doctor_name: "Алексей Смирнов",
+                    department: "Кардиология",
+                    date: "10.04.2025",
+                    time: "12:00",
+                    status: "Завершено"
+                },
+                {
+                    doctor_name: "Мария Соколова",
+                    department: "Терапия",
+                    date: "28.03.2025",
+                    time: "09:30",
+                    status: "Завершено"
+                },
+                {
+                    doctor_name: "Иван Кузнецов",
+                    department: "Гастроэнтерология",
+                    date: "15.02.2025",
+                    time: "16:00",
+                    status: "Завершено"
+                }
+            ])
+        })
+
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none')
+            document.querySelector(`#${tab}`).style.display = 'block'
+
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+            document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active')
+        }
+
+        let isChatbotOpen = false
+
+        function toggleChatbot() {
+            const chatbotBody = document.getElementById('chatbot-body')
+            if (isChatbotOpen) {
+                chatbotBody.classList.add('hidden')
+            } else {
+                chatbotBody.classList.remove('hidden')
+            }
+            isChatbotOpen = !isChatbotOpen
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('chatbot-input')
+            const message = inputField.value.trim()
+            const messagesContainer = document.getElementById('chatbot-messages')
+
+            if (message) {
+                // Добавляем сообщение пользователя
+                const userMessage = document.createElement('div')
+                userMessage.className = 'user-message'
+                userMessage.textContent = message
+                messagesContainer.appendChild(userMessage)
+
+                // Имитируем ответ бота
+                setTimeout(() => {
                     const botMessage = document.createElement('div')
                     botMessage.className = 'bot-message'
-                    botMessage.textContent = data.answer
+
+                    // Логика ответов бота
+                    if (message.toLowerCase().includes('да') && lastBotMessage.includes('Подтверждаете запись')) {
+                        botMessage.textContent = 'Запись подтверждена! Спасибо за обращение!'
+                        lastBotMessage = botMessage.textContent
+                    }
+                    else if (message.toLowerCase().includes('да') && lastBotMessage.includes('Хотите подобрать')) {
+                        botMessage.textContent = 'Доктор Смирнова Мария Александровна, дата 15.05.2025, время 14:30. Подтверждаете запись?'
+                        lastBotMessage = botMessage.textContent
+                    }
+                    else {
+                        // Имитируем анализ симптомов
+                        const recommendation = {
+                            recommended_doctor_specialty: "Кардиолог",
+                            recommendation_text: "На основе ваших симптомов рекомендую обратиться к кардиологу.",
+                            message: "Хотите подобрать ближайшую запись?",
+                            appointment_offered: false
+                        }
+
+                        botMessage.textContent = `${recommendation.recommendation_text} ${recommendation.message}`
+                        lastBotMessage = botMessage.textContent
+                    }
+
                     messagesContainer.appendChild(botMessage)
-
                     messagesContainer.scrollTop = messagesContainer.scrollHeight
-                })
-                .catch((error) => {
-                    console.error('Error:', error)
-                })
+                }, 1000)
 
-            inputField.value = ''
+                inputField.value = ''
+            }
         }
-    }
-</script>
+
+        // Добавляем переменную для хранения последнего сообщения бота
+        let lastBotMessage = ''
+
+        // Добавляем обработку Enter для отправки сообщения
+        document.getElementById('chatbot-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage()
+            }
+        })
+    </script>
 
 </body>
 

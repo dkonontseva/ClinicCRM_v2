@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Records</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
     <script src="../../static/js/api.js"></script>
     <style>
         * {
@@ -168,6 +168,7 @@
         }
 
         .submit-btn {
+            margin-left: 10px;
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 12px;
@@ -181,132 +182,188 @@
 
 <body>
 
-<div class="sidebar">
-    <div class="doctor-profile">
-        <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+    <div class="sidebar">
+        <div class="doctor-profile">
+            <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
+        </div>
+        <div class="nav-menu">
+            <a href='/patientDashboard' class="nav-item ">Дашборд</a>
+            <a href='/myMedicalCard' class="nav-item active">Моя мед. карта</a>
+            <a href="/findAppointment" class="nav-item">Найти талон</a>
+            <a href='/patientProfile' class="nav-item ">Профиль</a>
+            <a href='/' class="logout">Выйти</a>
+        </div>
     </div>
-    <div class="nav-menu">
-        <a href='/patientDashboard' class="nav-item">Dashboard</a>
-        <a href='/myMedicalCard' class="nav-item active">My medical card</a>
-        <a href="/findAppointment" class="nav-item">Find appointment</a>
-        <a href='/patientProfile' class="nav-item">Profile Settings</a>
-        <a href='/' class="logout">Logout</a>
-    </div>
-</div>
 
-<div class="main-content">
-    <h1>Medical Records</h1>
-    <div class="patients-section">
-        <form action="#" method="POST" style="width: 50%; margin-top: 30px; justify-content: center">
-            <div class="patients-header">
-                <form id="searchForm" style="width: 50%; margin-top: 30px; justify-content: center">
-                    <div class="patients-header">
-                        <input type="text" id="searchInput" name="search_query" placeholder="Search by patient name...">
-                        <button type="submit" class="submit-btn">Search</button>
-                    </div>
-                </form>
-
-            </div>
-        </form>
-
-        <table id="recordsTable">
-            <thead>
-            <tr>
-                <th>Doctor Name</th>
-                <th>Date of Visit</th>
-                <th>View</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for medicalnote in medicalCard %}
-            <tr>
-                <td>{{ medicalnote.first_name }} {{ medicalnote.last_name }}</td>
-                <td>{{ medicalnote.date.strftime('%d.%m.%Y') }}</td>
-                <td>
-                    <form method="GET" action="/medicalRecord/{{ medicalnote._id }}">
-                        <button type="submit" class="view-btn">View Details</button>
+    <div class="main-content">
+        <h1>Ваша мед. карта</h1>
+        <div class="patients-section">
+            <form action="#" method="POST" style="width: 50%; margin-top: 30px; justify-content: center">
+                <div class="patients-header">
+                    <form id="searchForm" style="width: 50%; margin-top: 30px; justify-content: center">
+                        <div class="patients-header">
+                            <input type="text" id="searchInput" name="search_query"
+                                placeholder="Поиск по ФИО...">
+                            <button type="submit" class="submit-btn">Поиск</button>
+                        </div>
                     </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
 
-        <div class="no-records" id="noRecords" style="display: none;">No records found</div>
+                </div>
+            </form>
+
+            <table id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>Врач</th>
+                        <th>Дата визита</th>
+                        <th>Посмотреть</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ medicalnote.first_name }} {{ medicalnote.last_name }}</td>
+                        <td>{{ medicalnote.date.strftime('%d.%m.%Y') }}</td>
+                        <td>
+                            <form method="GET" action="/medicalRecord/{{ medicalnote._id }}">
+                                <button type="submit" class="view-btn">Действия</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="no-records" id="noRecords" style="display: none;">Не найдено записей.</div>
+        </div>
     </div>
-</div>
-<div id="error-message" class="error-message" style="display: none;"></div>
 
-<script></script>
-<script>
-    let currentPatientId = null
+    <script></script>
+    <script>
+        let currentPatientId = null
+        const mockMedicalCards = [
+            {
+                _id: 'card003',
+                first_name: 'Мария',
+                last_name: 'Смирнова',
+                second_name: 'Александровна',
+                date: '2025-04-12T00:00:00.000Z'
+            },
+            {
+                _id: 'card004',
+                first_name: 'Алексей',
+                last_name: 'Смирнов',
+                second_name: 'Евгеньевич',
+                date: "2025-04-10T00:00:00.000Z"
+            },
+            {
+                _id: 'card005',
+                first_name: 'Мария',
+                last_name: 'Соколова',
+                second_name: 'Андреевна',
+                date: "2025-03-28T00:00:00.000Z"
+            },
+            {
+                _id: 'card006',
+                first_name: 'Иван',
+                last_name: 'Кузнецов',
+                second_name: 'Дмитриевич',
+                date: "2025-02-15T00:00:00.000Z"
+            },
+            {
+                _id: 'card002',
+                first_name: 'Игорь',
+                last_name: 'Петров',
+                second_name: 'Петрович',
+                date: '2025-02-14T00:00:00.000Z'
+            },
+            {
+                _id: 'card001',
+                first_name: 'Анна',
+                last_name: 'Иванова',
+                second_name: 'Ивановна',
+                date: '2025-02-03T00:00:00.000Z'
+            },
+            {
+                _id: 'card003',
+                first_name: 'Мария',
+                last_name: 'Смирнова',
+                second_name: 'Александровна',
+                date: '2025-01-20T00:00:00.000Z'
+            },
+            {
+                _id: 'card004',
+                first_name: 'Алексей',
+                last_name: 'Смирнов',
+                second_name: 'Евгеньевич',
+                date: "2025-01-17T00:00:00.000Z"
+            },
+            {
+                _id: 'card005',
+                first_name: 'Мария',
+                last_name: 'Соколова',
+                second_name: 'Андреевна',
+                date: "2025-01-09T00:00:00.000Z"
+            }
+        ]
 
-    async function loadMedicalCards(search = '') {
-        try {
-            const urlParams = new URLSearchParams(window.location.search)
-            currentPatientId = urlParams.get('id')
-            if (!currentPatientId && !search) {
-                showError('Patient ID not provided')
+        async function loadMedicalCards(search = '') {
+            try {
+                let medicalCards = mockMedicalCards
+
+                if (search.trim() !== '') {
+                    medicalCards = medicalCards.filter(card =>
+                        `${card.last_name} ${card.first_name} ${card.second_name}`.toLowerCase().includes(search.toLowerCase())
+                    )
+                }
+
+                updateMedicalCardsTable(medicalCards)
+            } catch (error) {
+                showError('Ошибка загрузки данных')
+            }
+        }
+
+        function updateMedicalCardsTable(cards) {
+            const tbody = document.querySelector('#recordsTable tbody')
+            tbody.innerHTML = ''
+
+            if (cards.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center">No medical records found</td></tr>'
                 return
             }
 
-            let medicalCards = []
-
-            if (search.trim() !== '') {
-                medicalCards = await PatientAPI.searchMedicalCards(search)
-            } else {
-                medicalCards = await PatientAPI.getMedicalCards(currentPatientId)
-            }
-
-            updateMedicalCardsTable(medicalCards)
-        } catch (error) {
-            showError(error.message)
-        }
-    }
-
-    function updateMedicalCardsTable(cards) {
-        const tbody = document.querySelector('#recordsTable tbody')
-        tbody.innerHTML = ''
-
-        if (cards.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center">No medical records found</td></tr>'
-            return
-        }
-
-        cards.forEach(card => {
-            const tr = document.createElement('tr')
-            tr.innerHTML = `
-            <td>Dr. ${card.first_name} ${card.last_name}</td>
+            cards.forEach(card => {
+                const tr = document.createElement('tr')
+                tr.innerHTML = `
+            <td>${card.last_name} ${card.first_name} ${card.second_name}</td>
             <td>${new Date(card.date).toLocaleDateString()}</td>
             <td>
-                <a href="/medicalRecord/${card._id}" class="view-btn">View Details</a>
+                <a href="/medicalRecord/${card._id}" class="view-btn">Открыть</a>
             </td>
         `
-            tbody.appendChild(tr)
+                tbody.appendChild(tr)
+            })
+        }
+
+        function showError(message) {
+            const messageElement = document.getElementById('error-message')
+            messageElement.textContent = message
+            messageElement.style.backgroundColor = '#f44336'
+            messageElement.style.display = 'block'
+            setTimeout(() => {
+                messageElement.style.display = 'none'
+            }, 3000)
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMedicalCards()
+
+            document.getElementById('searchForm').addEventListener('submit', (e) => {
+                e.preventDefault()
+                const query = document.getElementById('searchInput').value
+                loadMedicalCards(query)
+            })
         })
-    }
 
-    function showError(message) {
-        const messageElement = document.getElementById('error-message')
-        messageElement.textContent = message
-        messageElement.style.backgroundColor = '#f44336'
-        messageElement.style.display = 'block'
-        setTimeout(() => {
-            messageElement.style.display = 'none'
-        }, 3000)
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadMedicalCards()
-
-        document.getElementById('searchForm').addEventListener('submit', (e) => {
-            e.preventDefault()
-            const query = document.getElementById('searchInput').value
-            loadMedicalCards(query)
-        })
-    })
-
-</script>
+    </script>
 </body>
 
 </html>

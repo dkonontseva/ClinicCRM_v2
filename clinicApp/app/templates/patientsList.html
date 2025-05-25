@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -389,49 +390,56 @@
         }
     </style>
 </head>
+
 <body>
 <div class="container">
     <div class="sidebar">
         <div class="logo">
             <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+            <span>CarePuls</span>
         </div>
         <div class="menu-item">
             <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/dashboard">Дашборд</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
+            <a href="/admin/doctorsList">Врачи</a>
         </div>
         <div class="menu-item active">
             <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
+            <a href="/admin/patientsList">Пациенты</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
+            <a href="/admin/appointmentList">Талоны</a>
         </div>
         <div class="menu-item">
             <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
+            <a href="/admin/scheduleList">Графики</a>
         </div>
         <div class="menu-item">
             <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
+            <a href="/admin/doctorLeaves">Заявления</a>
         </div>
-        <a href='/' class="logout">Logout</a>
+        <a href='/' class="logout">Выход</a>
     </div>
     <!-- Main Content -->
     <div class="main-content">
         <div class="header">
-            <h2>Patient List</h2>
+            <h2>Пациенты</h2>
         </div>
-
+        <div class="patients-header" style="margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Поиск по ФИО..." oninput="searchPatients()"
+                   style="width: 50%; padding: 10px;">
+        </div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div class="action-buttons">
                 <button class="action-btn add-btn" onclick="window.location.href = '/admin/addPatient'">
-                    <i class="fas fa-plus"></i> Add New
+                    <i class="fas fa-plus"></i> Добавить
+                </button>
+                <button class="action-btn delete-btn"
+                        onclick="deleteSelected()">Удалить
                 </button>
                 <button class="action-btn refresh-btn" onclick="loadPatients()">
                     <i class="fas fa-sync-alt"></i>
@@ -439,24 +447,18 @@
             </div>
         </div>
 
-        <div class="patients-header" style="margin-bottom: 20px;">
-            <input type="text" id="searchInput" placeholder="Search by name..." oninput="searchPatients()"
-                   style="width: 50%; padding: 10px;">
-        </div>
 
         <div class="table-container">
-            <button class="action-btn delete-btn" style="margin-left: 84%;" onclick="deleteSelected()">Delete</button>
-
             <table>
                 <thead>
                 <tr>
                     <th></th>
-                    <th>Name</th>
-                    <th>Phone Number</th>
+                    <th>ФИО</th>
+                    <th>Номер телефона</th>
                     <th>Email</th>
-                    <th>Gender</th>
-                    <th>Address</th>
-                    <th>Actions</th>
+                    <th>Пол</th>
+                    <th>Адрес</th>
+                    <th>Действия</th>
                 </tr>
                 </thead>
                 <tbody id="patients-table-body">
@@ -465,83 +467,210 @@
             </table>
 
             <div class="pagination">
-                <button class="page-btn">Previous</button>
+                <button class="page-btn">Предыдущая</button>
                 <button class="page-btn active">1</button>
-                <button class="page-btn">Next</button>
+                <button class="page-btn">Следующая</button>
             </div>
         </div>
     </div>
 </div>
 <script>
     async function loadPatients() {
-        const response = await fetch('/admin/');
-        const data = await response.json();
+        try {
+            // Mock data for demonstration
+            const data = [
+                {
+                    _id: 1,
+                    users: {
+                        surname: "Кононцева",
+                        name: "Диана",
+                        patronymic: "Владимировна",
+                        phone_number: "+375 (29) 514-16-79",
+                        email: "diana.konontseva@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "2004-07-26",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Могилевская",
+                        house: "4/1",
+                        flat: "276"
+                    }
+                },
+                {
+                    _id: 2,
+                    users: {
+                        surname: "Маркова",
+                        name: "Людмила",
+                        patronymic: "Петровна",
+                        phone_number: "+375 (29) 123-45-67",
+                        email: "l.markova@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "1988-07-15",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Ленина",
+                        house: "10",
+                        flat: "15"
+                    }
+                },
+                {
+                    _id: 3,
+                    users: {
+                        surname: "Сидорчук",
+                        name: "Анна",
+                        patronymic: "Михайловна",
+                        phone_number: "+375 (29) 765-43-21",
+                        email: "a.sidorchuk@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "1992-11-30",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Независимости",
+                        house: "25",
+                        flat: "8"
+                    }
+                },
+                {
+                    _id: 4,
+                    users: {
+                        surname: "Кудрявцева",
+                        name: "Валерия",
+                        patronymic: "Александровна",
+                        phone_number: "+375 (29) 456-78-90",
+                        email: "v.kudryavceva@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "1990-02-25",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Пушкина",
+                        house: "15",
+                        flat: "45"
+                    }
+                },
+                {
+                    _id: 5,
+                    users: {
+                        surname: "Голубь",
+                        name: "Кира",
+                        patronymic: "Сергеевна",
+                        phone_number: "+375 (29) 987-65-43",
+                        email: "k.golub@mail.com",
+                        gender: "female"
+                    },
+                    b_date: "1995-03-10",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Якуба Коласа",
+                        house: "28",
+                        flat: "12"
+                    }
+                },
+                {
+                    _id: 6,
+                    users: {
+                        surname: "Иванов",
+                        name: "Иван",
+                        patronymic: "Иванович",
+                        phone_number: "+375 (29) 234-56-78",
+                        email: "i.ivanov@mail.com",
+                        gender: "male"
+                    },
+                    b_date: "1987-09-20",
+                    addresses: {
+                        country: "Беларусь",
+                        region: "Минская область",
+                        city: "Минск",
+                        street: "Сурганова",
+                        house: "50",
+                        flat: "89"
+                    }
+                }
+            ]
 
-        renderPatients(data);
+            renderPatients(data)
+        } catch (error) {
+            console.error('Error loading patients:', error)
+            alert('Failed to load patients data. Please try again.')
+        }
     }
 
     function renderPatients(patients) {
-        const tbody = document.getElementById('patients-table-body');
-        tbody.innerHTML = '';
+        const tbody = document.getElementById('patients-table-body')
+        tbody.innerHTML = ''
 
         if (patients.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No patients found.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Нет данных о пациентах.</td></tr>'
+            return
         }
 
         patients.forEach(patient => {
-            const row = document.createElement('tr');
+            const row = document.createElement('tr')
             row.innerHTML = `
-                <td><input type="checkbox" name="selectedRows" value="${patient._id}"></td>
-                <td>${patient.users.surname} ${patient.users.name} ${patient.users.patronymic || ''}</td>
-                <td>${patient.users.phone_number || '-'}</td>
-                <td>${patient.users.email || '-'}</td>
-                <td>${patient.users.gender || '-'}</td>
-                <td>${patient.addresses.country || ''}, ${patient.addresses.region || ''}, ${patient.addresses.city || ''} ${patient.addresses.street || ''} ${patient.addresses.house || ''}</td>
-                <td>
-                    <button class="download-btn" style="background: transparent; border: none;" onclick="editPatient(${patient._id})">
-                        <img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Edit"/>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
+                    <td><input type="checkbox" name="selectedRows" value="${patient._id}"></td>
+                    <td>${patient.users.surname} ${patient.users.name} ${patient.users.patronymic || ''}</td>
+                    <td>${patient.users.phone_number || '-'}</td>
+                    <td>${patient.users.email || '-'}</td>
+                    <td>${patient.users.gender === 'female' ? 'Женский' : 'Мужской'}</td>
+                    <td>${patient.addresses.country || ''}, ${patient.addresses.region || ''}, ${patient.addresses.city || ''} ${patient.addresses.street || ''} ${patient.addresses.house || ''} ${patient.addresses.flat ? `кв. ${patient.addresses.flat}` : ''}</td>
+                    <td>
+                        <button class="download-btn" style="background: transparent; border: none;" onclick="editPatient(${patient._id})">
+                            <img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Edit"/>
+                        </button>
+                    </td>
+                `
+            tbody.appendChild(row)
+        })
     }
 
     async function searchPatients() {
-        const query = document.getElementById('searchInput').value;
+        const query = document.getElementById('searchInput').value
         if (!query) {
-            return loadPatients();
+            return loadPatients()
         }
 
-        const response = await fetch(`/admin/search/?patient_name=${encodeURIComponent(query)}`);
-        const data = await response.json();
+        const response = await fetch(`/admin/search/?patient_name=${encodeURIComponent(query)}`)
+        const data = await response.json()
 
-        renderPatients(data);
+        renderPatients(data)
     }
 
     function editPatient(id) {
-        window.location.href = `/admin/addPatient/${id}`;
+        window.location.href = `/admin/addPatient/${id}`
     }
 
     async function deleteSelected() {
-        const selectedCheckboxes = document.querySelectorAll('input[name="selectedRows"]:checked');
-        const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value));
+        const selectedCheckboxes = document.querySelectorAll('input[name="selectedRows"]:checked')
+        const selectedIds = Array.from(selectedCheckboxes).map(cb => parseInt(cb.value))
 
         if (selectedIds.length === 0) {
-            alert("Select at least one patient to delete.");
-            return;
+            alert("Select at least one patient to delete.")
+            return
         }
 
         for (const id of selectedIds) {
-            await fetch(`/admin/delete/${id}`, {method: 'DELETE'});
+            await fetch(`/admin/delete/${id}`, {method: 'DELETE'})
         }
 
-        loadPatients();
+        loadPatients()
     }
 
     // Initial load
     loadPatients();
 </script>
 </body>
+
 </html>

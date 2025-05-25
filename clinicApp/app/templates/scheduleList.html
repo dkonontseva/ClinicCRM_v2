@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
 
     <style>
         * {
@@ -456,14 +457,6 @@
             border-bottom: none;
         }
 
-        .shift-doctor-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            margin-right: 10px;
-            object-fit: cover;
-        }
-
         .no-doctors {
             color: #8A92A6;
             font-size: 13px;
@@ -506,6 +499,18 @@
             padding: 8px 12px;
         }
 
+        .export-btn {
+            background: #28a745;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .export-btn:hover {
+            background: #218838;
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .content-wrapper {
@@ -529,545 +534,679 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="sidebar">
-        <div class="logo">
-            <img src="https://picsum.photos/32/32?random=1" alt="Logo">
-            <span>Pre Clinic</span>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <img src="https://picsum.photos/32/32?random=1" alt="Logo">
+                <span>CarePuls</span>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-th-large"></i>
+                <a href="/admin/dashboard">Дашборд</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-user-md"></i>
+                <a href="/admin/doctorsList">Врачи</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-users"></i>
+                <a href="/admin/patientsList">Пациенты</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <a href="/admin/appointmentList">Талоны</a>
+            </div>
+            <div class="menu-item active">
+                <i class="far fa-clock"></i>
+                <a href="/admin/scheduleList">Графики</a>
+            </div>
+            <div class="menu-item">
+                <i class="fas fa-hospital"></i>
+                <a href="/admin/doctorLeaves">Заявления</a>
+            </div>
+            <a href='/' class="logout">Выход</a>
         </div>
-        <div class="menu-item">
-            <i class="fas fa-th-large"></i>
-            <a href="/admin/dashboard">Dashboard</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-user-md"></i>
-            <a href="/admin/doctorsList">Doctors</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-users"></i>
-            <a href="/admin/patientsList">Patients</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <a href="/admin/appointmentList">Appointments</a>
-        </div>
-        <div class="menu-item  active">
-            <i class="far fa-clock"></i>
-            <a href="/admin/scheduleList">Doctor Schedule</a>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-hospital"></i>
-            <a href="/admin/doctorLeaves">Doctor Leaves</a>
-        </div>
-        <a href='/' class="logout">Logout</a>
-    </div>
-    <!-- Main Content -->
-    <div class="main-content">
-        <div class="header">
-            <h2>Doctor Schedules</h2>
-        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h2>Расписание врачей</h2>
+            </div>
 
-        <div class="action-buttons">
-            <button class="action-btn add-btn">
-                <i class="fas fa-plus"></i> Add New Schedule
-            </button>
-            <button class="action-btn refresh-btn" onclick="refreshData()">
-                <i class="fas fa-sync-alt"></i>
-            </button>
-        </div>
+            <div class="action-buttons">
+                <button class="action-btn add-btn">
+                    <i class="fas fa-plus"></i> Добавить расписание
+                </button>
+                <button class="action-btn refresh-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <button class="action-btn export-btn" onclick="exportToExcel()">
+                    <i class="fas fa-file-excel"></i> Выгрузить в Excel
+                </button>
+            </div>
 
-        <div class="content-wrapper">
-            <div class="calendar-section">
-                <div class="calendar-header">
-                    <div class="month-navigation">
-                        <button class="nav-btn" onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
-                        <div class="month-title" id="month-title"></div>
-                        <button class="nav-btn" onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+            <div class="content-wrapper">
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <div class="month-navigation">
+                            <button class="nav-btn" onclick="prevMonth()"><i class="fas fa-chevron-left"></i></button>
+                            <div class="month-title" id="month-title"></div>
+                            <button class="nav-btn" onclick="nextMonth()"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                        <select class="department-select" id="department-select" onchange="updateCalendar()">
+                            <option value="">Все отделения</option>
+                        </select>
                     </div>
-                    <select class="department-select" id="department-select" onchange="updateCalendar()">
-                        <option value="">All Departments</option>
-                    </select>
+
+                    <div class="calendar-grid" id="calendar-grid">
+                        <div class="calendar-day-header">Пн</div>
+                        <div class="calendar-day-header">Вт</div>
+                        <div class="calendar-day-header">Ср</div>
+                        <div class="calendar-day-header">Чт</div>
+                        <div class="calendar-day-header">Пт</div>
+                        <div class="calendar-day-header">Сб</div>
+                        <div class="calendar-day-header">Вс</div>
+                        <!-- Days will be inserted here by JavaScript -->
+                    </div>
                 </div>
 
-                <div class="calendar-grid" id="calendar-grid">
-                    <div class="calendar-day-header">Sun</div>
-                    <div class="calendar-day-header">Mon</div>
-                    <div class="calendar-day-header">Tue</div>
-                    <div class="calendar-day-header">Wed</div>
-                    <div class="calendar-day-header">Thu</div>
-                    <div class="calendar-day-header">Fri</div>
-                    <div class="calendar-day-header">Sat</div>
-                    <!-- Days will be inserted here by JavaScript -->
+                <div class="doctors-section">
+                    <div class="doctors-search">
+                        <input type="text" id="doctor-search" placeholder="Поиск по ФИО..." oninput="filterDoctors()">
+                    </div>
+                    <div class="doctors-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Врач</th>
+                                    <th>Отделение</th>
+                                </tr>
+                            </thead>
+                            <tbody id="doctors-list">
+                                <!-- Doctors will be inserted here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="doctors-section">
-                <div class="doctors-search">
-                    <input type="text" id="doctor-search" placeholder="Search doctors..." oninput="filterDoctors()">
-                </div>
-                <div class="doctors-table">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Doctor</th>
-                            <th>Specialization</th>
-                        </tr>
-                        </thead>
-                        <tbody id="doctors-list">
-                        <!-- Doctors will be inserted here by JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="shifts-container" id="shifts-container" style="display: none;">
-            <div class="shifts-header">Shifts for <span id="selected-date"></span></div>
-            <div class="shifts-tables">
-                <div class="shift-table">
-                    <div class="shift-title morning">Morning Shift (8:00 - 14:00)</div>
-                    <div class="shift-doctors" id="morning-shift"></div>
-                </div>
-                <div class="shift-table">
-                    <div class="shift-title evening">Evening Shift (14:00 - 20:00)</div>
-                    <div class="shift-doctors" id="evening-shift"></div>
+            <div class="shifts-container" id="shifts-container" style="display: none;">
+                <div class="shifts-header">Смены на <span id="selected-date"></span></div>
+                <div class="shifts-tables">
+                    <div class="shift-table">
+                        <div class="shift-title morning">Утренняя смена (8:00 - 14:00)</div>
+                        <div class="shift-doctors" id="morning-shift"></div>
+                    </div>
+                    <div class="shift-table">
+                        <div class="shift-title evening">Вечерняя смена (14:00 - 20:00)</div>
+                        <div class="shift-doctors" id="evening-shift"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    // Mock data for demonstration
-    const departments = [
-        {id: 1, name: "Cardiology"},
-        {id: 2, name: "Neurology"},
-        {id: 3, name: "Pediatrics"},
-        {id: 4, name: "Surgery"},
-        {id: 5, name: "Dermatology"}
-    ];
+    <script>
+        // Mock data for demonstration
+        const departments = [
+            { id: 1, name: "Кардиология" },
+            { id: 2, name: "Неврология" },
+            { id: 3, name: "Педиатрия" },
+            { id: 4, name: "Хирургия" },
+            { id: 5, name: "Терапия" }
+        ]
 
-    const doctors = [
-        {
-            id: 1,
-            firstName: "John",
-            lastName: "Smith",
-            specialization: "Cardiologist",
-            departmentId: 1,
-            avatar: "https://i.pravatar.cc/150?img=1"
-        },
-        {
-            id: 2,
-            firstName: "Sarah",
-            lastName: "Johnson",
-            specialization: "Neurologist",
-            departmentId: 2,
-            avatar: "https://i.pravatar.cc/150?img=2"
-        },
-        {
-            id: 3,
-            firstName: "Michael",
-            lastName: "Williams",
-            specialization: "Pediatrician",
-            departmentId: 3,
-            avatar: "https://i.pravatar.cc/150?img=3"
-        },
-        {
-            id: 4,
-            firstName: "Emily",
-            lastName: "Brown",
-            specialization: "Surgeon",
-            departmentId: 4,
-            avatar: "https://i.pravatar.cc/150?img=4"
-        },
-        {
-            id: 5,
-            firstName: "David",
-            lastName: "Jones",
-            specialization: "Dermatologist",
-            departmentId: 5,
-            avatar: "https://i.pravatar.cc/150?img=5"
-        },
-        {
-            id: 6,
-            firstName: "Jessica",
-            lastName: "Garcia",
-            specialization: "Cardiologist",
-            departmentId: 1,
-            avatar: "https://i.pravatar.cc/150?img=6"
-        },
-        {
-            id: 7,
-            firstName: "Daniel",
-            lastName: "Miller",
-            specialization: "Neurologist",
-            departmentId: 2,
-            avatar: "https://i.pravatar.cc/150?img=7"
-        },
-        {
-            id: 8,
-            firstName: "Olivia",
-            lastName: "Davis",
-            specialization: "Pediatrician",
-            departmentId: 3,
-            avatar: "https://i.pravatar.cc/150?img=8"
-        }
-    ];
+        const doctors = [
+            {
+                id: 1,
+                firstName: "Александр",
+                lastName: "Иванов",
+                patronymic: "Петрович",
+                specialization: "Кардиолог",
+                departmentId: 1,
+                avatar: "https://i.pravatar.cc/150?img=1",
+                phone_number: "+375 (29) 123-45-67",
+                email: "ivanov@clinic.by"
+            },
+            {
+                id: 2,
+                firstName: "Мария",
+                lastName: "Петрова",
+                patronymic: "Сергеевна",
+                specialization: "Невролог",
+                departmentId: 2,
+                avatar: "https://i.pravatar.cc/150?img=2",
+                phone_number: "+375 (29) 234-56-78",
+                email: "petrova@clinic.by"
+            },
+            {
+                id: 3,
+                firstName: "Константин",
+                lastName: "Сидоров",
+                patronymic: "Владимирович",
+                specialization: "Педиатр",
+                departmentId: 3,
+                avatar: "https://i.pravatar.cc/150?img=3",
+                phone_number: "+375 (29) 345-67-89",
+                email: "sidorov@clinic.by"
+            },
+            {
+                id: 4,
+                firstName: "Анна",
+                lastName: "Козлова",
+                patronymic: "Михайловна",
+                specialization: "Терапевт",
+                departmentId: 4,
+                avatar: "https://i.pravatar.cc/150?img=4",
+                phone_number: "+375 (29) 456-78-90",
+                email: "kozlova@clinic.by"
+            },
+            {
+                id: 5,
+                firstName: "Дмитрий",
+                lastName: "Новиков",
+                patronymic: "Александрович",
+                specialization: "Хирург",
+                departmentId: 5,
+                avatar: "https://i.pravatar.cc/150?img=5",
+                phone_number: "+375 (29) 567-89-01",
+                email: "novikov@clinic.by"
+            },
+            {
+                id: 6,
+                firstName: "Мария",
+                lastName: "Смирнова",
+                patronymic: "Александровна",
+                specialization: "Терапевт",
+                departmentId: 4,
+                avatar: "https://i.pravatar.cc/150?img=6",
+                phone_number: "+375 (29) 123-45-67",
+                email: "smirnova.ma@clinic.by"
+            },
+            {
+                id: 7,
+                firstName: "Андрей",
+                lastName: "Морозов",
+                patronymic: "Викторович",
+                specialization: "Хирург",
+                departmentId: 5,
+                avatar: "https://i.pravatar.cc/150?img=7",
+                phone_number: "+375 (29) 765-43-21",
+                email: "morozov@clinic.by"
+            },
+            {
+                id: 8,
+                firstName: "Елена",
+                lastName: "Волкова",
+                patronymic: "Дмитриевна",
+                specialization: "Невролог",
+                departmentId: 2,
+                avatar: "https://i.pravatar.cc/150?img=8",
+                phone_number: "+375 (29) 678-90-12",
+                email: "volkova@clinic.by"
+            }
+        ]
 
-    // Generate schedules for current month
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        // Generate schedules for current month
+        const currentDate = new Date()
+        const currentYear = currentDate.getFullYear()
+        const currentMonth = currentDate.getMonth()
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate()
 
-    const schedules = [];
+        const schedules = []
 
-    // Create schedules for each doctor on specific days
-    doctors.forEach(doctor => {
-        // Morning shifts on Mondays and Wednesdays
+        // Создаем расписание на месяц
         for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(currentYear, currentMonth, day);
-            if (date.getDay() === 1 || date.getDay() === 3) { // Monday or Wednesday
+            const date = new Date(currentYear, currentMonth, day)
+            const dayOfWeek = date.getDay()
+
+            // Пропускаем выходные
+            if (dayOfWeek === 0 || dayOfWeek === 6) continue
+
+            // Распределяем врачей по сменам
+            const availableDoctors = [...doctors] // Копия массива врачей
+
+            // Перемешиваем массив для случайного распределения
+            for (let i = availableDoctors.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [availableDoctors[i], availableDoctors[j]] = [availableDoctors[j], availableDoctors[i]]
+            }
+
+            // Определяем количество врачей для каждой смены (2-3 врача на смену)
+            const morningDoctorsCount = 2 + Math.floor(Math.random() * 2)
+            const eveningDoctorsCount = 2 + Math.floor(Math.random() * 2)
+
+            // Распределяем утреннюю смену
+            for (let i = 0; i < morningDoctorsCount && i < availableDoctors.length; i++) {
                 schedules.push({
-                    doctorId: doctor.id,
+                    doctorId: availableDoctors[i].id,
                     date: formatDate(date),
                     shift: "morning",
-                    departmentId: doctor.departmentId
-                });
+                    departmentId: availableDoctors[i].departmentId
+                })
+            }
+
+            // Оставшиеся врачи могут быть назначены на вечернюю смену
+            const remainingDoctors = availableDoctors.slice(morningDoctorsCount)
+
+            // Распределяем вечернюю смену
+            for (let i = 0; i < eveningDoctorsCount && i < remainingDoctors.length; i++) {
                 schedules.push({
-                    doctorId: doctor.id,
+                    doctorId: remainingDoctors[i].id,
                     date: formatDate(date),
                     shift: "evening",
-                    departmentId: doctor.departmentId
-                });
-            }
-
-            // Evening shifts on Tuesdays and Thursdays
-            if (date.getDay() === 2 || date.getDay() === 4) { // Tuesday or Thursday
-                schedules.push({
-                    doctorId: doctor.id,
-                    date: formatDate(date),
-                    shift: "evening",
-                    departmentId: doctor.departmentId
-                });
+                    departmentId: remainingDoctors[i].departmentId
+                })
             }
         }
-    });
 
-    // Current view date and selected date/doctor
-    let viewDate = new Date();
-    let selectedDate = null;
-    let selectedDoctorId = null;
+        // Current view date and selected date/doctor
+        let viewDate = new Date()
+        let selectedDate = null
+        let selectedDoctorId = null
 
-    // Initialize the page
-    document.addEventListener('DOMContentLoaded', () => {
-        // Populate department select
-        const deptSelect = document.getElementById('department-select');
-        departments.forEach(dept => {
-            const option = document.createElement('option');
-            option.value = dept.id;
-            option.textContent = dept.name;
-            deptSelect.appendChild(option);
-        });
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate department select
+            const deptSelect = document.getElementById('department-select')
+            departments.forEach(dept => {
+                const option = document.createElement('option')
+                option.value = dept.id
+                option.textContent = dept.name
+                deptSelect.appendChild(option)
+            })
 
-        renderCalendar();
-        renderDoctorsList();
-    });
+            renderCalendar()
+            renderDoctorsList()
+        })
 
-    // Calendar functions
-    function renderCalendar() {
-        const monthTitle = document.getElementById('month-title');
-        const calendarGrid = document.getElementById('calendar-grid');
+        // Calendar functions
+        function renderCalendar() {
+            const monthTitle = document.getElementById('month-title')
+            const calendarGrid = document.getElementById('calendar-grid')
 
-        // Set month title
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"];
-        monthTitle.textContent = `${monthNames[viewDate.getMonth()]} ${viewDate.getFullYear()}`;
+            // Set month title
+            const monthNames = [
+                "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+                "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+            ]
+            monthTitle.textContent = `${monthNames[viewDate.getMonth()]} ${viewDate.getFullYear()}`
 
-        // Get first day of month and total days in month
-        const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
-        const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+            // Получаем первый день месяца (0 = воскресенье, 1 = понедельник, и т.д.)
+            let firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay()
+            // Преобразуем для недели, начинающейся с понедельника
+            firstDay = firstDay === 0 ? 6 : firstDay - 1
 
-        // Get days from previous month
-        const prevMonthDays = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0).getDate();
+            const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate()
+            const prevMonthDays = new Date(viewDate.getFullYear(), viewDate.getMonth(), 0).getDate()
 
-        // Clear existing day cells (keep headers)
-        const dayCells = Array.from(calendarGrid.querySelectorAll('.calendar-day'));
-        dayCells.forEach(cell => cell.remove());
+            // Clear existing day cells (keep headers)
+            const dayCells = Array.from(calendarGrid.querySelectorAll('.calendar-day'))
+            dayCells.forEach(cell => cell.remove())
 
-        // Add days from previous month
-        for (let i = firstDay - 1; i >= 0; i--) {
-            const dayElement = createDayElement(prevMonthDays - i, true);
-            calendarGrid.appendChild(dayElement);
-        }
-
-        // Add days from current month
-        const today = new Date();
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dayDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), i);
-            const isToday = dayDate.getDate() === today.getDate() &&
-                dayDate.getMonth() === today.getMonth() &&
-                dayDate.getFullYear() === today.getFullYear();
-
-            const dayElement = createDayElement(i, false, isToday);
-            calendarGrid.appendChild(dayElement);
-        }
-
-        // Calculate remaining days to fill the grid (from next month)
-        const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
-        const remainingDays = totalCells - (firstDay + daysInMonth);
-
-        for (let i = 1; i <= remainingDays; i++) {
-            const dayElement = createDayElement(i, true);
-            calendarGrid.appendChild(dayElement);
-        }
-    }
-
-    function createDayElement(day, isOtherMonth, isToday = false) {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day';
-        if (isOtherMonth) dayElement.classList.add('other-month');
-        if (isToday) dayElement.classList.add('current-day');
-
-        const dayNumber = document.createElement('div');
-        dayNumber.className = 'day-number';
-        dayNumber.textContent = day;
-        dayElement.appendChild(dayNumber);
-
-        // Only add shifts for current month days
-        if (!isOtherMonth) {
-            const dayDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-            const formattedDate = formatDate(dayDate);
-
-            // Add click event
-            dayElement.addEventListener('click', () => {
-                selectedDate = formattedDate;
-                updateShiftsDisplay(formattedDate);
-
-                // Highlight selected day
-                document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected-day'));
-                dayElement.classList.add('selected-day');
-            });
-
-            // Get department filter
-            const departmentId = document.getElementById('department-select').value;
-
-            // Get shifts for this day
-            const dayShifts = schedules.filter(s => s.date === formattedDate &&
-                (!departmentId || s.departmentId == departmentId));
-
-            // Group by shift type
-            const morningShifts = dayShifts.filter(s => s.shift === 'morning');
-            const eveningShifts = dayShifts.filter(s => s.shift === 'evening');
-
-            // Create shifts display
-            const shiftsContainer = document.createElement('div');
-            shiftsContainer.className = 'day-shifts';
-
-            if (morningShifts.length > 0) {
-                const morningElement = document.createElement('div');
-                morningElement.className = 'shift-morning';
-                morningElement.innerHTML = `<i class="fas fa-sun"></i> ${morningShifts.length} <span class="shift-time">8:00-14:00</span>`;
-                shiftsContainer.appendChild(morningElement);
+            // Add days from previous month
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const dayElement = createDayElement(prevMonthDays - i, true)
+                calendarGrid.appendChild(dayElement)
             }
 
-            if (eveningShifts.length > 0) {
-                const eveningElement = document.createElement('div');
-                eveningElement.className = 'shift-evening';
-                eveningElement.innerHTML = `<i class="fas fa-moon"></i> ${eveningShifts.length} <span class="shift-time">14:00-20:00</span>`;
-                shiftsContainer.appendChild(eveningElement);
+            // Add days from current month
+            const today = new Date()
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), i)
+                const isToday = dayDate.getDate() === today.getDate() &&
+                    dayDate.getMonth() === today.getMonth() &&
+                    dayDate.getFullYear() === today.getFullYear()
+
+                const dayElement = createDayElement(i, false, isToday)
+                calendarGrid.appendChild(dayElement)
             }
 
-            dayElement.appendChild(shiftsContainer);
+            // Add days from next month
+            const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7
+            const remainingDays = totalCells - (firstDay + daysInMonth)
+
+            for (let i = 1; i <= remainingDays; i++) {
+                const dayElement = createDayElement(i, true)
+                calendarGrid.appendChild(dayElement)
+            }
         }
 
-        return dayElement;
-    }
+        function createDayElement(day, isOtherMonth, isToday = false) {
+            const dayElement = document.createElement('div')
+            dayElement.className = 'calendar-day'
+            if (isOtherMonth) dayElement.classList.add('other-month')
+            if (isToday) dayElement.classList.add('current-day')
 
-    function prevMonth() {
-        viewDate.setMonth(viewDate.getMonth() - 1);
-        renderCalendar();
-    }
+            const dayNumber = document.createElement('div')
+            dayNumber.className = 'day-number'
+            dayNumber.textContent = day
+            dayElement.appendChild(dayNumber)
 
-    function nextMonth() {
-        viewDate.setMonth(viewDate.getMonth() + 1);
-        renderCalendar();
-    }
+            if (!isOtherMonth) {
+                const dayDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), day)
+                const formattedDate = formatDate(dayDate)
+                const dayOfWeek = dayDate.getDay()
+                // Преобразуем для недели, начинающейся с понедельника
+                const adjustedDayOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1
 
-    function updateCalendar() {
-        renderCalendar();
-        renderDoctorsList();
-    }
+                // Не показываем смены в выходные дни (суббота = 5, воскресенье = 6)
+                if (adjustedDayOfWeek < 5) {
+                    dayElement.addEventListener('click', () => {
+                        selectedDate = formattedDate
+                        updateShiftsDisplay(formattedDate)
+                        document.querySelectorAll('.calendar-day').forEach(el => el.classList.remove('selected-day'))
+                        dayElement.classList.add('selected-day')
+                    })
 
-    // Doctors list functions
-    function renderDoctorsList(filter = '') {
-        const doctorsList = document.getElementById('doctors-list');
-        doctorsList.innerHTML = '';
+                    const departmentId = document.getElementById('department-select').value
+                    const dayShifts = schedules.filter(s =>
+                        s.date === formattedDate &&
+                        (!departmentId || s.departmentId == departmentId)
+                    )
 
-        const departmentId = document.getElementById('department-select').value;
-        const searchTerm = filter.toLowerCase();
+                    const morningShifts = dayShifts.filter(s => s.shift === "morning")
+                    const eveningShifts = dayShifts.filter(s => s.shift === "evening")
 
-        const filteredDoctors = doctors.filter(doctor => {
-            const matchesDepartment = !departmentId || doctor.departmentId == departmentId;
-            const matchesSearch = !searchTerm ||
-                doctor.firstName.toLowerCase().includes(searchTerm) ||
-                doctor.lastName.toLowerCase().includes(searchTerm);
-            return matchesDepartment && matchesSearch;
-        });
+                    const shiftsContainer = document.createElement('div')
+                    shiftsContainer.className = 'day-shifts'
 
-        if (filteredDoctors.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `<td colspan="2" style="text-align: center; padding: 20px;">No doctors found</td>`;
-            doctorsList.appendChild(row);
-            return;
-        }
+                    const morningElement = document.createElement('div')
+                    morningElement.className = 'shift-morning'
+                    morningElement.innerHTML = `<i class="fas fa-sun"></i> ${morningShifts.length} <span class="shift-time">8:00-14:00</span>`
+                    shiftsContainer.appendChild(morningElement)
 
-        filteredDoctors.forEach(doctor => {
-            const row = document.createElement('tr');
-            row.className = 'doctor-row';
-            if (selectedDoctorId === doctor.id) {
-                row.classList.add('selected');
+                    const eveningElement = document.createElement('div')
+                    eveningElement.className = 'shift-evening'
+                    eveningElement.innerHTML = `<i class="fas fa-moon"></i> ${eveningShifts.length} <span class="shift-time">14:00-20:00</span>`
+                    shiftsContainer.appendChild(eveningElement)
+
+                    dayElement.appendChild(shiftsContainer)
+                }
             }
 
-            row.innerHTML = `
+            return dayElement
+        }
+
+        function prevMonth() {
+            viewDate.setMonth(viewDate.getMonth() - 1)
+            renderCalendar()
+        }
+
+        function nextMonth() {
+            viewDate.setMonth(viewDate.getMonth() + 1)
+            renderCalendar()
+        }
+
+        function updateCalendar() {
+            renderCalendar()
+            renderDoctorsList()
+        }
+
+        // Doctors list functions
+        function renderDoctorsList(filter = '') {
+            const doctorsList = document.getElementById('doctors-list')
+            doctorsList.innerHTML = ''
+
+            const departmentId = document.getElementById('department-select').value
+            const searchTerm = filter.toLowerCase()
+
+            const filteredDoctors = doctors.filter(doctor => {
+                const matchesDepartment = !departmentId || doctor.departmentId == departmentId
+                const matchesSearch = !searchTerm ||
+                    doctor.firstName.toLowerCase().includes(searchTerm) ||
+                    doctor.lastName.toLowerCase().includes(searchTerm)
+                return matchesDepartment && matchesSearch
+            })
+
+            if (filteredDoctors.length === 0) {
+                const row = document.createElement('tr')
+                row.innerHTML = `<td colspan="2" style="text-align: center; padding: 20px;">Врачи не найдены</td>`
+                doctorsList.appendChild(row)
+                return
+            }
+
+            filteredDoctors.forEach(doctor => {
+                const row = document.createElement('tr')
+                row.className = 'doctor-row'
+                if (selectedDoctorId === doctor.id) {
+                    row.classList.add('selected')
+                }
+
+                row.innerHTML = `
                 <td>
                     <div class="doctor-name">
-                        <img src="${doctor.avatar}" alt="${doctor.firstName}" class="doctor-avatar">
-                        ${doctor.firstName} ${doctor.lastName}
+                        ${doctor.lastName} ${doctor.firstName} ${doctor.patronymic}
                     </div>
                 </td>
                 <td>${doctor.specialization}</td>
-            `;
+                <td>
+                    <button class="download-btn" style="background-color: transparent; border-color: transparent" onclick="editDoctorSchedule(${doctor.id})">
+                            <img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Редактировать"/>
+                        </button>
+                </td>
+            `
 
-            row.addEventListener('click', () => {
-                selectedDoctorId = doctor.id;
-                document.querySelectorAll('.doctor-row').forEach(r => r.classList.remove('selected'));
-                row.classList.add('selected');
-                highlightDoctorShifts(doctor.id);
-            });
+                row.addEventListener('click', () => {
+                    selectedDoctorId = doctor.id
+                    document.querySelectorAll('.doctor-row').forEach(r => r.classList.remove('selected'))
+                    row.classList.add('selected')
+                    highlightDoctorShifts(doctor.id)
+                })
 
-            doctorsList.appendChild(row);
-        });
-    }
+                doctorsList.appendChild(row)
+            })
+        }
 
-    function filterDoctors() {
-        const searchTerm = document.getElementById('doctor-search').value;
-        renderDoctorsList(searchTerm);
-    }
+        function editDoctorSchedule(doctorId) {
+            const doctor = doctors.find(d => d.id === doctorId)
+            if (doctor) {
+                window.location.href = `/admin/editSchedule/${doctorId}`
+            }
+        }
 
-    function highlightDoctorShifts(doctorId) {
-        // Clear previous highlights
-        document.querySelectorAll('.calendar-day').forEach(day => {
-            day.querySelectorAll('.shift-morning, .shift-evening').forEach(shift => {
-                shift.style.opacity = '1';
-                shift.style.fontWeight = 'normal';
-            });
-        });
+        function filterDoctors() {
+            const searchTerm = document.getElementById('doctor-search').value
+            renderDoctorsList(searchTerm)
+        }
 
-        // Get all dates this doctor has shifts
-        const doctorShifts = schedules.filter(s => s.doctorId === doctorId);
-        const shiftDates = doctorShifts.map(s => s.date);
+        function highlightDoctorShifts(doctorId) {
+            // Clear previous highlights
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                day.querySelectorAll('.shift-morning, .shift-evening').forEach(shift => {
+                    shift.style.opacity = '1'
+                    shift.style.fontWeight = 'normal'
+                })
+            })
 
-        // Highlight these dates
-        document.querySelectorAll('.calendar-day').forEach(day => {
-            const dayNumber = day.querySelector('.day-number').textContent;
-            const dayDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNumber);
-            const formattedDate = formatDate(dayDate);
+            // Get all dates this doctor has shifts
+            const doctorShifts = schedules.filter(s => s.doctorId === doctorId)
+            const shiftDates = doctorShifts.map(s => s.date)
 
-            if (shiftDates.includes(formattedDate) && !day.classList.contains('other-month')) {
-                const shiftType = doctorShifts.find(s => s.date === formattedDate).shift;
-                const highlightClass = shiftType === 'morning' ? 'shift-morning' : 'shift-evening';
+            // Highlight these dates
+            document.querySelectorAll('.calendar-day').forEach(day => {
+                const dayNumber = day.querySelector('.day-number').textContent
+                const dayDate = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNumber)
+                const formattedDate = formatDate(dayDate)
 
-                const highlight = day.querySelector(`.${highlightClass}`);
-                if (highlight) {
-                    highlight.style.opacity = '1';
-                    highlight.style.fontWeight = 'bold';
+                if (shiftDates.includes(formattedDate) && !day.classList.contains('other-month')) {
+                    const shiftType = doctorShifts.find(s => s.date === formattedDate).shift
+                    const highlightClass = shiftType === 'morning' ? 'shift-morning' : 'shift-evening'
+
+                    const highlight = day.querySelector(`.${highlightClass}`)
+                    if (highlight) {
+                        highlight.style.opacity = '1'
+                        highlight.style.fontWeight = 'bold'
+                    }
+                }
+            })
+        }
+
+        // Shifts display functions
+        function updateShiftsDisplay(date) {
+            const shiftsContainer = document.getElementById('shifts-container')
+            const selectedDateElement = document.getElementById('selected-date')
+            const morningShiftElement = document.getElementById('morning-shift')
+            const eveningShiftElement = document.getElementById('evening-shift')
+
+            const dateObj = new Date(date)
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+            selectedDateElement.textContent = dateObj.toLocaleDateString('ru-RU', options)
+
+            const departmentId = document.getElementById('department-select').value
+
+            const dayShifts = schedules.filter(s => s.date === date &&
+                (!departmentId || s.departmentId == departmentId) &&
+                (!selectedDoctorId || s.doctorId === selectedDoctorId))
+
+            const morningShifts = dayShifts.filter(s => s.shift === 'morning')
+            const eveningShifts = dayShifts.filter(s => s.shift === 'evening')
+
+            morningShiftElement.innerHTML = ''
+            eveningShiftElement.innerHTML = ''
+
+            // Получаем полную информацию о врачах для каждой смены
+            const morningDoctors = morningShifts.map(shift =>
+                doctors.find(d => d.id === shift.doctorId)
+            ).filter(Boolean)
+
+            const eveningDoctors = eveningShifts.map(shift =>
+                doctors.find(d => d.id === shift.doctorId)
+            ).filter(Boolean)
+
+            renderShiftDoctors(morningShiftElement, morningDoctors)
+            renderShiftDoctors(eveningShiftElement, eveningDoctors)
+
+            shiftsContainer.style.display = 'block'
+        }
+
+        // Функция для отображения врачей в смене
+        function renderShiftDoctors(shiftElement, doctors) {
+            if (doctors.length > 0) {
+                const doctorsList = document.createElement('div')
+                doctorsList.className = 'doctors-list'
+
+                doctors.forEach(doctor => {
+                    const doctorElement = document.createElement('div')
+                    doctorElement.className = 'shift-doctor'
+                    doctorElement.innerHTML = `${doctor.lastName} ${doctor.firstName} ${doctor.patronymic}`
+                    doctorsList.appendChild(doctorElement)
+                })
+
+                shiftElement.appendChild(doctorsList)
+            } else {
+                shiftElement.innerHTML = '<div class="no-doctors">Нет назначенных врачей</div>'
+            }
+        }
+
+        // Utility functions
+        function formatDate(date) {
+            const year = date.getFullYear()
+            const month = String(date.getMonth() + 1).padStart(2, '0')
+            const day = String(date.getDate()).padStart(2, '0')
+            return `${year}-${month}-${day}`
+        }
+
+        function refreshData() {
+            renderCalendar()
+            renderDoctorsList()
+            if (selectedDate) updateShiftsDisplay(selectedDate)
+        }
+
+        function exportToExcel() {
+            const monthNames = [
+                "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+                "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+            ]
+            const currentMonth = monthNames[viewDate.getMonth()]
+            const currentYear = viewDate.getFullYear()
+            const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate()
+
+            let excelData = []
+
+            // Заголовок с форматированием
+            excelData.push(['УТВЕРЖДАЮ'])
+            excelData.push(['Главный врач ____________________'])
+            excelData.push([`"___" ${currentMonth} ${currentYear} г.`])
+            excelData.push([''])
+            excelData.push([`ГРАФИК РАБОТЫ ВРАЧЕЙ НА ${currentMonth.toUpperCase()} ${currentYear} ГОДА`])
+            excelData.push([''])
+
+            // Создаем заголовки с датами
+            let headers = ['№ п/п', 'ФИО врача', 'Отделение']
+            let subHeaders = ['', '', '']
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), day)
+                if (date.getDay() !== 0 && date.getDay() !== 6) {
+                    headers.push(day)
                 }
             }
-        });
-    }
 
-    // Shifts display functions
-    function updateShiftsDisplay(date) {
-        const shiftsContainer = document.getElementById('shifts-container');
-        const selectedDateElement = document.getElementById('selected-date');
-        const morningShiftElement = document.getElementById('morning-shift');
-        const eveningShiftElement = document.getElementById('evening-shift');
+            excelData.push(headers)
+            excelData.push(subHeaders)
 
-        // Format date for display
-        const dateObj = new Date(date);
-        const options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-        selectedDateElement.textContent = dateObj.toLocaleDateString('en-US', options);
-
-        // Get department filter
-        const departmentId = document.getElementById('department-select').value;
-
-        // Get shifts for this date
-        const dayShifts = schedules.filter(s => s.date === date &&
-            (!departmentId || s.departmentId == departmentId) &&
-            (!selectedDoctorId || s.doctorId === selectedDoctorId));
-
-        // Group by shift type
-        const morningShifts = dayShifts.filter(s => s.shift === 'morning');
-        const eveningShifts = dayShifts.filter(s => s.shift === 'evening');
-
-        // Clear previous shifts
-        morningShiftElement.innerHTML = '';
-        eveningShiftElement.innerHTML = '';
-
-        // Add morning shifts
-        if (morningShifts.length > 0) {
-            morningShifts.forEach(shift => {
-                const doctor = doctors.find(d => d.id === shift.doctorId);
-                if (doctor) {
-                    const doctorElement = document.createElement('div');
-                    doctorElement.className = 'shift-doctor';
-                    doctorElement.innerHTML = `
-                        <img src="${doctor.avatar}" alt="${doctor.firstName}" class="shift-doctor-avatar">
-                        ${doctor.firstName} ${doctor.lastName}
-                    `;
-                    morningShiftElement.appendChild(doctorElement);
+            // Группируем расписание по врачам
+            const doctorSchedules = {}
+            doctors.forEach((doctor, index) => {
+                doctorSchedules[doctor.id] = {
+                    index: index + 1,
+                    name: `${doctor.lastName} ${doctor.firstName} ${doctor.patronymic}`,
+                    department: doctor.specialization,
+                    shifts: {}
                 }
-            });
-        } else {
-            morningShiftElement.innerHTML = '<div class="no-doctors">No doctors scheduled</div>';
-        }
+            })
 
-        // Add evening shifts
-        if (eveningShifts.length > 0) {
-            eveningShifts.forEach(shift => {
-                const doctor = doctors.find(d => d.id === shift.doctorId);
-                if (doctor) {
-                    const doctorElement = document.createElement('div');
-                    doctorElement.className = 'shift-doctor';
-                    doctorElement.innerHTML = `
-                        <img src="${doctor.avatar}" alt="${doctor.firstName}" class="shift-doctor-avatar">
-                        ${doctor.firstName} ${doctor.lastName}
-                    `;
-                    eveningShiftElement.appendChild(doctorElement);
+            // Заполняем данные о сменах
+            schedules.forEach(schedule => {
+                const date = new Date(schedule.date)
+                const day = date.getDate()
+                const shiftNumber = schedule.shift === 'morning' ? '1' : '2'
+                doctorSchedules[schedule.doctorId].shifts[day] = shiftNumber
+            })
+
+            // Добавляем данные в таблицу
+            Object.values(doctorSchedules).forEach(doctor => {
+                let row = [doctor.index, doctor.name, doctor.department]
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = new Date(viewDate.getFullYear(), viewDate.getMonth(), day)
+                    if (date.getDay() !== 0 && date.getDay() !== 6) {
+                        row.push(doctor.shifts[day] || '-')
+                    }
                 }
-            });
-        } else {
-            eveningShiftElement.innerHTML = '<div class="no-doctors">No doctors scheduled</div>';
+                excelData.push(row)
+            })
+
+            // Добавляем легенду
+            excelData.push([''])
+            excelData.push(['Условные обозначения:'])
+            excelData.push(['1 - первая смена (08:00 - 14:00)'])
+            excelData.push(['2 - вторая смена (14:00 - 20:00)'])
+            excelData.push(['\'-  - выходной'])
+            excelData.push([''])
+            excelData.push([''])
+            excelData.push(['Начальник отдела кадров ____________________'])
+            excelData.push([''])
+            excelData.push(['Старшая медсестра ____________________'])
+
+            // Создаем CSV строку с дополнительным форматированием
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"
+            excelData.forEach(row => {
+                // Добавляем кавычки для всех значений, чтобы сохранить форматирование
+                const formattedRow = row.map(cell => `"${cell}"`)
+                csvContent += formattedRow.join(';') + '\n'
+            })
+
+            const encodedUri = encodeURI(csvContent)
+            const link = document.createElement("a")
+            link.setAttribute("href", encodedUri)
+            link.setAttribute("download", `График_работы_врачей_${currentMonth}_${currentYear}.csv`)
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
         }
-
-        // Show shifts container
-        shiftsContainer.style.display = 'block';
-    }
-
-    // Utility functions
-    function formatDate(date) {
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    function refreshData() {
-        renderCalendar();
-        renderDoctorsList();
-        if (selectedDate) updateShiftsDisplay(selectedDate);
-    }
-</script>
+    </script>
 </body>
+
 </html>

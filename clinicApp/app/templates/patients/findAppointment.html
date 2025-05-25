@@ -241,17 +241,21 @@
 
 
         .slots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             margin-top: 20px;
         }
 
         .slot-card {
-            background: #4a90e2;
-            color: white;
-            padding: 10px;
-            text-align: center;
+            background: rgba(209, 217, 255, 0.86);
+            color: #2e2e2e;
+            box-shadow: 0 4px 8px rgba(108, 135, 255, 0.89);
+            width: 80px; /* фиксированная ширина */
+            height: 40px; /* фиксированная высота (опционально) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 8px;
             font-size: 14px;
             font-weight: bold;
@@ -259,8 +263,9 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
+
         .slot-card:hover {
-            transform: scale(1.1);
+            transform: scale(1.01);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
@@ -291,27 +296,27 @@
         <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
     </div>
     <div class="nav-menu">
-        <a href="/patientDashboard" class="nav-item">Dashboard</a>
-        <a href="/myMedicalCard" class="nav-item">My medical card</a>
-        <a href="/findAppointment" class="nav-item active">Find appointment</a>
-        <a href="/patientProfile" class="nav-item">Profile Settings</a>
-        <a href="/" class="logout">Logout</a>
+        <a href='/patientDashboard' class="nav-item">Дашборд</a>
+        <a href='/myMedicalCard' class="nav-item">Моя мед. карта</a>
+        <a href="/findAppointment" class="nav-item active">Найти талон</a>
+        <a href='/patientProfile' class="nav-item">Профиль</a>
+        <a href='/' class="logout">Выйти</a>
     </div>
 </div>
 
 <div class="main-content">
-    <h1>Find and Book Appointment</h1>
+    <h1>Найти и забронировать талон ко врачу</h1>
     <form id="searchForm" method="GET">
         <div class="filter-section">
 
-            <label for="date">Date</label>
+            <label for="date">Дата</label>
             <input type="date" id="date" class="search-input" name="date" value="{{ date }}" required>
 
             <input type="text" id="doctorSearch" class="search-input" name="doctor_search"
-                   placeholder="Search doctor by name...">
+                   placeholder="Поиск врача по ФИО...">
 
             <select id="departmentFilter" class="department-filter" name="department">
-                <option value="">Select Department</option>
+                <option value="">Выбрать отделение</option>
                 {% for department in departments %}
                 <option value="{{ department[1] }}" {% if request.args.get(
                 'department')==department[1] %}selected{%
@@ -321,12 +326,12 @@
                 {% endfor %}
             </select>
 
-            <button type="button" id="searchButton" class="search-btn">Search</button>
+            <button type="button" id="searchButton" class="search-btn">Поиск</button>
         </div>
     </form>
     <div class="profile-container">
         <div id="doctors-section">
-            <h2>Available Doctors</h2>
+            <h2>Свободные врачи</h2>
             <div id="doctors-grid" class="tickets-grid">
                 {% if doctor_list %}
                 {% for doctor in doctor_list %}
@@ -334,67 +339,67 @@
                      onclick="loadAvailableSlots('{{ doctor[0] }}', '{{ doctor[2] }} {{ doctor[1] }}')">
                     <div class="ticket-time">Dr. {{ doctor[2] }} {{ doctor[1] }}</div>
                     <div class="ticket-info">
-                        <p>Department: {{ doctor[4] }}</p>
-                        <p>Phone: {{ doctor[3] }}</p>
+                        <p>Отделение: {{ doctor[4] }}</p>
+                        <p>Телефон: {{ doctor[3] }}</p>
                     </div>
                 </div>
                 {% endfor %}
                 {% else %}
-                <p>No doctors available for the selected date.</p>
+                <p>Нет свободных врачей на выбранную дату.</p>
                 {% endif %}
             </div>
         </div>
 
         <div id="appointment-section" style="display: none;">
-            <h2>Available Slots for <span id="selected-doctor-name"></span></h2>
-            <label for="serviceSelect">Select Service:</label>
+            <h2>Дотупные талоны для <span id="selected-doctor-name"></span></h2>
+            <label for="serviceSelect">Выберите услугу:</label>
             <select id="serviceSelect" class="form-control" style="margin: 10px 0;">
-                <option value="">Loading...</option>
+                <option value="">Загрузка...</option>
             </select>
-
             <div id="available-times" class="slots-grid"></div>
+            <div id="selected-info" style="margin-top: 20px; font-weight: lighter;"></div>
+
             <button id="book-button" style="display: none; margin-top: 20px;" class="search-btn"
-                    onclick="bookSelectedAppointment()">Book Appointment
+                    onclick="bookSelectedAppointment()">Взять талон
             </button>
-            <button onclick="goBack()" style="margin-top: 20px;" class="search-btn">Back to Doctors</button>
+            <button onclick="goBack()" style="margin-top: 20px;" class="search-btn">Назад</button>
         </div>
     </div>
 </div>
 <div id="error-message" class="error-message" style="display: none;"></div>
 
 <script>
-    let currentPatientId = null
+    let currentPatientId = 'demo123'
     let selectedDoctorId = null
     let selectedTime = null
     let availableServices = []
 
-    async function loadDoctors() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search)
-            currentPatientId = urlParams.get('id')
-            if (!currentPatientId) {
-                showError('Patient ID not provided')
-                return
-            }
+    const mockDoctors = [
+        {id: '1', first_name: 'Анна', last_name: 'Иванова', department: 'Терапия', phone: '+375 (29) 123-45-67'},
+        {id: '4', first_name: 'Владислав', last_name: 'Лишкович', department: 'Терапия', phone: '+375 (29) 123-45-67'},
+        {id: '2', first_name: 'Сергей', last_name: 'Петров', department: 'Кардиология', phone: '+375 (33) 987-65-43'},
+        {id: '3', first_name: 'Мария', last_name: 'Сидорова', department: 'Неврология', phone: '+375 (33) 555-22-11'}
+    ]
 
-            const date = document.getElementById('date').value
-            const doctorSearch = document.getElementById('doctorSearch').value
-            const department = document.getElementById('departmentFilter').value
-
-            const doctors = await PatientAPI.searchDoctors(date, doctorSearch, department)
-            updateDoctorsGrid(doctors)
-
-        } catch (error) {
-            showError(error.message)
-        }
+    const mockSlots = {
+        '1': ['09:00', '10:30', '11:00'],
+        '2': ['13:00', '14:00'],
+        '3': ['08:30', '09:30', '15:00']
     }
+
+    const mockServices = [
+        {id: 's1', service: 'Первичная консультация'},
+        {id: 's2', service: 'Повторная прием'}
+    ]
+
+    const mockDepartments = ['Терапия', 'Кардиология', 'Неврология', 'Офтальмология', 'Хирургия']
 
     function updateDoctorsGrid(doctors) {
         const grid = document.getElementById('doctors-grid')
         grid.innerHTML = ''
 
         if (doctors.length === 0) {
-            grid.innerHTML = '<p>No doctors available for the selected date.</p>'
+            grid.innerHTML = '<p>Нет доступных врачей на выбранную дату.</p>'
             return
         }
 
@@ -403,30 +408,33 @@
             card.className = 'ticket-card'
             card.onclick = () => loadAvailableSlots(doctor.id, `${doctor.first_name} ${doctor.last_name}`)
             card.innerHTML = `
-                <div class="ticket-time">Dr. ${doctor.first_name} ${doctor.last_name}</div>
+                <div class="ticket-time">Врач: ${doctor.first_name} ${doctor.last_name}</div>
                 <div class="ticket-info">
-                    <p>Department: ${doctor.department}</p>
-                    <p>Phone: ${doctor.phone}</p>
+                    <p>Отделение: ${doctor.department}</p>
+                    <p>Телефон: ${doctor.phone}</p>
                 </div>
             `
             grid.appendChild(card)
         })
     }
 
-    async function loadAvailableSlots(doctorId, doctorName) {
-        try {
-            selectedDoctorId = doctorId
-            const date = document.getElementById('date').value
-            document.getElementById('selected-doctor-name').innerText = doctorName
-            document.getElementById('doctors-section').style.display = 'none'
-            document.getElementById('appointment-section').style.display = 'block'
+    function loadDoctors() {
+        const department = document.getElementById('departmentFilter').value
+        const filtered = department
+            ? mockDoctors.filter(doc => doc.department === department)
+            : mockDoctors
 
-            const slots = await PatientAPI.getAvailableTalons(doctorId, date)
-            updateSlotsGrid(slots)
+        updateDoctorsGrid(filtered)
+    }
 
-        } catch (error) {
-            showError(error.message)
-        }
+    function loadAvailableSlots(doctorId, doctorName) {
+        selectedDoctorId = doctorId
+        const date = document.getElementById('date').value
+        document.getElementById('selected-doctor-name').innerText = doctorName
+        document.getElementById('doctors-section').style.display = 'none'
+        document.getElementById('appointment-section').style.display = 'block'
+
+        updateSlotsGrid(mockSlots[doctorId] || [])
     }
 
     function updateSlotsGrid(slots) {
@@ -434,7 +442,7 @@
         grid.innerHTML = ''
 
         if (slots.length === 0) {
-            grid.innerHTML = '<p>No available slots for this doctor.</p>'
+            grid.innerHTML = '<p>Нет доступных временных интервалов для этого врача.</p>'
             return
         }
 
@@ -447,35 +455,55 @@
         })
     }
 
+    // function selectSlot(time) {
+    //     selectedTime = time
+    //     const bookButton = document.getElementById('book-button')
+    //     bookButton.style.display = 'block'
+    //     bookButton.textContent = `Записаться на ${time}`
+    // }
     function selectSlot(time) {
         selectedTime = time
         const bookButton = document.getElementById('book-button')
         bookButton.style.display = 'block'
-        bookButton.textContent = `Book Appointment for ${time}`
+
+        const date = document.getElementById('date').value
+        const serviceSelect = document.getElementById('serviceSelect')
+        const serviceName = serviceSelect.options[serviceSelect.selectedIndex]?.textContent || 'Не выбрана услуга'
+        const doctorName = document.getElementById('selected-doctor-name').innerText
+        let price = null
+        if (serviceName === "Первичная консультация") price = '45 р'
+        else price = '55 р'
+        const selectedInfo = `
+        <div>
+            Врач: ${doctorName}<br>
+            Дата: ${date}<br>
+            Время: ${selectedTime}<br>
+            Услуга: ${serviceName}<br>
+            Стоимость: ${price}
+        </div>
+    `
+        document.getElementById('selected-info').innerHTML = selectedInfo
+
+        bookButton.textContent = `Записаться на ${selectedTime}`
     }
 
-    async function bookSelectedAppointment() {
-        try {
-            if (!selectedDoctorId || !selectedTime) {
-                showError('Please select a doctor and time slot')
-                return
-            }
 
-            const date = document.getElementById('date').value
-            const serviceSelect = document.getElementById('serviceSelect')
-            const serviceId = serviceSelect.value
-
-            if (!serviceId) {
-                showError('Please select a service')
-                return
-            }
-            await PatientAPI.bookTalon(selectedDoctorId, currentPatientId, date, selectedTime)
-            showSuccess('Appointment booked successfully')
-            goBack()
-
-        } catch (error) {
-            showError(error.message)
+    function bookSelectedAppointment() {
+        if (!selectedDoctorId || !selectedTime) {
+            showError('Пожалуйста, выберите врача и время.')
+            return
         }
+
+        const date = document.getElementById('date').value
+        const serviceId = document.getElementById('serviceSelect').value
+
+        if (!serviceId) {
+            showError('Пожалуйста, выберите услугу.')
+            return
+        }
+
+        showSuccess(`Вы успешно записались на ${date} в ${selectedTime}`)
+        goBack()
     }
 
     function showSuccess(message) {
@@ -503,37 +531,49 @@
         document.getElementById('doctors-section').style.display = 'block'
     }
 
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', () => {
-        loadDoctors()
-        flatpickr('#date', {
-            minDate: "today",
-            dateFormat: "Y-m-d",
-            onChange: () => loadDoctors()
+    function loadServices() {
+        const select = document.getElementById('serviceSelect')
+        select.innerHTML = ''
+
+        mockServices.forEach(service => {
+            const option = document.createElement('option')
+            option.value = service.id
+            option.textContent = service.service
+            select.appendChild(option)
         })
-        loadServices()
-
-    });
-
-    async function loadServices() {
-        try {
-            const services = await PatientAPI.getAllServices()
-            availableServices = services
-            const select = document.getElementById('serviceSelect')
-            select.innerHTML = ''
-
-            services.forEach(service => {
-                const option = document.createElement('option')
-                option.value = service.id
-                option.textContent = service.service
-                select.appendChild(option)
-            })
-        } catch (error) {
-            showError('Failed to load services')
-        }
     }
 
+    function loadDepartments() {
+        const select = document.getElementById('departmentFilter')
+        select.innerHTML = '<option value="">Выбрать отделение</option>'
+        mockDepartments.forEach(dep => {
+            const option = document.createElement('option')
+            option.value = dep
+            option.textContent = dep
+            select.appendChild(option)
+        })
+    }
+
+    // Переопределение загрузки данных при старте
+    document.addEventListener('DOMContentLoaded', () => {
+        const dateInput = document.getElementById('date')
+        const today = new Date().toISOString().split('T')[0]
+        dateInput.value = today
+
+        loadDepartments()
+        loadDoctors()
+        loadServices()
+
+        document.getElementById('searchButton').addEventListener('click', loadDoctors)
+    })
+
+    const today = new Date().toISOString().split("T")[0];
+    flatpickr("#date", {
+        dateFormat: "d-m-Y",
+        maxDate: today
+    });
 </script>
+
 </body>
 
 </html>

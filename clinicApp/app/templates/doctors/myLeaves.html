@@ -6,7 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doctor Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         /* Стилизация страницы */
         * {
@@ -14,6 +20,18 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
+        }
+
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #F3F6F9;
+            --text-color: #2E2E3A;
+            --border-color: #EBEEF6;
+            --success-color: #2BC155;
+            --warning-color: #FFA755;
+            --danger-color: #FF5C75;
+            --new-color: #8E44AD;
+            --sidebar-width: 280px;
         }
 
         body {
@@ -178,7 +196,13 @@
         }
 
         .add-btn {
-            background: var(--primary-color);
+            background: #4a90e2;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e17272;
+            color: white;
         }
 
         .refresh-btn {
@@ -322,67 +346,69 @@
         }
 
         .search-button {
-            background: var(--primary-color);
+            background: #4a90e2;
             border: none;
             border-radius: 8px;
             padding: 10px 25px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
+            color: white;
+            font-weight: bold;
         }
     </style>
 </head>
 <div class="sidebar">
     <div class="doctor-profile">
         <img src="https://picsum.photos/200/200?random=1" alt="Doctor Profile">
-
     </div>
     <div class="nav-menu">
-        <a href="/doctor/dashboard" class="nav-item ">Dashboard</a>
-        <a href="/doctor/myLeaves" class="nav-item active">My Leaves</a>
-        <a href="/doctor/patientsCards" class="nav-item">Patients' cards</a>
-        <a href="/doctor/profile" class="nav-item">Profile Settings</a>
-        <a href="/doctor/chat" class="nav-item">Chat</a>
-        <a href='/' class="logout">Logout</a>
+        <a href="/doctor/dashboard" class="nav-item ">Дашборд</a>
+        <a href="/doctor/myLeaves" class="nav-item active">Мои заявления</a>
+        <a href="/doctor/patientsCards" class="nav-item ">Мед. карты пациентов</a>
+        <a href="/doctor/profile" class="nav-item">Профиль</a>
+        <a href="/doctor/chat" class="nav-item">Чат</a>
+        <a href="/doctor/video" class="nav-item">Видеочат</a>
+        <a href='/' class="logout">Выход</a>
     </div>
 </div>
 
 <div class="main-content">
     <div class="header">
-        <h2>Leave Request</h2>
+        <h2>Заявления</h2>
     </div>
 
     <form id="filter-form">
         <div class="filters" style="display: flex; gap: 15px; align-items: center;">
-            <input type="text" name="search_query" class="filter-input" placeholder="Search by reason or type">
+            <input type="text" name="search_query" class="filter-input" placeholder="Поиск по причине">
             <select name="leave_type" class="filter-input">
-                <option value="">All Leave Types</option>
-                <option value="Medical Reason">Medical Reason</option>
-                <option value="Casual Leave">Casual Leave</option>
-                <option value="Family Reason">Family Reason</option>
+                <option value="">Все типы</option>
+                <option value="Medical Reason">Больничный</option>
+                <option value="Casual Leave">Отпуск</option>
+                <option value="Family Reason">Иные причины</option>
             </select>
-            <input type="date" name="from_date" class="filter-input">
-            <input type="date" name="to_date" class="filter-input">
+            <input type="date" id="from_date" name="from_date" class="filter-input">
+            <input type="date" id="to_date" name="to_date" class="filter-input">
             <select name="status" class="filter-input">
-                <option value="">Leave Status</option>
-                <option value="Approved">Approved</option>
-                <option value="Pending">Pending</option>
-                <option value="Declined">Declined</option>
+                <option value="">Статус</option>
+                <option value="Approved">Одобрено</option>
+                <option value="Pending">Ожидание</option>
+                <option value="Declined">Отклонено</option>
             </select>
-            <button type="submit" class="search-button">Search</button>
+            <button type="submit" class="search-button">Поиск</button>
         </div>
     </form>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <div class="action-buttons">
             <button class="action-btn add-btn" onclick="window.location.href = '/doctor/addLeave'">
-                <i class="fas fa-plus"></i> Add New
+                <i class="fas fa-plus"></i> Добавить
             </button>
             <button class="action-btn refresh-btn" onclick="window.location.href = '/doctor/myLeaves'">
                 <i class="fas fa-sync-alt"></i>
             </button>
             <button class="action-btn delete-btn" id="deleteSelected" onclick="deleteSelectedLeaves()">
-                <i class="fas fa-trash"></i> Delete Selected
+                <i class="fas fa-trash"></i> Удалить
             </button>
         </div>
     </div>
@@ -390,19 +416,19 @@
     <div class="table-container">
         <table>
             <thead>
-            <tr>
-                <th><input type="checkbox" id="select-all" onclick="toggleSelectAll()"></th>
-                <th>Leave Type</th>
-                <th>From</th>
-                <th>To</th>
-                <th>No of days</th>
-                <th>Reason</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
+                <tr>
+                    <th><input type="checkbox" id="select-all" onclick="toggleSelectAll()"></th>
+                    <th>Тип заявления</th>
+                    <th>С</th>
+                    <th>До</th>
+                    <th>Количество дней</th>
+                    <th>Причина</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
             </thead>
             <tbody id="leaves-table-body">
-            <!-- Leaves data will be inserted here dynamically -->
+                <!-- Leaves data will be inserted here dynamically -->
             </tbody>
         </table>
     </div>
@@ -410,108 +436,189 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetchLeaves();
+        fetchLeaves()
 
         // Обработчик отправки формы фильтрации
         document.getElementById('filter-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-            fetchLeaves();
-        });
-    });
+            event.preventDefault()
+            fetchLeaves()
+        })
+    })
 
     // Функция для получения заявок с фильтрацией
     async function fetchLeaves() {
-        const formData = new FormData(document.getElementById('filter-form'));
-        const params = new URLSearchParams();
+        const formData = new FormData(document.getElementById('filter-form'))
+        const params = new URLSearchParams()
 
         formData.forEach((value, key) => {
-            if (value) { // Добавляем параметр, только если его значение не пустое
-                params.append(key, value);
+            if (value) {
+                params.append(key, value)
             }
-        });
+        })
 
         try {
-            const doctorId = new URLSearchParams(window.location.search).get('id');
-            params.append('doctor_id', doctorId);
+            // Имитация данных о заявлениях
+            const mockLeaves = [
+                {
+                    _id: "L003",
+                    leave_type: "Отпуск",
+                    from_date: "01-06-2025",
+                    to_date: "14-06-2025",
+                    number_of_days: 15,
+                    reason: "Отпуск",
+                    status: "Одобрено"
+                },
+                {
+                    _id: "L002",
+                    leave_type: "Иные причины",
+                    from_date: "10-05-2025",
+                    to_date: "12-05-2025",
+                    number_of_days: 3,
+                    reason: "Семейные обстоятельства",
+                    status: "Одобрено"
+                },
+                {
+                    _id: "L001",
+                    leave_type: "Больничный",
+                    from_date: "01-05-2025",
+                    to_date: "03-05-2025",
+                    number_of_days: 3,
+                    reason: "Плохое самочувствие",
+                    status: "Ожидание"
+                }
+            ]
 
-            const response = await fetch(`/leaves/search?${params.toString()}`);
-            const leaves = await response.json();
+            // Применяем фильтры из формы
+            let filteredLeaves = mockLeaves
 
-            updateLeavesTable(leaves);
+            const searchQuery = formData.get('search_query')?.toLowerCase()
+            const leaveType = formData.get('leave_type')
+            const status = formData.get('status')
+            const fromDate = formData.get('from_date')
+            const toDate = formData.get('to_date')
+
+            if (searchQuery) {
+                filteredLeaves = filteredLeaves.filter(leave =>
+                    leave.reason.toLowerCase().includes(searchQuery) ||
+                    leave.leave_type.toLowerCase().includes(searchQuery)
+                )
+            }
+
+            if (leaveType) {
+                filteredLeaves = filteredLeaves.filter(leave => leave.leave_type === leaveType)
+            }
+
+            if (status) {
+                filteredLeaves = filteredLeaves.filter(leave => leave.status === status)
+            }
+
+            if (fromDate) {
+                filteredLeaves = filteredLeaves.filter(leave => leave.from_date >= fromDate)
+            }
+
+            if (toDate) {
+                filteredLeaves = filteredLeaves.filter(leave => leave.to_date <= toDate)
+            }
+
+            updateLeavesTable(filteredLeaves)
         } catch (error) {
-            showError('Failed to fetch leaves data');
+            showError('Failed to fetch leaves data')
         }
     }
 
     // Обновление таблицы заявок
     function updateLeavesTable(leaves) {
-        const tableBody = document.getElementById('leaves-table-body');
+        const tableBody = document.getElementById('leaves-table-body')
         if (!leaves || leaves.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No leaves found</td></tr>';
-            return;
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center">No leaves found</td></tr>'
+            return
         }
 
-        tableBody.innerHTML = leaves.map(leave => `
-            <tr>
-                <td><input type="checkbox" class="select-leave" value="${leave._id}"></td>
-                <td>${leave.leave_type}</td>
-                <td>${leave.from_date}</td>
-                <td>${leave.to_date}</td>
-                <td>${leave.number_of_days}</td>
-                <td>${leave.reason}</td>
-                <td><span class="status-${leave.status.toLowerCase()}">${leave.status}</span></td>
-                <td><button class="download-btn" onclick="editLeave('${leave._id}')"><img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Edit"/></button></td>
-            </tr>
-        `).join('');
+        tableBody.innerHTML = leaves.map(leave => {
+            let stat
+
+            if (leave.status === "Ожидание") {
+                stat = 'pending'
+            } else if (leave.status === "Одобрено") {
+                stat = 'approved'
+            } else {
+                stat = 'declined'
+            }
+
+            return `
+        <tr>
+            <td><input type="checkbox" class="select-leave" value="${leave._id}"></td>
+            <td>${leave.leave_type}</td>
+            <td>${leave.from_date}</td>
+            <td>${leave.to_date}</td>
+            <td>${leave.number_of_days}</td>
+            <td>${leave.reason}</td>
+            <td><span class="status-${stat}">${leave.status}</span></td>
+            <td><button class="download-btn"
+                        style="background-color: transparent; border-color: transparent" onclick="editLeave('${leave._id}')"><img width="40" height="40" src="https://img.icons8.com/pastel-glyph/40/4D4D4D/pencil--v2.png" alt="Edit"/></button></td>
+        </tr>
+    `
+        }).join('')
+
     }
 
     // Функция для редактирования заявки
     function editLeave(leaveId) {
-        window.location.href = `/doctor/editLeave?leave_id=${leaveId}`;
+        window.location.href = `/doctor/editLeave?leave_id=${leaveId}`
     }
 
     // Функция для удаления выбранных заявок поочередно
     async function deleteSelectedLeaves() {
-        const selectedCheckboxes = document.querySelectorAll('.select-leave:checked');
+        const selectedCheckboxes = document.querySelectorAll('.select-leave:checked')
         if (selectedCheckboxes.length === 0) {
-            alert('Please select at least one leave to delete.');
-            return;
+            alert('Please select at least one leave to delete.')
+            return
         }
 
-        const selectedIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+        const selectedIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value)
 
         // Удаление поочередно
         for (const leaveId of selectedIds) {
             try {
                 const response = await fetch(`/leaves/delete/${leaveId}`, {
                     method: 'DELETE',
-                });
+                })
 
-                const result = await response.json();
+                const result = await response.json()
                 if (result.message && result.message.includes("удален")) {
-                    alert(`Leave with ID ${leaveId} has been deleted.`);
+                    alert(`Leave with ID ${leaveId} has been deleted.`)
                 } else {
-                    alert(`Error while deleting leave with ID ${leaveId}.`);
+                    alert(`Error while deleting leave with ID ${leaveId}.`)
                 }
             } catch (error) {
-                alert(`Error while deleting leave with ID ${leaveId}.`);
+                alert(`Error while deleting leave with ID ${leaveId}.`)
             }
         }
 
         // Обновляем таблицу после удаления
-       await fetchLeaves();
+        await fetchLeaves()
     }
 
     // Функция для выбора всех чекбоксов
     function toggleSelectAll() {
-        const selectAllCheckbox = document.getElementById('select-all');
-        const checkboxes = document.querySelectorAll('.select-leave');
-        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+        const selectAllCheckbox = document.getElementById('select-all')
+        const checkboxes = document.querySelectorAll('.select-leave')
+        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked)
     }
 
     // Показ ошибки
     function showError(message) {
-        alert(message);
+        alert(message)
     }
+
+    flatpickr("#from_date", {
+        dateFormat: "d-m-Y",
+        static: true
+    })
+    flatpickr("#to_date", {
+        dateFormat: "d-m-Y",
+        static: true
+    });
 </script>
+
 </html>
